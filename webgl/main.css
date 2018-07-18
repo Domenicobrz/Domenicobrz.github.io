@@ -628,24 +628,24 @@ hr.header_separator {
     -webkit-transform: translate(-50%, -50%) rotate(360deg);
             transform: translate(-50%, -50%) rotate(360deg); } }
 
-.masonrygrid {
+.mosaicogrid {
   width: 600px;
   position: relative;
   overflow: hidden;
   margin: auto;
   min-height: 100vh;
   transition: height .35s; }
-  .masonrygrid .masonrygrid_cell {
+  .mosaicogrid .mosaicogrid_cell {
     display: block;
     position: absolute;
     overflow: hidden;
     border-radius: 4px;
     opacity: 0;
     transition: top 0.75s ease, opacity 0.75s ease; }
-    .masonrygrid .masonrygrid_cell a {
+    .mosaicogrid .mosaicogrid_cell a {
       display: block;
       width: 100%; }
-      .masonrygrid .masonrygrid_cell a img {
+      .mosaicogrid .mosaicogrid_cell a img {
         width: 100%;
         height: auto;
         display: block;
@@ -653,15 +653,15 @@ hr.header_separator {
         transition: transform 0.25s ease;
         transition: transform 0.25s ease, -webkit-transform 0.25s ease;
         cursor: pointer; }
-        .masonrygrid .masonrygrid_cell a img:hover {
+        .mosaicogrid .mosaicogrid_cell a img:hover {
           -webkit-transform: scale(1.1, 1.1);
                   transform: scale(1.1, 1.1); }
 
-.masonry_container {
+.mosaico_container {
   position: relative;
   margin: auto; }
 
-.masonry_header {
+.mosaico_header {
   padding: 0.25em 1em 1em 1em;
   margin: auto auto 2px auto;
   box-sizing: border-box;
@@ -669,7 +669,7 @@ hr.header_separator {
   display: flex;
   flex-flow: row wrap;
   justify-content: center; }
-  .masonry_header span {
+  .mosaico_header span {
     text-transform: uppercase;
     font-size: 0.85rem;
     cursor: pointer;
@@ -677,11 +677,11 @@ hr.header_separator {
     color: #999;
     padding: 1em 1.3em; }
     @media all and (min-width: 1600px) {
-      .masonry_header span {
+      .mosaico_header span {
         font-size: 1.2rem; } }
-    .masonry_header span.active {
+    .mosaico_header span.active {
       color: #333; }
-    .masonry_header span:hover {
+    .mosaico_header span:hover {
       color: #00a5ff; }
 
 .footer_main {
