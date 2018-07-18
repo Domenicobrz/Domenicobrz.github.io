@@ -629,7 +629,6 @@ hr.header_separator {
             transform: translate(-50%, -50%) rotate(360deg); } }
 
 .mosaicogrid {
-  width: 600px;
   position: relative;
   overflow: hidden;
   margin: auto;
