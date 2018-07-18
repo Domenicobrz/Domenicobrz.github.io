@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+
+    <script src='dat.gui.min.js'></script>
+    <script src='shader.js'></script>
+    <script src='main.js'></script>
+
+
+    <script id="mainv" type="vert">
+        attribute vec3 pos; 
+        attribute vec3 color; 
+
+        varying vec2 uv;
+
+        void main() { 
+            gl_Position = vec4(pos, 1); 
+            vec3 c = color;
+            uv = pos.xy * 0.5 + 0.5;
+        }
+    </script>
+
+    <script id="mainf" type="frag">
+        // will be added programmatically by javascript
+        // precision mediump float; 
+
+        varying vec2 uv;
+
+        uniform float time; 
+        uniform float screenRatio; 
+        uniform sampler2D randNoise; 
+
+        uniform float scaleMult;
+        uniform float scaleAdd;
+        uniform vec2 finalOffset;
+        uniform float finalSinMult;
+
+        uniform float antiSinMult;
+        uniform float antiSinAmp;
+        uniform float sineShifter;
+
+        uniform float basicAmplitude;
+        uniform float ampMult;
+
+        uniform float timeCrack;
+
+        uniform float powMult;
+
+
+        void main() { 
+            vec4 col = vec4(0.0);
+            vec4 colRef = vec4(0.0);
+
+            float scale = 32.0;
+            float scv   = 255.0 / scale;
+            float amplitude = 2.0;
+            float amplitudeRef = 2.0;
+
+            // modified uvs
+            vec2 muv = vec2(uv.x * screenRatio, uv.y);
+
+            float off[19];
+            off[0] = 995.0;
+            off[1] = 15.0;
+            off[2] = 453.0;
+            off[3] = 19.0;
+            off[4] = 235.0;
+            off[5] = 427.0;
+            off[6] = 0.0;
+            off[7] = 53.0;
+            off[8] = 1.0;
+            off[9] = 143.0;
+            off[10] = 495.0;
+            off[11] = 158.0;
+            off[12] = 73.0;
+            off[13] = 349.0;
+            off[14] = 88.0;
+            off[15] = 776.0;
+            off[16] = 5.0;
+            off[17] = 211.0;
+            off[18] = 199.0;
+
+            for(int i = 1; i < 19; i++) {
+                amplitude = basicAmplitude / float(i) * ampMult;
+                amplitudeRef = 0.3 / float(i);
+                scale = 64.0 / (float(i) * scaleMult + scaleAdd);
+                scv   = 255.0 / scale;
+                // dopo un'ora di mal di testa, la frase con cui faccio il summit del tutto è "devi aumentare la spaziatura fra i valori
+                // che prendi". Non cercare di capirlo, mi sto già dimenticando di come ci sono arrivato mano a mano che scrivo
+                vec2  offs  = vec2((255.0 - scv) / 2.0 * screenRatio + off[i], (255.0 - scv) / 2.0 + off[i]);
+                offs += finalOffset;
+
+
+                // four points coordinates
+                vec2 t00 = floor(mod( muv * scv + offs, 255.0 )) / 255.0;
+                vec2 t10 = floor(mod( muv * scv + offs, 255.0 )) / 255.0;
+                t10.x    += 1.0 / 255.0;
+                vec2 t01 = floor(mod( muv * scv + offs, 255.0 )) / 255.0;
+                t01.y    += 1.0 / 255.0;
+                vec2 t11 = floor(mod( muv * scv + offs, 255.0 )) / 255.0;
+                t11      += 1.0 / 255.0;
+
+                // four points colors
+                vec4 c00 = texture2D(randNoise, t00); 
+                vec4 c10 = texture2D(randNoise, t10); 
+                vec4 c01 = texture2D(randNoise, t01); 
+                vec4 c11 = texture2D(randNoise, t11); 
+
+                float cx  = fract(muv.x * scv + offs.x);
+                float cy  = fract(muv.y * scv + offs.y);
+
+                cx = cx * cx * (3.0 * timeCrack - 2.0 * cx);
+                cy = cy * cy * (3.0 * timeCrack - 2.0 * cy);
+
+                // color on the x interpolated
+                vec4 colxi1    = c00 * (1.0 - cx) + c10 * cx;  
+                vec4 colxi2    = c01 * (1.0 - cx) + c11 * cx;
+
+                // interpolated final color 
+                vec4 colyi     = colxi1 * (1.0 - cy) + colxi2 * cy;
+
+
+                // colyi *= amplitude;
+                col += colyi * amplitude;
+
+                if(i < 19)
+                    colRef.x += colyi.x * amplitudeRef;
+            }
+            vec2 pixelUv = vec2(uv.x * 500.0, uv.y * 500.0);
+
+            col.x = pow(sin(pixelUv.x  * finalSinMult + sin(pixelUv.y * antiSinMult) * antiSinAmp + col.x * 13.0 + sineShifter) * 0.5 + 0.5, powMult);
+            gl_FragColor = vec4(col.x, col.x, col.x, 1.0);  
+
+            //colRef.x = pow(colRef.x, 4.1) * 213595.0;
+            // colRef.x = pow(sin(colRef.x + sin(colRef.x * 3.0) * antiSinAmp + col.x * 13.0 + sineShifter) * 0.5 + 0.5, 1.0);
+            colRef.x = pow(sin(pixelUv.x  * 0.0025 + sin(pixelUv.y * antiSinMult) * antiSinAmp + colRef.x * 13.0 + 3.8) * 0.5 + 0.5, 1.3);
+            
+
+
+            if(col.x < 0.4) {
+                gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+                // maximum amount 
+                float dist = 0.4 - col.x;
+
+
+                // it was set to 1.3 before
+                // it was set to 1.3 before
+                // it was set to 1.3 before
+                // it was set to 1.3 before
+                // it was set to 1.3 before
+                // it was set to 1.3 before
+                // it was set to 1.3 before
+                // it was set to 1.3 before
+                col.x += dist *  1.6 * min(colRef.x, 1.0);
+                gl_FragColor = vec4(col.x, col.x, col.x, 1.0);                       
+                // gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);                       
+            }
+        
+            // gl_FragColor = vec4(colRef.x, colRef.x, colRef.x, 1.0);              
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            // that's cool too!!
+            // col.y = pow(sin(pixelUv.x * finalSinMult + sin(pixelUv.y * antiSinMult) * antiSinAmp + col.y * 13.0 + sineShifter) * 0.5 + 0.5, powMult);
+            // col.z = pow(sin(pixelUv.x * finalSinMult + sin(pixelUv.y * antiSinMult) * antiSinAmp + col.z * 13.0 + sineShifter) * 0.5 + 0.5, powMult);
+            // gl_FragColor = vec4(col.x, col.y, col.z, 1.0);   
+            // gl_FragColor = vec4(col.x * 1.5, 1.0, 1.0, 1.0);   
+            // gl_FragColor = vec4(1.0 - col.x, 1.0 - col.y, 1.0 - col.z, 1.0); 
+
+            // mix between colored and grayscale
+            // vec4 median = vec4((col.x + col.y + col.z) / 3.0);
+            // col = mix(col, median, 0.5); 
+            
+            // gl_FragColor = vec4(col.x, col.y, col.z, 1.0);   
+            // gl_FragColor = vec4(1.0 - col.x, 1.0 - col.y, 1.0 - col.z, 1.0);   
+        }
+    </script>
+
+
+
+    <link href="https://fonts.googleapis.com/css?family=UnifrakturCook:700" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia" rel="stylesheet"> 
+
+
+    <style>
+        * {
+            margin: 0;
+        }
+        
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+        
+        canvas {
+            margin: auto;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        svg.wmn {
+            position:relative;
+            width:  600px;
+            margin: auto;
+            left:0;
+            right:0;
+            display: block;
+        }
+
+        svg.wmn text {
+            font-family: 'UnifrakturMaguntia', cursive;
+        }
+
+        svg.bwr {
+            position:relative;
+            width:  450px;
+            margin: auto;
+            margin-top: 3em;
+            margin-bottom: -1em;
+            left:0;
+            right:0;
+            display: block;
+        }
+
+        svg.bwr text {
+            font-family: 'UnifrakturMaguntia', cursive;
+        }
+
+        .bwrstrokeeffect {
+            fill: none; 
+            stroke: rgba(255,255,255, 0.95); 
+            stroke-width: 0.5;
+            stroke-dasharray: 1, 100;
+            stroke-dashoffset: -70;
+
+            animation: bwrtextanim 6s infinite; 
+        }
+
+        @keyframes bwrtextanim {
+            0% { stroke-dashoffset: -70; }
+            50% { stroke-dashoffset: 10; }
+            100% { stroke-dashoffset: 10; }
+        }
+
+    </style>
+</head>
+
+<body>
+
+
+    <canvas id="canvas"></canvas>
+
+    <svg class="bwr" viewBox="-2 0 55 20">
+       <defs>
+           <mask id="textMask">
+               <text style="fill:white;" x="0" y="15">Beware</text>
+           </mask>
+           <filter id="innerShadow" x="-10%" y="-10%" width="140%" height="140%">
+               <feGaussianBlur in="SourceGraphic" stdDeviation="0.45" result="blur"/>
+               <feOffset in="blur" dx="0.3" dy="0.3"/>
+           </filter>
+           <filter id="innerShadowTwo" x="-20%" y="-20%" width="140%" height="140%">
+               <feGaussianBlur in="SourceGraphic" stdDeviation="0.45" result="blur"/>
+               <!--   se proprio vuoi avere il massimo controllo
+               <feColorMatrix in="blur"
+                              type="matrix"
+                              values="1 0 0 0 0
+                                      0 1 0 0 0
+                                      0 0 1 0 0
+                                      0 0 0 2 0" />-->
+           </filter>
+       </defs>
+
+       <text x="0" y="15" style="filter: url(#innerShadowTwo); fill:#333;">Beware</text>
+       <text x="0" y="15" class="bwrstrokeeffect">Beware</text>
+       <text x="0" y="15" style="fill: black;">Beware</text>
+       <g mask="url(#textMask)">
+           <text x="0" y="15" style="fill: #535353; filter: url(#innerShadow)">Beware</text>
+       </g>
+    </svg> 
+
+
+
+
+<!--
+    <svg class="wmn" viewBox="-1 0 160 20">
+       <defs>
+           <mask id="textMaskTwo">
+               <text style="fill:white;" x="0" y="15">Web Magicians nearby</text>
+           </mask>
+       </defs>
+       <text x="0" y="15" fill="#black">Web Magicians nearby</text>
+       <g mask="url(#textMaskTwo)">
+           <text x="0" y="15" style="fill: #535353; filter: url(#innerShadow)">Web Magicians nearby</text>
+       </g>
+    </svg>-->
+
+
+
+
+
+    <svg class="wmn" viewBox="-1 0 160 20">
+       <text x="0" y="15" fill="#333" style="filter: url(#innerShadow); stroke: #333; stroke-width: 1.25;">Web Magicians nearby</text>
+       <text x="0" y="15" fill="#ddd">Web Magicians nearby</text>
+    </svg> 
+
+
+</body>
+
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src="fx-min.js"></script>
+	
+	<script type="vert" id="mainv">
+	attribute vec3 pos;
+	attribute vec3 pos2;
+	attribute vec3 pos3;
+	attribute vec3 color;
+
+	uniform mat4 projection;
+	uniform mat4 model;
+	uniform mat4 view;
+
+	varying vec3 Color;
+	varying vec3 FragPos;
+	varying vec3 Normal;
+
+	void main() {
+		gl_Position = projection * view * model * vec4(pos, 1.0);
+		Color       = color;
+		FragPos     = pos;
+
+		vec3 v = vec3(pos2.x - pos.x, pos2.y - pos.y, pos2.z - pos.z);
+		vec3 p = vec3(pos3.x - pos.x, pos3.y - pos.y, pos3.z - pos.z);
+		Normal = normalize(cross(v, p));
+	}
+	</script>
+
+	<script type="frag" id="mainf">
+	precision mediump float;
+
+	varying vec3 Color;
+	varying vec3 FragPos;
+	varying vec3 Normal;
+
+	uniform float t;
+
+	void main() {
+
+		vec3 diffuse = vec3(max(dot(Normal, normalize(vec3(vec3(20, 20, 80) - FragPos))), 0.0));
+		vec3 norm    = vec3(Normal * 0.5 + 0.5);
+
+		gl_FragColor   = vec4(mix(diffuse, norm, t), 1.0);
+	}
+	</script>
+
+
+	<style>
+	* {
+		margin: 0;
+	}
+
+	html, body {
+		overflow: hidden;
+	}
+
+	p {
+		font-family: Georgia;
+		color: white;
+		position: absolute;
+		margin: 1vw;
+		bottom: 0;
+		font-size: 1em;
+		text-align: center;
+		width: 100%;
+	}
+
+
+	</style>
+
+
+</head>
+<body>
+
+	<canvas id="canvas"></canvas>
+
+	<p>Click and drag to rotate the scene, mousewheel to zoom</p>
+
+</body>
+</html>

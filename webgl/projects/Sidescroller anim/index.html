@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="mobile-web-app-capable" content="yes">
+	<title></title>
+
+
+<script id="vertex" type="vert">
+	attribute vec3 pos;
+	attribute vec2 tcoord;
+
+	varying vec2 Tcoord;
+
+	uniform mat4 projection;
+	uniform mat4 model;
+	uniform mat4 view;
+
+	void main()
+	{
+		gl_Position = projection * view * model * vec4(pos.xyz, 1.0);
+
+		Tcoord = tcoord;
+	}
+</script>
+<script id="fragment" type="frag">
+	precision mediump float;
+
+	varying vec2 Tcoord;
+
+	uniform sampler2D tex;
+	uniform float radius;
+	uniform float textel_offset;
+
+	vec4 blur(float radius)
+	{
+		float offset = textel_offset;
+
+		vec4 col = vec4(0.0);
+
+		int rad = int(radius);
+
+		for(int j = 0; j < 1000; j++)
+		{
+			if(j >= rad) break;
+			float i = float(j);
+
+			vec2 vector = vec2(Tcoord.x + (offset * i), Tcoord.y);
+			if(texture2D(tex, vector).xyz == vec3(0.0, 0.0, 0.0))
+				col += vec4(1.0, 1.0, 1.0, 0.0);
+			else
+				col += texture2D(tex, vector);
+		
+
+
+			vector = vec2(Tcoord.x - (offset * i), Tcoord.y);
+			if(texture2D(tex, vector).xyz == vec3(0.0, 0.0, 0.0))
+				col += vec4(1.0, 1.0, 1.0, 0.0);
+			else
+				col += texture2D(tex, vector);
+		}
+
+		float g = float(rad);
+		//il multiplier si deve usare perchè aggiungi 2 COLORI ad ogni iterazione di radius
+		float multiplier = 2.0;// + (g * -0.00);
+
+		col = vec4(col.x / (g*multiplier), 
+				   col.y / (g*multiplier), 
+				   col.z / (g*multiplier), 
+				   col.a / (g * 2.0));
+
+		if(Tcoord.x < 0.0)
+		{
+			float lowestPossible = (radius * 0.001);
+			col.a *= pow((1.0 - (-Tcoord.x / lowestPossible)), 1.0);
+		}
+		if(Tcoord.x > 1.0)
+		{
+			float HighestPossible = /*1.0 + */(radius * 0.001);
+			float alpha = 1.0 - ((Tcoord.x - 1.0) / HighestPossible);
+			col.a *= pow(alpha, 1.0);
+		}
+
+		return col;
+	}
+
+
+	void main()
+	{
+		if(radius == 0.0) {
+			if(Tcoord.x < 0.0 || Tcoord.x > 1.0)
+				discard;
+		}
+		else {
+			if(Tcoord.x < -(radius * 0.001) || Tcoord.x > 1.0 + (radius * 0.001))
+				discard;
+		}
+
+		if(radius > 1.0)
+			gl_FragColor = blur(radius);
+		else
+			gl_FragColor = texture2D(tex, Tcoord);
+	}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script id="leaf_vertex" type="vert">
+	attribute vec3 pos;
+	attribute vec2 tcoord;
+	attribute float ystart;
+	attribute float ID;
+	attribute float texID;
+
+	varying vec2 Tcoord;
+	varying float alphaAnim;
+	varying float TexID;
+
+
+	uniform mat4 projection;
+	uniform mat4 model;
+	uniform mat4 view;
+
+	uniform float Rotator;
+	uniform vec2  quad_world_size;
+
+
+	mat4 getRotMatrix(float rad)
+	{
+		float x = 0.0, y = 0.0, z = 1.0;
+		float len = sqrt(x * x + y * y + z * z);
+
+		if (abs(len) < 0.000001) { 
+			return mat4(0.0); 
+		}
+
+		len = 1.0 / len;
+	    x *= len;
+	    y *= len;
+	    z *= len;
+
+	    float s = sin(rad),
+	    c = cos(rad),
+	    t = 1.0 - c;
+
+	    float a00 = 1.0, a01 = 0.0, a02 = 0.0, 
+	    a03 = 0.0, a10 = 0.0,  a11 = 1.0, 
+	    a12 = 0.0, a13 = 0.0,  a20 = 0.0, 
+	    a21 = 0.0, a22 = 1.0,  a23 = 0.0;
+
+	    float b00 = x * x * t + c, 
+	    	  b01 = y * x * t + z * s, 
+	    	  b02 = z * x * t - y * s,
+	    	  b10 = x * y * t - z * s, 
+	    	  b11 = y * y * t + c,
+	    	  b12 = z * y * t + x * s,
+	          b20 = x * z * t + y * s, 
+	          b21 = y * z * t - x * s, 
+	          b22 = z * z * t + c;
+
+	    float out0 = a00 * b00 + a10 * b01 + a20 * b02,
+	    out1 = a01 * b00 + a11 * b01 + a21 * b02,
+	    out2 = a02 * b00 + a12 * b01 + a22 * b02,
+	    out3 = a03 * b00 + a13 * b01 + a23 * b02,
+	    out4 = a00 * b10 + a10 * b11 + a20 * b12,
+	    out5 = a01 * b10 + a11 * b11 + a21 * b12,
+	    out6 = a02 * b10 + a12 * b11 + a22 * b12,
+	    out7 = a03 * b10 + a13 * b11 + a23 * b12,
+	    out8 = a00 * b20 + a10 * b21 + a20 * b22,
+	    out9 = a01 * b20 + a11 * b21 + a21 * b22,
+	    out10 = a02 * b20 + a12 * b21 + a22 * b22,
+	    out11 = a03 * b20 + a13 * b21 + a23 * b22,
+	    out12 = 0.0,
+	    out13 = 0.0,
+	    out14 = 0.0,
+	    out15 = 1.0;
+
+	    vec4 v1 = vec4(out0, out1, out2, out3);
+	    vec4 v2 = vec4(out4, out5, out6, out7);
+	    vec4 v3 = vec4(out8, out9, out10, out11);
+	    vec4 v4 = vec4(out12, out13, out14, out15);
+
+
+	    highp mat4 outs = mat4(v1, v2, v3, v4);
+		return outs;
+	}
+
+
+
+
+	void main()
+	{
+		vec3 OriginalPos;
+		if(tcoord.x == -0.5)
+		{
+			if(tcoord.y == 1.0)
+			{
+				OriginalPos = vec3(-quad_world_size.x, quad_world_size.y, pos.z);
+			}
+			
+			if(tcoord.y == 0.0)
+			{
+				OriginalPos = vec3(-quad_world_size.x, -quad_world_size.y, pos.z);
+			}
+		}
+
+		if(tcoord.x == 1.5)
+		{
+			if(tcoord.y == 1.0)
+			{
+				OriginalPos = vec3(quad_world_size.x, quad_world_size.y, pos.z);
+			}
+			
+			if(tcoord.y == 0.0)
+			{
+				OriginalPos = vec3(quad_world_size.x, -quad_world_size.y, pos.z);
+			}
+		}
+
+		
+		vec2 distance = vec2(pos.x - OriginalPos.x, pos.y - OriginalPos.y);
+
+		mat4 rotation = getRotMatrix(-acos(cos(Rotator * 2.3 + ID) * 0.5) + 3.14 / 2.0  );
+
+		OriginalPos = (rotation * vec4(OriginalPos.xyz, 1.0)).xyz;
+
+		OriginalPos.x += distance.x; 
+		OriginalPos.y += distance.y;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		float yOffset = 0.0;
+		yOffset = -mod(Rotator / 2.0, ystart - (-5.0));
+
+
+		float pendulum_x = cos(Rotator * 2.3 + ID) * 0.7;
+		float pendulum_y = -abs(sin(acos(pendulum_x)));
+
+
+
+		vec3 finalPos = vec3(OriginalPos.x + pendulum_x, OriginalPos.y + yOffset + pendulum_y, pos.z);
+
+
+		gl_Position = projection * view * model * /*rotate **/ 
+											vec4(finalPos.xyz, 1.0);
+
+
+
+		float ids = ID;
+		Tcoord = tcoord;
+		TexID = texID;
+
+		alphaAnim = 1.0;
+		if(finalPos.y < -1.0)	{
+			alphaAnim = 1.0 + (finalPos.y + 1.0);
+			if(alphaAnim < 0.0) alphaAnim = 0.0;
+		}
+	}
+
+	//rotation matrix routine
+</script>
+
+
+<script id="leaf_fragment" type="frag">
+	precision mediump float;
+
+	varying vec2 Tcoord;
+	varying float alphaAnim;
+	varying float TexID;
+
+	uniform sampler2D tex;
+	uniform sampler2D tex2;
+	uniform sampler2D tex3;
+
+
+	uniform float radius;
+	uniform float textel_offset;
+
+
+	vec4 blur(float radius)
+	{
+		float offset = textel_offset;
+
+		vec4 col = vec4(0.0);
+
+		int rad = int(radius);
+
+		for(int j = 0; j < 1000; j++)
+		{
+			if(j >= rad) break;
+			float i = float(j);
+
+			
+			if(TexID < 1.0) {
+				vec2 vector = vec2(Tcoord.x + (offset * i), Tcoord.y);
+				if(texture2D(tex, vector).a < 0.02)
+					col += vec4(0.0);
+				else
+					col += texture2D(tex, vector);
+
+
+				vector = vec2(Tcoord.x - (offset * i), Tcoord.y);
+				if(texture2D(tex, vector).a < 0.02)
+					col += vec4(0.0);
+				else
+					col += texture2D(tex, vector);
+			}
+			else if (TexID < 2.0)
+			{
+				vec2 vector = vec2(Tcoord.x + (offset * i), Tcoord.y);
+				if(texture2D(tex2, vector).a < 0.02)
+					col += vec4(0.0);
+				else
+					col += texture2D(tex2, vector);
+
+
+				vector = vec2(Tcoord.x - (offset * i), Tcoord.y);
+				if(texture2D(tex2, vector).a < 0.02)
+					col += vec4(0.0);
+				else
+					col += texture2D(tex2, vector);
+			}
+			else
+			{
+				vec2 vector = vec2(Tcoord.x + (offset * i), Tcoord.y);
+				if(texture2D(tex3, vector).a < 0.02)
+					col += vec4(0.0);
+				else
+					col += texture2D(tex3, vector);
+
+
+				vector = vec2(Tcoord.x - (offset * i), Tcoord.y);
+				if(texture2D(tex3, vector).a < 0.02)
+					col += vec4(0.0);
+				else
+					col += texture2D(tex3, vector);
+			}
+		}
+
+		float g = float(rad);
+		//il multiplier si deve usare perchè aggiungi 2 COLORI ad ogni iterazione di radius
+		float multiplier = 2.0;// + (g * -0.00);
+
+		col = vec4(col.x / (g*multiplier), 
+				   col.y / (g*multiplier), 
+				   col.z / (g*multiplier), 
+				   col.a / (g*multiplier));
+
+		if(Tcoord.x < 0.0)
+		{
+			float lowestPossible = (radius * 0.002);
+			col.a *= pow((1.0 - (-Tcoord.x / lowestPossible)), 1.0);
+		}
+		if(Tcoord.x > 1.0)
+		{
+			float HighestPossible = /*1.0 + */(radius * 0.002);
+			float alpha = 1.0 - ((Tcoord.x - 1.0) / HighestPossible);
+			col.a *= pow(alpha, 1.0);
+		}
+
+		return col;
+	}
+
+
+	void main()
+	{
+		if(radius == 0.0) {
+			if(Tcoord.x < 0.0 || Tcoord.x > 1.0)
+				discard;
+		}
+		else {
+
+			if(Tcoord.x < -(radius * 0.002) || Tcoord.x > 1.0 + (radius * 0.002))
+				discard;
+		}
+
+		if(radius > 1.0) {
+
+			if(radius > 180.0)
+			{
+				discard;
+			}
+
+			gl_FragColor = blur(radius);
+			gl_FragColor.a *= alphaAnim * (1.0 - radius / 180.0);
+			return;
+		}
+
+
+
+
+
+		//se non ti piace sto bordello devi riscrivere tutto sovrapponendo VERTICALMENTE le texture in una sola texture
+
+		if(TexID < 1.0) {
+			gl_FragColor = blur(1.0);//texture2D(tex, Tcoord);
+			gl_FragColor.a *= alphaAnim;
+		}
+		else if(TexID < 2.0) {
+			gl_FragColor = blur(1.0);//texture2D(tex2, Tcoord);
+			gl_FragColor.a *= alphaAnim;
+		}
+		else {
+			gl_FragColor = blur(1.0);//texture2D(tex3, Tcoord);
+			gl_FragColor.a *= alphaAnim;
+		}
+
+	}
+</script>
+
+
+<!--	Glyphs 			-->
+	<script id="glyphv" type="vert">
+	attribute vec2 pos;
+	attribute vec3 tcoord;
+	attribute float fx;
+
+	varying vec2 Tcoord;
+	varying vec3 Color;
+	varying float Anim;
+
+	uniform float pixelSize;
+	uniform float rotator;
+	uniform float anim;
+
+	void main()
+	{
+		gl_Position = vec4(pos, -0.9, 1.0);
+
+		//adjust texture coordinates based on active letter
+		vec2 coords = vec2(tcoord.xy);
+
+		if(coords.x == 0.0)
+		{
+			coords.x = (tcoord.z * (pixelSize * 37.0)) - pixelSize;
+		}
+		else if(coords.x == 1.0)
+		{
+			coords.x = (tcoord.z * (pixelSize * 37.0)) - pixelSize + (pixelSize * 37.0);
+		}
+
+
+		//make fx calculation here
+		float normsin = (sin(rotator * fx) * 0.5 + 0.5) * 0.7;
+		//float alph = pow(normsin, 0.45) * 0.5 + 0.1;
+
+
+		Color.x = 0.490  + (0.510 * normsin);
+		Color.y = 0.298  + (0.702 * normsin);
+		Color.z = 0.188  + (0.812 * normsin);
+
+		Tcoord = coords;
+	}
+	</script>
+
+
+	<script id="glyphf" type="frag">
+	precision mediump float;
+
+	varying vec2 Tcoord;
+	varying vec3 Color;
+	varying float Anim;
+
+
+	uniform float blurradius;
+	uniform sampler2D tex;
+	void main()
+	{
+		//si chiama blurradius ma funziona tramite xtranslation
+		float alpha = 1.0 - abs(blurradius) / 10.0;
+
+		gl_FragColor = vec4(
+			Color.xyz, 
+			texture2D(tex, Tcoord).r * alpha);
+	}
+	</script>
+<!--	Glyphs - END	-->
+
+
+
+
+
+
+
+
+
+	<script src="gl-matrix-min.js"type="text/javascript"></script>
+	<script src="shader.js" type="text/javascript"></script>
+	<script src="fx.js"	type="text/javascript"></script>
+
+	<style>
+	*{
+		margin: 0;
+	}
+
+	html, body{
+		overflow: hidden;
+	}
+
+	img {
+		display: none;
+	}
+	</style>
+
+</head>
+<body>
+
+
+
+	<canvas id="canvas" style="border: none;"></canvas>
+
+	<img id="layer1"   src="layer1tiny.png">
+	<img id="layer2"   src="layer2tiny.png">
+	<img id="layer3_1" src="layer3_1tiny.png">
+	<img id="layer3_2" src="layer3_2tiny.png">
+	<img id="layer3_3" src="layer3_3tiny.png">
+	<img id="layer4_1" src="layer4_1tiny.png">
+	<img id="layer4_2" src="layer4_2tiny.png">
+
+	<img id="leaves"   src="leaf.png">
+	<img id="leaves2"  src="leaf2.png">
+	<img id="leaves3"  src="leaf3.png">
+
+
+</body>
+</html>

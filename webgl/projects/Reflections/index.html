@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+
+	<script id="vertex"   type="vert">
+		attribute vec3 pos;
+		attribute vec3 normal;
+
+		varying vec3 Normal;
+		varying vec3 fragPos;
+		varying vec3 camPos;
+		varying float drwCube;
+
+		uniform mat4 projection;
+		uniform mat4 model;
+		uniform mat4 view;
+
+		uniform vec3 cameraPos;
+		uniform float drawCube;
+
+		mat3 normalMatrix(in mat4 a);
+
+		void main()
+		{
+			gl_PointSize = 2.0;
+
+			if(drawCube > 1.0)
+				gl_Position = projection * mat4(mat3(view)) * model * vec4(pos, 1.0);
+			else
+				gl_Position = projection * view * model * vec4(pos, 1.0);
+
+
+
+			
+			
+			fragPos = vec3(model * vec4(pos, 1.0));
+			camPos = cameraPos;
+
+
+			Normal = normalMatrix(model) * normalize(normal);
+			drwCube = drawCube;
+		}
+
+	mat3 normalMatrix(in mat4 a)
+	{
+		float a00 = a[0].x;
+		float a01 = a[0].y;
+		float a02 = a[0].z;
+		float a03 = a[0].w;
+
+		float a10 = a[1].x;
+		float a11 = a[1].y;
+		float a12 = a[1].z;
+		float a13 = a[1].w;
+
+		float a20 = a[2].x;
+		float a21 = a[2].y;
+		float a22 = a[2].z;
+		float a23 = a[2].w;
+
+		float a30 = a[3].x;
+		float a31 = a[3].y;
+		float a32 = a[3].z;
+		float a33 = a[3].w;
+
+		float b00 = a00 * a11 - a01 * a10;
+		float b01 = a00 * a12 - a02 * a10;
+		float b02 = a00 * a13 - a03 * a10;
+		float b03 = a01 * a12 - a02 * a11;
+		float b04 = a01 * a13 - a03 * a11;
+		float b05 = a02 * a13 - a03 * a12;
+		float b06 = a20 * a31 - a21 * a30;
+		float b07 = a20 * a32 - a22 * a30;
+		float b08 = a20 * a33 - a23 * a30;
+		float b09 = a21 * a32 - a22 * a31;
+		float b10 = a21 * a33 - a23 * a31;
+		float b11 = a22 * a33 - a23 * a32;
+
+		float det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
+
+
+		highp mat3 outz = mat3(
+							vec3(
+						(a11 * b11 - a12 * b10 + a13 * b09) * det,
+						(a12 * b08 - a10 * b11 - a13 * b07) * det,
+						(a10 * b10 - a11 * b08 + a13 * b06) * det
+					 			),
+
+
+
+							vec3(
+						(a02 * b10 - a01 * b11 - a03 * b09) * det,
+						(a00 * b11 - a02 * b08 + a03 * b07) * det,
+						(a01 * b08 - a00 * b10 - a03 * b06) * det
+					 			),
+
+
+
+							vec3(
+						(a31 * b05 - a32 * b04 + a33 * b03) * det,
+						(a32 * b02 - a30 * b05 - a33 * b01) * det,
+						(a30 * b04 - a31 * b02 + a33 * b00) * det
+								)
+						);
+		
+
+	    return outz;
+	}
+	</script>
+
+
+	<script id="fragment" type="frag">
+		precision mediump float;
+		varying vec3 Normal;
+		varying vec3 fragPos;
+		varying vec3 camPos;
+		varying float drwCube;
+
+
+		uniform float rotator;
+		uniform samplerCube envSampler;
+		uniform float frsnratio;
+		uniform float brdfrsnratio;
+
+
+		uniform float refractz;
+
+		void main()
+		{
+			if(drwCube > 1.0)
+			{
+				gl_FragColor = textureCube(envSampler, fragPos);
+
+				return;
+			}
+
+
+			vec3 norm = normalize(Normal);
+			float diffuse = 0.5;
+			float lightMult = 1.0;
+
+			for(int i = 0; i < 3; i++)	{
+				vec3 lightPos = vec3(-20.0, -3.5, -3.0);
+				
+				if(i == 1)
+					lightPos = vec3(20.0, -3.5, -3.0);
+
+				if(i == 2) {
+					lightPos = vec3(0.0, -5.0, -3.0);
+					lightMult = 0.9;
+				}
+				
+				vec3 lightDir = normalize(lightPos - fragPos);
+				diffuse += max(dot(lightDir, norm), 0.0) * lightMult;
+			}
+
+
+			vec3 R;
+			vec3 G; 
+			//if(refractz > 1.0)
+				R = refract(fragPos - camPos, norm, 2.23);
+			//else
+				G = reflect(fragPos - camPos, norm);
+
+
+
+			vec4 col = textureCube(envSampler, vec3(R.x, 
+				R.y, R.z));
+
+			vec4 colr = textureCube(envSampler, vec3(G.x, 
+				G.y, G.z));
+
+			col = mix(col, colr, refractz);
+
+
+
+
+			float fresnelRatio = 0.0;
+			vec3 viewDir = normalize(camPos - fragPos);
+			fresnelRatio = pow(max(dot(viewDir, norm), 0.0), 0.25 ) * frsnratio;
+
+
+			col += col * ((diffuse * (1.0 + frsnratio * brdfrsnratio)) * frsnratio);
+			vec4 sphereCol = vec4(0.02, 0.02, 0.02, 1.0);
+
+			vec4 mixed = mix(col, sphereCol, fresnelRatio);
+
+
+			gl_FragColor = vec4(
+				vec3(mixed) /* * diffuse*/ 
+
+							+ 
+
+
+
+				//mi sa che non cerco l'effetto della luce diffusa ma di quella speculare
+				vec3(pow((diffuse - 0.5), 6.0 ) / 38.0, 
+					 pow((diffuse - 0.5), 6.0 ) / 59.0, 
+					 pow((diffuse - 0.5), 6.0 ) / 59.0), 
+
+				1.0); 
+		}
+	</script>
+
+
+
+
+	<script type="text/javascript" src="fx-min.js"></script>
+
+
+
+	<style>
+	*{
+		margin: 0;
+	}
+
+	html, body{
+		overflow: hidden;
+	}
+
+	#contain {
+		padding: 10px;
+		box-sizing: border-box;
+		border-top-left-radius: 10px;
+		background: rgba(0,0,0, 0.3);
+		z-index: 25;
+		position:relative;
+		/*bottom: 0;
+		right: 0;
+		text-align: center;*/
+	}
+
+	#cont {
+		box-sizing: border-box;
+		border-top-left-radius: 10px;
+		background: rgba(0,0,0, 0.3);
+		padding: 5px 0px 5px 5px;
+		position:absolute;
+		bottom: 0;
+		right: 0;
+		text-align: center;
+	}
+
+	#contain #idz {
+
+		border-top-left-radius: 10px;
+		padding: 0px;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		margin-bottom: -10px;
+		margin-left: -10px;
+		position: relative;
+		width: calc(100% + 20px);
+		background: rgba(0,0,0, 0.5);
+		text-align: center;
+		bottom: 0;
+		left: 0;
+	}
+
+	#idz div {
+		padding: 0px;
+		position: relative;
+		width: 100%;
+		background: transparent;
+		text-align: center;
+		bottom: 0;
+		left: 0;
+	}
+
+	#idz input[type=range]::-moz-range-thumb {
+	    background: #00A5FF;
+	}
+
+	#idz input[type=range]::-webkit-slider-thumb {
+	    background: #00A5FF;
+	}
+
+
+
+
+
+	span {
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		text-decoration: none;
+		cursor:default;
+		pointer-events: none;
+		font-family: sans-serif;
+		display: block;
+		font-size: 12px;
+		margin-bottom: -4px;
+		color: rgba(255,255,255, 1.0);
+	}
+
+	input[type=range]{
+		margin-bottom: -4px;
+    	/* fix for FF unable to apply focus style bug  */
+    	/*required for proper track sizing in FF*/
+	}
+	
+	input[type=range]::-moz-range-track {
+	    height: 2px;
+	    background: #444;
+	    border-radius: 3px;
+	}
+	
+	input[type=range]::-moz-range-thumb {
+	    border: none;
+	    height: 10px;
+	    width: 10px;
+	    border-radius: 50%;
+	    background: #FF3B25;
+	}
+	
+	/*hide the outline behind the border*/
+	input[type=range]:-moz-focusring{
+	}
+	
+	input[type=range]:focus::-moz-range-track {
+	    /*background: #ccc;*/
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+	input[type=range]{
+	    -webkit-appearance: none;
+	    background: transparent;
+	}
+	
+	input[type=range]::-webkit-slider-runnable-track {
+		margin-top: 9px;
+		margin-bottom: 9px;
+		height: 2px;
+	    border: 1px solid #333;
+	}
+	
+	input[type=range]::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		margin-top: -5px;
+	    border: none;
+		height: 10px;
+		width: 10px;
+		border-radius: 50%;
+		background: #FF3B25;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	p {
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		text-decoration: none;
+		cursor:default;
+		pointer-events: none;
+		color: rgba(255, 255, 255, 0.9);
+		font-style: sans-serif;
+		font-size: 13px;
+		text-align: center;
+		display:block;
+		position: relative;
+		margin-bottom: 5px;
+		bottom:0;
+		left:0;
+		right:0;
+	}
+
+
+
+	</style>
+
+
+</head>
+<body>
+
+	
+	<canvas id="canvas" style="border: none;"></canvas>
+		<p>Click and drag to rotate the scene, 
+			<br>zoom with your mousewheel</p>
+
+
+	<div id="cont">
+		<p>Click and drag to rotate the scene, 
+			<br>zoom with your mousewheel</p>
+
+	<div id="contain">
+		<span>Sphere tessellation:</span>
+        <input type="range" name="tessellation" min="2" max="500" step="1"
+oninput="tessellate(this.value)">
+
+
+		<span>x-Cosine exponent:</span>
+        <input type="range" name="tessellation" min="1" max="10" step="0.02"
+oninput="params(this.value, 'cosx')">
+
+
+		<span>z-Cosine exponent:</span>
+        <input type="range" name="tessellation" min="1" max="10" step="0.02"
+oninput="params(this.value, 'cosz')">
+
+
+		<span>Tessellation degree stop:</span>
+        <input type="range" name="tessellation" min="0" max="1" step="0.02"
+oninput="params(this.value, 'degratio')">
+
+		<span>Inward triangulation:</span>
+        <input type="range" name="tessellation" min="1" max="3" step="0.02"
+oninput="params(this.value, 'ydegratio')">
+
+
+		<span>Vertex cosine multiplier:</span>
+        <input type="range" name="tessellation" min="1" max="5" step="0.02"
+oninput="params(this.value, 'vcos')">
+
+		<span>Vertical sine multiplier</span>
+        <input type="range" name="tessellation" min="1" max="5" step="0.02"
+oninput="params(this.value, 'vsin')">
+
+
+
+
+
+
+		<div id="idz">
+		<span style="margin-bottom: 10px;">Light params</span>
+		<span>Fresnel reflectance ratio:</span>
+        <input type="range" name="tessellation" min="0" max="1" step="0.01"
+oninput="params(this.value, 'fresnel')">
+
+
+		<span>Fresnel border reflectance:</span>
+		<span style="font-size: 9px;">(visible only if fresnel is on)</span>
+        <input type="range" name="tessellation" min="0" max="5" step="0.01"
+oninput="params(this.value, 'borderfresnel')">
+
+
+		<span>Refraction vs Reflection</span>
+        <input type="range" name="tessellation" min="0" max="1" step="0.01"
+oninput="params(this.value, 'refrtorefl')">
+		<div>
+		</div>
+
+
+
+
+
+		<!--<span>Compute Object Refraction 
+			<input style="display:inline-block; bottom:-4px; position: relative; pointer-events: initial;" type="checkbox" onclick="refractt(this.checked);">
+		</span>-->
+
+
+		<span style="font-size: 10px; margin-top: 5px; margin-bottom: -2px;">(May hit performance a bit)</span>
+		<span>Compute Face Normals
+			<input style="display:inline-block; bottom:-4px; position: relative; pointer-events: initial;" name="fnc" type="checkbox" onclick="faceNorm(this.checked);">
+		</span>
+
+	</div> 
+
+	
+
+
+
+</body> 
+</html>

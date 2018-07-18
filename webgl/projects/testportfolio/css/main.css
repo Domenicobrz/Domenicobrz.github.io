@@ -1,0 +1,47 @@
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; }
+
+html, body {
+  font-size: 10px;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden; }
+
+a, a:hover, a:active, a:visited, a:focus {
+  color: inherit;
+  text-decoration: none;
+  outline: 0;
+  cursor: pointer; }
+
+ul, li {
+  list-style: none; }
+
+@font-face {
+  font-family: 'SharpUnity';
+  src: url("../assets/fonts/SharpUnity-Extrabold.woff") format("woff"); }
+
+@font-face {
+  font-family: 'MuseoSansBold';
+  src: url("../assets/fonts/MuseoSansBold.woff") format("woff"); }
+
+@font-face {
+  font-family: 'MuseoSansRegular';
+  src: url("../assets/fonts/MuseoSansRegular.woff") format("woff"); }
+
+@font-face {
+  font-family: 'MuseoSansBlack';
+  src: url("../assets/fonts/MuseoSansBlack.ttf") format("truetype"); }
+
+@font-face {
+  font-family: 'MuseoSans300';
+  src: url("../assets/fonts/MuseoSans-300.woff2") format("woff2"); }
+
+@font-face {
+  font-family: 'MuseoSans500';
+  src: url("../assets/fonts/MuseoSans-500.woff2") format("woff2"); }
+
+@font-face {
+  font-family: 'MuseoSans900';
+  src: url("../assets/fonts/MuseoSans-900.woff2") format("woff2"); }

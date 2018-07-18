@@ -1,0 +1,41 @@
+{
+  "name": "dxf-parser",
+  "version": "0.4.8",
+  "description": "Parse dxf files into a readable, logical js object.",
+  "main": "dist/dxf-parser.js",
+  "license": "MIT",
+  "keywords": [
+    "dxf",
+    "cad",
+    "parser",
+    "reader"
+  ],
+  "homepage": "https://github.com/gdsestimating/dxf-parser",
+  "moduleType": [
+    "globals"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "lib",
+    "samples",
+    "src",
+    ".npmignore",
+    "package.json",
+    "jsconfig.json",
+    "index.js",
+    "scripts"
+  ],
+  "_release": "0.4.8",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.4.8",
+    "commit": "e93944333a443f562c483886298fe6de6c35ffeb"
+  },
+  "_source": "https://github.com/gdsestimating/dxf-parser.git",
+  "_target": "~0.4.2",
+  "_originalSource": "dxf-parser"
+}

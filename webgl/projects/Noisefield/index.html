@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+
+    <script src='dat.gui.min.js'></script>
+    <script src='shader.js'></script>
+    <script src='noiseTexture.js'></script>
+    <script src='perlinNoiseProgram.js'></script>
+    <script src='blitToScreen.js'></script>
+    <script src='particles.js'></script>
+    <script src='main.js'></script>
+
+
+    <script id="mainv" type="vert">
+        attribute vec3 pos; 
+        attribute vec3 color; 
+
+        varying vec2 uv;
+
+        void main() { 
+            gl_Position = vec4(pos, 1); 
+            vec3 c = color;
+            uv = pos.xy * 0.5 + 0.5;
+        }
+    </script>
+
+    <script id="mainf" type="frag">
+        // will be added programmatically by javascript
+        // precision mediump float; 
+
+        varying vec2 uv;
+
+        uniform float time; 
+        uniform float screenRatio; 
+        uniform sampler2D randNoise; 
+        uniform sampler2D secondRandNoise;
+
+        uniform float scaleMult;
+        uniform float scaleAdd;
+        uniform vec2 finalOffset;
+        uniform float finalSinMult;
+
+        uniform float antiSinMult;
+        uniform float antiSinAmp;
+        uniform float sineShifter;
+
+        uniform float basicAmplitude;
+        uniform float ampMult;
+
+        uniform float timeCrack;
+
+        uniform float powMult;
+
+
+        float computePerlinNoise(sampler2D texture, vec2 muv, int i, float off) {
+            float amplitude = basicAmplitude / float(i) * ampMult;
+            float amplitudeRef = 0.515 / float(i) * 0.8;
+            float scale = 64.0 / (float(i) * scaleMult + scaleAdd);
+            float scv   = 255.0 / scale;
+            // dopo un'ora di mal di testa, la frase con cui faccio il summit del tutto è "devi aumentare la spaziatura fra i valori
+            // che prendi". Non cercare di capirlo, mi sto già dimenticando di come ci sono arrivato mano a mano che scrivo
+            vec2  offs  = vec2((255.0 - scv) / 2.0 * screenRatio + off, (255.0 - scv) / 2.0 + off);
+            offs += finalOffset;
+
+            // four points coordinates
+            vec2 muv_sanitized = mod( muv * scv + offs, 255.0 );
+            
+            
+            vec2 t00 = floor(muv_sanitized);
+            vec2 t10 = floor(muv_sanitized);
+            t10.x    += 1.0;
+            if(t10.x > 254.0) t10.x = 0.0;
+
+            vec2 t01 = floor(muv_sanitized);
+            t01.y    += 1.0;
+            if(t10.y > 254.0) t10.y = 0.0;
+            
+            vec2 t11 = floor(muv_sanitized);
+            t11      += 1.0;
+            if(t11.x > 254.0) t11.x = 0.0;
+            if(t11.y > 254.0) t11.y = 0.0;
+
+            // four points vectors
+            vec3 v00 = texture2D(texture, t00 / 255.0).xyz * 2.0 - 1.0; 
+            vec3 v10 = texture2D(texture, t10 / 255.0).xyz * 2.0 - 1.0; 
+            vec3 v01 = texture2D(texture, t01 / 255.0).xyz * 2.0 - 1.0; 
+            vec3 v11 = texture2D(texture, t11 / 255.0).xyz * 2.0 - 1.0; 
+
+            // vector v to p (point)
+            vec3 muvv3 = vec3(muv_sanitized.x, muv_sanitized.y, 0.0);
+            vec3 vtp00 = normalize(muvv3 - vec3(t00.x, t00.y, 0.0));
+            vec3 vtp10 = normalize(muvv3 - vec3(t00.x + 1.0, t00.y, 0.0));
+            vec3 vtp01 = normalize(muvv3 - vec3(t00.x, t00.y + 1.0, 0.0));
+            vec3 vtp11 = normalize(muvv3 - vec3(t00.x + 1.0, t00.y + 1.0, 0.0));
+
+            float c00   = dot(vtp00, v00) * 0.5 + 0.5;
+            float c01   = dot(vtp01, v01) * 0.5 + 0.5;
+            float c10   = dot(vtp10, v10) * 0.5 + 0.5;
+            float c11   = dot(vtp11, v11) * 0.5 + 0.5;
+
+            float cx  = fract(muv.x * scv + offs.x);
+            float cy  = fract(muv.y * scv + offs.y);
+
+            cx = cx * cx * (3.0 * timeCrack - 2.0 * cx);
+            cy = cy * cy * (3.0 * timeCrack - 2.0 * cy);
+
+            // color on the x interpolated
+            float colxi1    = c00 * (1.0 - cx) + c10 * cx;  
+            float colxi2    = c01 * (1.0 - cx) + c11 * cx;
+
+            // interpolated final color 
+            float colyi     = colxi1 * (1.0 - cy) + colxi2 * cy;
+            return colyi * amplitude;
+        }
+
+        
+        float computeValueNoise(sampler2D texture, vec2 muv, int i, float off) {
+            float amplitude = basicAmplitude / float(i) * ampMult;
+            float amplitudeRef = 0.515 / float(i) * 0.8;
+            float scale = 64.0 / (float(i) * scaleMult + scaleAdd);
+            float scv   = 255.0 / scale;
+            // dopo un'ora di mal di testa, la frase con cui faccio il summit del tutto è "devi aumentare la spaziatura fra i valori
+            // che prendi". Non cercare di capirlo, mi sto già dimenticando di come ci sono arrivato mano a mano che scrivo
+            vec2  offs  = vec2((255.0 - scv) / 2.0 * screenRatio + off, (255.0 - scv) / 2.0 + off);
+            offs += finalOffset;
+
+            // four points coordinates
+            vec2 muv_sanitized = mod( muv * scv + offs, 255.0 );
+            
+            
+            vec2 t00 = floor(muv_sanitized);
+            vec2 t10 = floor(muv_sanitized);
+            t10.x    += 1.0;
+            if(t10.x > 254.0) t10.x = 0.0;
+
+            vec2 t01 = floor(muv_sanitized);
+            t01.y    += 1.0;
+            if(t10.y > 254.0) t10.y = 0.0;
+            
+            vec2 t11 = floor(muv_sanitized);
+            t11      += 1.0;
+            if(t11.x > 254.0) t11.x = 0.0;
+            if(t11.y > 254.0) t11.y = 0.0;
+
+            // four points colors
+            float c00 = texture2D(texture, t00 / 255.0).x; 
+            float c10 = texture2D(texture, t10 / 255.0).x; 
+            float c01 = texture2D(texture, t01 / 255.0).x; 
+            float c11 = texture2D(texture, t11 / 255.0).x; 
+
+
+            float cx  = fract(muv.x * scv + offs.x);
+            float cy  = fract(muv.y * scv + offs.y);
+
+            cx = cx * cx * (3.0 * timeCrack - 2.0 * cx);
+            cy = cy * cy * (3.0 * timeCrack - 2.0 * cy);
+
+            // color on the x interpolated
+            float colxi1    = c00 * (1.0 - cx) + c10 * cx;  
+            float colxi2    = c01 * (1.0 - cx) + c11 * cx;
+
+            // interpolated final color 
+            float colyi     = colxi1 * (1.0 - cy) + colxi2 * cy;
+            return colyi * amplitude;
+        }
+
+
+        void main() { 
+            vec4 col = vec4(0.0);
+            vec4 colRef = vec4(0.0);
+
+            // modified uvs
+            vec2 muv = vec2(uv.x * screenRatio, uv.y);
+
+            float off[20];
+            off[0] = 995.0;
+            off[1] = 15.0;
+            off[2] = 453.0;
+            off[3] = 19.0;
+            off[4] = 235.0;
+            off[5] = 427.0;
+            off[6] = 0.0;
+            off[7] = 53.0;
+            off[8] = 1.0;
+            off[9] = 143.0;
+            off[10] = 495.0;
+            off[11] = 158.0;
+            off[12] = 73.0;
+            off[13] = 349.0;
+            off[14] = 88.0;
+            off[15] = 776.0;
+            off[16] = 5.0;
+            off[17] = 211.0;
+            off[18] = 199.0;
+            off[19] = 199.0;
+
+
+            for(int i = 1; i < 12; i++) {
+                col.x += computeValueNoise(randNoise, muv, i, off[i]);
+                col.y += computeValueNoise(secondRandNoise, muv, i, off[i]);
+            }
+
+            vec2 pixelUv = vec2(uv.x * 500.0, uv.y * 500.0);
+            col.x = pow(sin(pixelUv.x  * finalSinMult + sin(pixelUv.y * antiSinMult) * antiSinAmp + col.x * 13.0 + sineShifter) * 0.5 + 0.5, powMult);
+            col.y = pow(sin(pixelUv.x  * finalSinMult + sin(pixelUv.y * antiSinMult) * antiSinAmp + col.y * 13.0 + sineShifter) * 0.5 + 0.5, powMult);
+            gl_FragColor = vec4(col.x, col.y, 0.0, 1.0);  
+        }
+    </script>
+
+
+
+
+    <script type="vert" id="blitvert">
+    	attribute vec2  pos;
+    	attribute vec2  coord;
+
+    	varying vec2  Coord;
+
+    	void main() 
+    	{
+    		gl_Position = vec4(pos.xy, 0.0, 1.0);
+    		Coord = coord;
+    	}
+    </script>
+
+    <script type="frag" id="blitfrag">
+    	precision mediump float;
+
+    	varying vec2  Coord;
+
+    	uniform sampler2D texture;
+    	void main() 
+    	{
+    		vec4 col     = texture2D(texture, Coord);
+    		gl_FragColor = col;
+    	}
+    </script>
+
+
+
+
+    <script type="vert" id="particlesPositionv">
+        attribute vec2 pos;
+
+        varying vec2 Coord;
+
+        void main() {
+            gl_Position = vec4(pos, 0.0, 1.0);
+            Coord = pos * 0.5 + 0.5;
+        }
+    </script>
+    
+    <script type="frag" id="particlesPositionf">
+        precision highp float;
+
+        varying vec2 Coord;
+
+        uniform sampler2D prevPos;
+        uniform sampler2D noiseTexture;
+
+        uniform vec2 screenSize;
+
+        void main() {
+            vec2 prevPosition = texture2D(prevPos, Coord).xy;
+
+            // our previous position is in pixels, we'll convert that to coordinates to our Noise Texture
+            vec2 prevPosCoords = vec2(prevPosition.x / screenSize.x, prevPosition.y / screenSize.y);
+            vec2 directionVector = texture2D(noiseTexture, prevPosCoords).xy * 2.0 - 1.0;
+
+            prevPosition += directionVector * 3.0;
+
+            gl_FragColor = vec4(prevPosition.x, prevPosition.y, 0.0, 1.0);
+        }
+    </script>
+
+
+
+
+    <script type="vert" id="drawParticlesv">
+        attribute vec2 samplerCoord;
+
+        uniform sampler2D particlePositions;
+        uniform vec2 screenSize;
+
+        void main() {
+            // returned floats are in pixel units 0...1366
+            vec2 position = texture2D(particlePositions, samplerCoord).xy;
+
+            // normalizing our coordinates to 0...1
+            position = vec2(position.x / screenSize.x, 
+                            position.y / screenSize.y);
+
+            // NDC between -1 ... +1
+            position = position * 2.0 - 1.0;
+            
+            gl_PointSize = 1.0;
+            gl_Position = vec4(position, 0.0, 1.0);
+        }
+    </script>
+    
+    <script type="frag" id="drawParticlesf">
+        precision highp float;
+
+        void main() {
+            gl_FragColor = vec4(0.0, 0.0, 0.0, 0.3);
+        }
+    </script>
+
+
+
+
+
+
+    <link href="https://fonts.googleapis.com/css?family=UnifrakturCook:700" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia" rel="stylesheet"> 
+
+
+    <style>
+        * {
+            margin: 0;
+        }
+        
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            background: red;
+        }
+        
+        canvas {
+            margin: auto;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+
+    </style>
+</head>
+<body>
+
+
+    <canvas id="canvas"></canvas>
+
+
+
+</body>
+</html>

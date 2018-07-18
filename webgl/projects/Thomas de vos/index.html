@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+
+
+
+    <!--dependencies--> 
+    <script src='gl-matrix-min.js'></script>
+    <script src='shader.js'></script>
+    <script src='dat.gui.min.js'></script>
+
+    <!-- utils -->
+    <script src='utils/texture.js'></script>
+    <script src='utils.js'></script>
+
+    <!-- structures -->
+    <script src='quadtree.js'></script>
+    <script src='nodes.js'></script>
+
+    <!-- programs -->
+    <script src='programs/pointProgram.js'></script>
+    <script src='programs/lineProgram.js'></script>
+    <script src='programs/backgroundProgram.js'></script>
+    <script src='programs/meshProgram.js'></script>
+
+    <!-- shaders -->
+    <script src='shaders/common.js'></script>
+    <script src='shaders/backgroundv.js'></script>
+    <script src='shaders/backgroundf.js'></script>
+    <script src='shaders/meshpointf.js'></script>
+    <script src='shaders/meshpointv.js'></script>
+    <script src='shaders/pointv.js'></script>
+    <script src='shaders/pointf.js'></script>
+    <script src='shaders/linev.js'></script>
+    <script src='shaders/linef.js'></script>
+    <script src='shaders/meshv.js'></script>
+    <script src='shaders/meshf.js'></script>
+    
+    <!-- meshes -->
+    <script src='meshes/headset/headset.js'></script>
+    <script src='meshes/note/note.js'></script>
+    <script src='meshes/play/play.js'></script>
+    <script src='meshes/card/card.js'></script>
+    <script src='meshes/dollar/dollar.js'></script>
+    <script src='meshes/euro/euro.js'></script>
+    <script src='meshes/twitter.js'></script>
+    <script src='meshes/glasses.js'></script>
+    <script src='meshes/rocket.js'></script>
+    <script src='meshes/plane.js'></script>
+    <script src='meshes/tree.js'></script>
+
+    <!-- input -->
+    <script src='mouseController.js'></script>
+    <script src='guiCommands.js'></script>
+    
+
+    
+    <script src='video.js'></script>
+    <script src='main.js'></script>
+    
+
+
+    <style>
+        * {
+            margin: 0;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        canvas#canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        video.bgvid {
+            position: absolute;
+            top: 0;
+            left: 0;   
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+
+    <video playsinline preload="metadata" muted loop class="bgvid" style="display: block;">
+        <!-- source element is created in javascript, to async the video downloads and load the page faster -->          
+        <!-- one random video will be choosen at runtime and downloaded -->          
+    </video>
+
+    <canvas id="canvas"></canvas>
+
+</body>
+</html>

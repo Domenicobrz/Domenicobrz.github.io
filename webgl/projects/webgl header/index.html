@@ -1,0 +1,2137 @@
+<!DOCTYPE html>
+<!--
+
+THINGS TO DO:
+
+•multi color radial brushes
+•abstract everything related to the canvas in another .js
+•try to overlay a watercolor texture over everything
+•custom sort function to avoid javascript's heap allocation
+•delete "shifting" routine in quads. It causes unnecessary heap allocations
+•http://www.hongkiat.com/blog/creative-css-animations/
+uno dei risultati ha una bella animazione da usare per i progetti in webgl mostrati in uno dei lati della pagina
+•http://www.hongkiat.com/blog/css-mask-switch/ per cambiare il tema della pagina
+•palette differente per ogni immagine
+•reduce state calls
+•Lion's animation should happen inside the GPU based on quad's ID
+•var ui = ["input","prompt","heading"]; // An array of element ids
+ui.forEach(function(id) { // For each id look up the element
+ui[id] = document.getElementById(id); // and store it in a property
+});
+After running this code, ui.input, ui.prompt, and ui.heading refer to document elements.
+
+-->
+
+
+
+
+<html>
+<head>
+
+	<!--<link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>-->
+
+	<link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+
+	<title></title>
+
+<script type="vert" id="qvertex">
+	attribute vec3 pos; //call it translation
+	//coord.z is the index of the assigned texture
+	attribute vec3 coord;
+	//scale, rotation, opacity, isimage?
+	attribute vec4 fx;
+	//grayed, distort
+	attribute vec4 fx2;
+	attribute vec4 color;
+
+	uniform mat4 projection; 
+	uniform mat4 model; 
+	uniform mat4 view;
+
+	varying vec3 BrushCoord;
+	varying vec4 Color;
+	varying float Opacity;
+	varying float isImage;
+	varying float Grayed;
+	varying float Distortion;
+	varying vec3 Coord;
+	varying vec3 FragPos;
+
+
+
+	vec2 rotate(vec2 point, float angle)
+	{
+		vec2 newpoint = vec2(0.0, 0.0);
+		newpoint.x = cos(angle) * point.x + (-sin(angle)) * point.y;
+		newpoint.y = sin(angle) * point.x + cos(angle) * point.y;
+
+		return newpoint;
+	}
+
+
+	void main()
+	{
+		float scale = fx.x;
+		float rotation = fx.y;
+
+		vec3 position = vec3( 0, 0, 0);
+		if(coord.x == 0.0) position.x = -1.0 * scale;
+		if(coord.y == 0.0) position.y = -1.0 * scale;
+		if(coord.x == 1.0) position.x = +1.0 * scale;
+		if(coord.y == 1.0) position.y = +1.0 * scale;
+
+		if(rotation > 0.0) {
+			vec2 rotatedPoint = rotate(position.xy, rotation);
+
+			position.x = rotatedPoint.x;
+			position.y = rotatedPoint.y;
+		}
+
+		//is it really necessary to multiply by view & model now?
+		gl_Position = projection * view * model * vec4(
+			pos + position, 1.0);
+
+
+		//there are 16 possible indexes inside brushes texture, each divided in a 4x4 grid. We're changing here the incoming coordinates based on which grid texture was choosed for this quad.
+		float xCoord = coord.x / 4.0;
+		float yCoord = coord.y / 4.0 + 0.25 * 3.0;
+
+		int mod = int(coord.z) - ((int(coord.z) / 4) * 4);
+		float column = float(mod) * 0.25;
+		float row    = float(int(coord.z) / 4) * 0.25;
+
+		xCoord += column;
+		yCoord -= row;
+
+		BrushCoord = vec3(xCoord, yCoord, coord.z);
+		//brush texture routine - end
+
+
+
+
+
+
+		Color = color;
+		//original coordinates mapped from [0, 1]
+		Coord = coord;
+		FragPos = pos + position;
+		Opacity = fx.z;
+		isImage = fx.w;
+		Grayed  = fx2.x;
+		Distortion = fx2.y;
+	} 
+</script>
+
+<script type="frag" id="qfragment">
+	precision mediump float;
+
+	uniform sampler2D brushes;
+	uniform sampler2D image;
+	uniform sampler2D deformmap;
+	//eventualmente mettere il ratio nel 3° elemento del vettore
+	uniform vec2 canvas_size;
+
+
+
+	uniform float camera_movement;
+	uniform float Rotator;
+
+
+
+
+	varying vec3 BrushCoord;
+	varying vec4 Color;
+	varying float Opacity;
+	varying float isImage;
+	varying float Grayed;
+	varying float Distortion;
+	varying vec3 Coord;
+	varying vec3 FragPos;
+
+
+	void main()
+	{
+		float alpha = 1.0 - texture2D(brushes, BrushCoord.xy).r;
+		
+
+		float distanceFromCoordinatesCenter = length(Coord.xy - vec2(0.5, 0.5));
+		if(distanceFromCoordinatesCenter > Opacity)
+			alpha = 0.0;
+		else if((Opacity - distanceFromCoordinatesCenter) <= 0.15)  {
+			alpha *= (Opacity - distanceFromCoordinatesCenter) / 0.15;
+		}
+
+		vec4 finalColor = vec4(Color.xyz, Color.a * alpha);
+
+
+		if(isImage > 0.0)
+		{
+			//finding texture coordinates from world position
+			float wheight = 3.342; 
+			//remember, world height is always 3.34 at 3 depth if the FOV is fixed at 45 degree, an increased screen ratio "opens up more" the view frustum in the width direction, but the frustum's height stays fixed at 3.34
+			float wwidth  = wheight * (canvas_size.x / canvas_size.y);
+
+			wwidth  = wwidth  * (3.0 - camera_movement) / 3.0;
+			wheight = wheight * (3.0 - camera_movement) / 3.0;
+
+			float x_coord = (FragPos.x +  wwidth  / 2.0) / wwidth;
+			float y_coord = (FragPos.y +  wheight / 2.0) / wheight;
+			//finding texture coordinates from world position - end
+
+
+
+
+
+
+
+			//*******  fixing texture coords based on screen size
+			//*******  fixing texture coords based on screen size
+			//*******  fixing texture coords based on screen size
+			if(canvas_size.x / canvas_size.y > 1.50) {
+
+				float offset = (canvas_size.y / canvas_size.x) / 0.666666;
+				y_coord *= offset;
+				y_coord += (1.0 - offset) / 2.0;
+
+				//*******  zoom routine   *********
+ 				float xdistancefromcenter = abs(x_coord - 0.5) * 2.0;
+				float xzoom = 0.077 * xdistancefromcenter;
+				if(x_coord < 0.5) x_coord += xzoom;
+				else x_coord -= xzoom;
+				float ydistancefromcenter = abs(y_coord - 0.5) * 2.0;
+				float yzoom = 0.077 * ydistancefromcenter;
+				if(y_coord < 0.5) y_coord += yzoom;
+				else  y_coord -= yzoom;
+				//*******  zoom routine - end  *********
+
+				x_coord += 0.07 * sin(Rotator / 3.0);
+			}
+
+			if(canvas_size.x / canvas_size.y < 1.50) {
+
+				float offset = (canvas_size.x / canvas_size.y) / 1.5;
+				x_coord *= offset;
+				x_coord += (1.0 - offset) / 2.0;
+
+				if((1.0 - offset) / 2.0 < 0.077) {
+
+					//*******  zoom routine   *********
+					float xdistancefromcenter = abs(x_coord - 0.5) * 2.0;
+					float xzoom = (0.077 - ((1.0 - offset) / 2.0)) * xdistancefromcenter;
+					if(x_coord < 0.5) x_coord += xzoom;
+					else x_coord -= xzoom;
+					float ydistancefromcenter = abs(y_coord - 0.5) * 2.0;
+					float yzoom = (0.077 - ((1.0 - offset) / 2.0)) * ydistancefromcenter;
+					if(y_coord < 0.5) y_coord += yzoom;
+					else y_coord -= yzoom;
+					//*******  zoom routine - end *********
+				}
+
+
+				x_coord += 0.07 * sin(Rotator / 3.0);
+			}
+			//******* fixing texture coords based on screen size - end
+			//******* fixing texture coords based on screen size - end
+			//******* fixing texture coords based on screen size - end
+
+
+
+
+
+
+			//deform map coordinate routine1.0
+			if(Distortion > 0.0) {
+				//vec2 distortCoord = vec2(Coord.x / 2.0 + 0.25, Coord.y / 2.0 + 0.25);
+
+				vec2 normal = texture2D(deformmap, Coord.xy).rg * 2.0 - 1.0;
+				normal *= 0.0499 * pow(Distortion, 2.0);
+
+				x_coord += normal.r;
+				y_coord += normal.g;
+			}
+			finalColor  = texture2D(image, vec2(x_coord, y_coord));
+			//deform map coordinate routine - end*/
+
+
+
+
+
+			//gray animation routine
+			if(Grayed > 0.0) {
+				float average = 0.2126 * finalColor.r + 
+								0.7152 * finalColor.g + 
+								0.0722 * finalColor.b;
+
+				float t = pow(Grayed, 0.4);
+
+				finalColor = mix(finalColor, vec4(vec3(average), 1.0), t);
+			}
+			finalColor.a *= Color.a * alpha; 
+			//gray animation routine - end
+
+
+
+			float sinnorm = sin(Rotator + FragPos.x) * 0.5 + 0.5;
+			float sintext = 1.0; 		//sinnorm * 0.4 + 0.6;	//almeno 0.5 
+			float sincol  = sinnorm * 0.4;
+
+			vec4 text  = vec4(finalColor.xyz * sintext, finalColor.a);
+			vec4 col   = vec4(Color.xyz      * sincol , Color.a);
+			finalColor = vec4(vec3(text + col), text.a);
+		}
+
+
+		gl_FragColor = finalColor; 
+	}
+</script>
+
+
+
+
+
+<!--blit related Scripts -->
+	<script type="vert" id="blitvert">
+		attribute vec2 pos;
+		attribute vec2 coord;
+
+		varying vec2 Coord;
+
+		void main() 
+		{
+			gl_Position = vec4(pos.xy, 0.0, 1.0);
+			Coord = coord;
+		}
+	</script>
+	
+	<script type="frag" id="blitfrag">
+		precision mediump float;
+
+		varying vec2 Coord;
+
+		uniform sampler2D quad_texture;
+		uniform sampler2D bkg_texture;
+		uniform float bkg_pass;
+
+		void main()
+		{
+			if(bkg_pass > 4.0) {
+				//instead of using another uniform i'm reusing bkg_pass as an alpha value
+				gl_FragColor = vec4(1.0, 1.0, 1.0, bkg_pass - 4.0);//vec4(1.0, 0.9, 0.8, bkg_pass - 4.0);
+				return;
+			}
+			if(bkg_pass > 2.0) {
+				vec4 bkg   = texture2D(bkg_texture,  Coord);
+				gl_FragColor = vec4(/*quads + */bkg);
+				return;
+			}
+			if(bkg_pass > 0.5) {
+				//blit quad's texture into bkg, remember that the blendFunc will tell us how to mix the underlying pixels togheter, there's no need to do it by hand
+				//compute both
+				gl_FragColor = texture2D(quad_texture, Coord);
+				return;
+			}
+			else {
+				//compute both
+				//vec4 bkg   = texture2D(bkg_texture,  Coord);
+				vec4 quads = texture2D(quad_texture, Coord);
+
+				/*quads.xyz  *= quads.a;
+				bkg.xyz    *= 1.0 - quads.a;
+
+				quads.a    *= quads.a;*/
+
+				gl_FragColor = vec4(quads);
+			}
+		}
+	</script>
+	
+	<script type="frag" id="bimffrag">
+		precision mediump float;
+
+		varying vec2 Coord;
+
+		uniform sampler2D quad_texture;
+
+		void main()
+		{
+			vec4 quads = texture2D(quad_texture, Coord);
+			gl_FragColor = vec4(quads);	
+		}
+	</script>
+	
+	<script type="frag" id="bbtiqffrag">
+		precision mediump float;
+
+		varying vec2 Coord;
+
+		uniform sampler2D bkg_texture;
+
+		void main()
+		{
+			vec4 bkg   = texture2D(bkg_texture,  Coord);
+			gl_FragColor = vec4(/*quads + */bkg);
+		}
+	</script>
+	
+	<script type="frag" id="dbfrag">
+		precision mediump float;
+
+		varying vec2 Coord;
+
+		uniform sampler2D quad_texture;
+
+		void main()
+		{
+			//blit quad's texture into bkg, remember that the blendFunc will tell us how to mix the underlying pixels togheter, there's no need to do it by hand
+			gl_FragColor = texture2D(quad_texture, Coord);
+		}
+	</script>
+<!--blit related Scripts - END -->
+
+
+
+<!-- Starting Anim Scripts -->
+	<script type="vert" id="savert">
+		attribute vec3 pos;
+		attribute float upSpeed;
+		uniform mat4 pvm;
+
+		uniform float hTessellation;
+		uniform float rotator;
+		uniform float randomizer;
+
+		varying float Alpha;
+
+		void main()
+		{
+			//numbers between 0 and 49
+			float xID = pos.x  + hTessellation; 
+			float yID = abs(pos.z) - 20.0;
+
+			vec3 finalPos = vec3(pos.x * 1.26, pos.y, pos.z);
+
+			if (finalPos.y > 0.0) finalPos.y = sin(rotator + xID * 0.03) * 3.0 + 1.5;
+
+			finalPos.y += sin(-rotator * 3.0 + xID * 0.25 + yID * 0.1) * 2.9;
+			finalPos.y += cos(rotator + yID * 0.25) * 1.7;
+			finalPos.y += sin(upSpeed * 10.0 * rotator) * randomizer * upSpeed;
+
+			gl_Position = pvm * vec4(finalPos, 1.0);
+
+			float alpha = (abs(pos.z) - 19.99) / (hTessellation * 2.0 + 0.01);
+			alpha = 1.0 - pow(alpha, 0.3);
+			Alpha = 0.27 * alpha;
+
+			/** starting anim alpha calc **/
+			float distance = length(vec2(pos.x, pos.z + 20.0)) / 15.0;
+			if(rotator - distance > 1.0) Alpha *= 1.0;
+			else if(rotator - distance < 0.0) Alpha *= 0.0;
+			else {
+				Alpha *= (rotator - distance) / 1.0;
+			}
+			/** starting anim alpha calc - end **/
+		}
+	</script>
+
+	<script type="frag" id="safrag">
+		precision mediump float;
+
+		varying float Alpha;
+
+		void main()
+		{
+			gl_FragColor = vec4(0.0, 0.0, 0.0, Alpha);
+		}
+	</script>
+
+
+	<script type="vert" id="lionvert">
+		attribute vec3 pos;
+		//coord.z equals which part of the lion
+		attribute vec3 coord;
+		//w equals rotation in radians
+		attribute vec4 translrot;
+
+		uniform mat4 projection;
+		uniform mat4 model;
+		uniform mat4 view;
+
+		varying vec2 Coord;
+		varying vec2 FragPos;
+
+		vec2 rotate(vec2 point, float angle)
+		{
+			vec2 newpoint = vec2(0.0, 0.0);
+			newpoint.x = cos(angle) * point.x + (-sin(angle)) * point.y;
+			newpoint.y = sin(angle) * point.x + cos(angle) * point.y;
+
+			return newpoint;
+		}
+
+		void main() 
+		{
+			vec3 transformedPos = pos;
+
+			transformedPos.xy = rotate(pos.xy, translrot.w);
+
+			transformedPos.x += translrot.x;
+			transformedPos.y += translrot.y;
+			transformedPos.z += translrot.z;
+
+			gl_Position = projection * 
+			 //we're dividing the translation portion of the view matrix to achieve a lighter world move effect with our gui elements
+			 mat4(view[0], view[1], view[2], view[3] * 0.3) 
+			 * model * vec4(transformedPos, 1.0); 
+
+			Coord = coord.xy;
+			FragPos = transformedPos.xy;
+		}
+	</script>
+
+	<script type="frag" id="lionfrag">
+		precision mediump float;
+
+		varying vec2 Coord;
+		varying vec2 FragPos;
+
+		uniform sampler2D texture;
+		uniform float time;
+
+		void main() 
+		{
+			vec4 col     = texture2D(texture, Coord, -50.0);
+			//remember how the .png file works
+			if(col.a < 0.01) discard;
+
+
+			if(time < 4.0 && time >= 3.0) {
+				float t = (time - 3.0) * 10.0;
+				float l = length(FragPos);
+				//max alpha value registered till now
+				float max = col.a;
+
+				//radial distance between lenght and t
+				float d = l-t; 
+				//if distance > 0.3 alpha is zero
+				//if distance is less alpha is full blown one
+				//else compute the radial alpha
+				if(d > 2.0)  col.a = 0.0;
+				if(d < 0.0)  col.a = max;
+				if(d < 2.0 && d > 0.0) 
+					col.a = max - (d / 2.0) * max;
+			}
+
+			gl_FragColor = vec4(col.xyz, col.a);
+		}
+	</script>
+
+
+	<script type="vert" id="blitlionvert">
+		attribute vec2 pos;
+		attribute vec2 coord;
+
+		varying vec2 Coord;
+
+		void main() 
+		{
+			gl_Position = vec4(pos.xy, 0.0, 1.0);
+			Coord = coord;
+		}
+	</script>
+
+	<script type="frag" id="blitlionfrag">
+		precision mediump float;
+
+		varying vec2 Coord;
+
+		uniform sampler2D texture;
+
+		void main()
+		{
+			float alpha = (1.0 - texture2D(texture, Coord).r) * 0.85;
+			gl_FragColor = vec4(0.2, 0.2, 0.2, alpha);		
+		}
+	</script>
+
+
+	<script type="vert" id="loadcirclevert">
+		attribute vec4 pos;	//pos.w equals vertex ID
+		attribute vec4 color;
+		attribute vec2 coord;
+
+		uniform mat4 projection;
+		uniform mat4 model;
+		uniform mat4 view;
+
+		varying vec4 Color;
+		varying vec3 Coord;
+
+		uniform float time;
+		uniform float ribbon;
+
+		void main() 
+		{
+			//time will be used to animate both the small circle and the large one, time < 1.0 means we're animating the small one, > 1.0 means we're animation the big one
+
+
+			vec3 finalPos = pos.xyz;
+			if(color.x > 2.0) 	//identifies the little starting circle
+			{
+				if(time < 1.0) {
+					finalPos.x *= 1.0 + (1.0 - time) * 10.0;
+					finalPos.y *= 1.0 + (1.0 - time) * 10.0;
+
+					finalPos.x += 0.0;
+					finalPos.y += 1.8;
+				}
+				else {
+					//translate
+					finalPos.x += 0.0;
+					finalPos.y += 1.8;
+
+					float angle = (time - 1.0) * 6.28;
+					vec2 point = finalPos.xy;
+					//rotate
+					finalPos.x = cos(angle) * point.x + (-sin(angle)) * point.y;
+					finalPos.y = sin(angle) * point.x + cos(angle) * point.y;
+				}
+			}
+
+
+
+			gl_Position = projection * 
+			//we're dividing the translation portion of the view matrix to achieve a lighter world move effect with our gui elements
+			mat4(view[0], view[1], view[2], view[3] * 0.3) 
+			* model * vec4(finalPos, 1.0);
+
+
+
+			Coord = vec3(coord.xy, 0.0);
+
+
+
+			if(ribbon < 1.0) {
+				//drawing circles
+				float alpha = (pos.w / 100.0);
+				float t     = time - 1.0;
+				if(t < 0.0) t = 0.0;
+	
+				if(t + 0.01 > alpha) alpha = 1.0;
+				else if(t < alpha) 	alpha = 0.0;
+				else if(t > alpha)	alpha = (t - alpha) * 100.0;
+				Color = vec4(color.xyz, 0.9 * alpha);
+	
+				float smallalpha = time < 1.0 ? time * 0.2 : 0.2;
+				if(color.x > 2.0)
+					Color = vec4(vec3(Color.y), smallalpha);
+			}
+			else {
+				//drawing ribbon
+				if(pos.w > 9.0) {
+					//drawing textured ribbon
+					//textured ribbon vertex, coord.z > 0.0 means to draw this vertex by texture coordinates
+					Coord.z = 1.0;
+				}
+				Color = color;
+			}
+		}
+	</script>
+
+	<script type="frag" id="loadcirclefrag">
+		precision mediump float;
+
+		uniform sampler2D texture;
+
+		varying vec4 Color;
+		varying vec3 Coord;
+
+
+		void main()
+		{
+			if(Coord.z > 0.999) {
+				//apply ribbon texture
+				float r = texture2D(texture, Coord.xy, -0.7).r;
+				gl_FragColor = vec4(vec3(min(r, Color.r)), 1.0);
+			}
+			else {
+				gl_FragColor = Color;
+			}
+		}
+	</script>
+
+
+
+	<script type="vert" id="2dgeneralanimvert">
+		attribute vec4 pos;			//pos.w is the vertex ID
+		attribute vec4 color;
+		attribute vec3 coord;		//coord.z is 1 if vertex is textured
+	
+		uniform mat4 projection;
+		uniform mat4 model;
+		uniform mat4 view;
+		//uniform mat4 pvm;
+	
+		varying vec4 Color;
+		varying vec3 Coord;
+		varying float vertexID;
+		varying vec3 FragPos;
+
+		uniform mat4  transform[20];
+		uniform float time;
+		//you should compute vertex transformation/rotation here only if we're talking about few quads on screen, else way it's better to compute the matrix once inside the CPU
+		//uniform vec3[] translation;
+		//uniform vec3[] rotation;
+		//vec3 translate(vec3 point) 	{ implementation }
+		//vec3 rotate(vec3 point) 		{ implementation }
+
+
+		void main() 
+		{
+			//I decided to store alpha info in the last element of the transform matrix
+			//float alpha   = transform[3][3] - 1.0;
+			//mat4 ttransform = transform;
+			//ttransform[3][3] = 1.0;
+			vec4 finalPos;
+			int  matrixID = int(pos.w);
+
+			mat4 SRT = transform[matrixID];
+			SRT[0][3] = 0.0;
+			SRT[1][3] = 0.0;
+			SRT[2][3] = 0.0;
+			SRT[3][3] = 1.0;
+			finalPos = SRT * vec4(pos.xyz, 1.0);
+
+			if(pos.w == 1.0 || pos.w == 5.0) {
+				if(length(pos.xy) > 1.5) {
+					//in coord.y c'è l'offset
+					vec2 offvector = normalize(pos.xy) * coord.y;
+					if(pos.w == 5.0) offvector /= 3.0;
+					finalPos += vec4(offvector.xy, 0.0, 0.0);
+				}
+			}
+
+	
+			gl_Position = projection * 
+				mat4(view[0], view[1], view[2], view[3] * 0.3)  
+				* model * finalPos;
+			//gl_FragPosition = pvm * vec4(pos, 1.0);
+	
+			Color = color;
+			Color.a *= transform[matrixID][0][3];
+		
+			if(pos.w == 1.0 || pos.w == 5.0) {
+				if(transform[matrixID][0][3] > 1.0) {
+					Color = color;
+				}
+				else {
+					//reset matrix alpha change
+					Color.a = color.a;
+					//basically t * loadcircletessellation to compute the 	alpha
+					float t = transform[matrixID][0][3] * transform[matrixID][1][3];
+					//vertex number
+					if(t < coord.x) 		Color.a *= 0.0;
+					if(t - coord.x > 0.0 && t - coord.x < 1.0) {
+						Color.a = color.a * fract(t);
+					}
+				}
+			}
+
+			if(pos.w == 1.0 || pos.w == 5.0) {
+				float t = coord.y;
+				if(pos.w == 5.0) Color.rgb += t * 1.5;
+				else 			 Color.rgb -= t;
+			}
+
+			Coord 	 = coord;
+			vertexID = float(int(pos.w));
+			FragPos  = finalPos.xyz;
+		}
+	</script>
+
+	<script type="frag" id="2dgeneralanimfrag">
+		precision mediump float;
+	
+		varying vec4 Color;
+		varying vec3 Coord;
+		varying highp float vertexID;
+		varying vec3 FragPos;
+
+	
+		uniform sampler2D texture;
+	
+		void main() {
+			if(Color.a == 0.0)	discard;
+			//textured fragment
+			if(Coord.z > 0.999) {
+				if(vertexID > 1.99) {
+					//apply ribbon texture
+					float r = texture2D(texture, Coord.xy, -0.7).r;
+					gl_FragColor = vec4(vec3(min(r, Color.r)), 1.0);
+				}
+			} else {
+			//non textured fragment
+				if(vertexID > 2.99 && vertexID < 3.01) 
+				if(length(FragPos.xy) > 1.5) discard;
+				
+				gl_FragColor = Color;
+
+				if(vertexID > 4.99 && vertexID < 5.01)
+					gl_FragColor = vec4(0.0, 0.6, 1.0, 1.0) + Color;
+			}
+		}
+	</script>
+
+
+	<script type="vert" id="glyphsvert">
+		attribute vec4 pos;
+		attribute vec2 coord;
+		attribute vec4 fx;
+
+		varying vec2 Coord;
+		varying float Alpha;
+
+		uniform mat4 projection;
+		uniform mat4 model;
+		uniform mat4 view;
+
+		vec2 rotate(vec2 point, float angle)
+		{
+			vec2 newpoint = vec2(0.0, 0.0);
+			newpoint.x = cos(angle) * point.x + (-sin(angle)) * point.y;
+			newpoint.y = sin(angle) * point.x + cos(angle) * point.y;
+
+			return newpoint;
+		}
+
+		void main(){
+			//fx.x == z value offset
+			//fx.y == radius translation
+			//fx.z == rotation value
+			//fx.w == alpha value
+
+			vec4 finalPos = vec4(pos.xyz, 1.0) + vec4(0.0, fx.y, fx.x, 0.0);
+
+			vec2 rotatedPos = rotate(finalPos.xy, -fx.z);
+			finalPos.xy = rotatedPos;
+			finalPos.y  -= 0.71;
+
+			gl_Position = projection * 
+			mat4(view[0], view[1], view[2], view[3] * 0.3)
+			* model * finalPos;
+
+			Coord = coord;
+			Alpha = fx.w > 1.0 ? 1.0 : fx.w;
+		}
+	</script>
+
+	<script type="frag" id="glyphsfrag">
+		precision mediump float;
+
+		varying vec2 Coord;
+		varying float Alpha;
+
+		uniform sampler2D texture;
+
+		const float offset = (1.0 / 32.0) * 4.0;
+
+		void main() {
+			float ab = 1.0 - texture2D(texture, Coord).r;
+			float aw = texture2D(texture, vec2(Coord.x, Coord.y - offset)).r;
+			vec4 black = vec4(0.0, 0.0, 0.0, ab);
+			vec4 white = vec4(1.0, 1.0, 1.0, pow(aw, 0.6));
+
+			//if(black.a == 0.0) discard;
+			vec4 col = mix(black, white, 1.0 - black.a);
+			col.a *= Alpha;
+
+			gl_FragColor = col;
+		}
+	</script>
+<!-- Starting Anim Scripts - END -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="vert" id="guivert">
+		attribute vec3 pos;
+		attribute vec3 coord;
+		//transl.z & transl.w keeps track of the original texture coordinates mapped from 0 to 1
+		attribute vec4 transl;
+
+		uniform mat4 projection;
+		uniform mat4 model;
+		uniform mat4 view;
+
+		uniform float     palette_opacity;
+		uniform float     reloading;
+
+		varying vec3 Coord;
+		varying vec2 origCoord;
+		varying float Palette_opacity;
+
+		void main() 
+		{
+			vec3 starting_pos = pos;
+
+
+			//***********  WATERCOLOR'S SCALING ROUTINE
+			if(reloading > 0.0 && coord.z != 0.0) {
+				//coord.z equals the ID of current gui element
+				//watercolors ranges from 1 to 8
+				float t = (palette_opacity) - (coord.z - 1.0);
+				if(t < 0.0) t = 0.0;
+				if(t > 1.0) t = 1.0;
+				t = 1.0 - abs(t - 0.5) * 2.0;
+				t *= 0.03;
+				//float multiplier = 1.0 + t;
+
+				if(transl.z == 0.0) starting_pos.x -= t;
+				if(transl.z == 1.0) starting_pos.x += t;
+				if(transl.w == 0.0) starting_pos.y -= t;
+				if(transl.w == 1.0) starting_pos.y += t;
+			}
+			//***********  WATERCOLOR'S SCALING ROUTINE - end
+
+
+			//pos comes unnormalized, range [0, 1]
+			vec3 translated_pos = starting_pos + vec3(transl.xy, 0.0);
+			gl_Position = projection * view * model * vec4(translated_pos, 1.0);
+
+			Coord      = coord;
+			//transl.z & transl.w keeps track of the original texture coordinates mapped from 0 to 1
+			origCoord = vec2(transl.z, transl.w);
+
+			Palette_opacity = palette_opacity;
+		}
+</script>
+
+<script type="frag" id="guifrag">
+		precision mediump float;
+
+		varying vec3 Coord;
+		varying vec2 origCoord;
+		varying float Palette_opacity;
+
+
+		uniform sampler2D palette_texture;
+
+		void main()
+		{
+			float coord_offset = 0.5;
+
+			if(Coord.z == 0.0) {
+				gl_FragColor = texture2D(palette_texture, vec2(Coord.x / 2.0, Coord.y));
+				return;
+			}
+			if(Coord.z >= 1.0 && Coord.z <= 8.0) {
+
+				vec4 watercolor = texture2D(palette_texture, vec2(Coord.x / 2.0 + coord_offset, Coord.y));
+
+				//maximum reachable distance with texture coordinates from a quad is 0.7071 (pithagorean theorem between adj & opp when both are 0.5). distance_from_center is being normalized in [0, 1] interval
+				float x_abs = abs(origCoord.x - 0.5);
+				float y_abs = abs(origCoord.y - 0.5);
+				float distance_from_center = length(vec2(x_abs, y_abs)) / 0.5;//0.7071;
+
+				float alpha = Palette_opacity - (Coord.z - 1.0);
+				if(alpha > 1.0)  alpha = 1.0;
+				if(alpha <= 0.0) return;	//nothing to draw at this point
+
+				alpha *= 2.0;
+				alpha -= distance_from_center;
+				if(alpha > 1.0) alpha = 1.0;
+				if(alpha < 0.0) alpha = 0.0;	
+
+				gl_FragColor = vec4(watercolor.xyz, watercolor.a * alpha);
+			}
+		}
+</script>
+
+
+
+
+
+
+
+
+<!--   POST PROCESS ROUTINE  -->
+<script type="vert" id="postprocvert">
+	attribute vec2  pos;
+	attribute vec2  coord;
+	attribute float id;
+
+	varying vec2  Coord;
+	varying float ID;
+
+	void main() 
+	{
+		gl_Position = vec4(pos.xy, 0.0, 1.0);
+		Coord = coord;
+		ID    = id;
+	}
+</script>
+
+<script type="frag" id="postprocfrag">
+	precision mediump float;
+
+	varying vec2  Coord;
+	varying float ID;
+
+	uniform sampler2D texture;
+	uniform vec3  time;
+	uniform float type;
+
+	float rand(vec2 co) {
+  		return fract(sin(dot(co.xy, vec2(12.9898,78.233))) * 43758.5453);
+	}
+
+	void main() 
+	{
+		vec4 col     = vec4(0.0);
+
+		//a co.x gli assegno l'offset nella y
+		//e co.y sarà time.y
+
+		//invert colors && bluetilt shift
+		if(type == 1.0 || type == 5.0) {
+			//RGB TILT SHIFT + NOISE DISTORTION routine
+			float randxoff = 0.0;
+			float randyoff = 0.0;
+			//rgb shift offset
+			float rgboff = time.z; 
+
+			//col         = texture2D(texture, vec2(Coord.x, Coord.y));
+
+			if(type == 5.0) {
+				float randydiscriminant = rand(vec2(time.x, time.y)) * 150.0;
+				randxoff = rand(vec2(floor(gl_FragCoord.y / randydiscriminant), time.y)) * 0.08 - 0.04;
+				float randxdiscriminant = rand(vec2(time.x, time.y)) * 50.0;
+				randyoff = rand(vec2(time.y, floor(gl_FragCoord.x / randxdiscriminant))) * 0.04 - 0.02;
+
+				rgboff = (sin(time.y * 30.0) * 0.5 + 0.5) * 0.015; 
+			}
+
+
+			col.r         = texture2D(texture, vec2(Coord.x - rgboff + randxoff, Coord.y + rgboff + randyoff)).r;
+			col.g         = texture2D(texture, vec2(Coord.x + randxoff, 		 Coord.y + randyoff)).g;
+			col.b         = texture2D(texture, vec2(Coord.x + rgboff + randxoff, Coord.y - rgboff + randyoff)).b;
+			col.a 		  = 1.0;
+
+
+			/***** inverting color routine *****/
+			if(time.x >= 1.0) {
+				col = vec4(1.0 - col.x, 1.0 - col.y, 1.0 - col.z, col.a);
+			}
+			else if(time.x > 0.0 && time.x < 1.0) {
+				vec4 icol = vec4(1.0 - col.x, 1.0 - col.y, 1.0 - col.z, col.a);
+				col = mix(col, icol, time.x);
+			}
+			else {
+				//do nothing
+			}
+			/***** inverting color routine *****/
+		}
+
+		gl_FragColor = col;
+	}
+</script>
+<!--   POST PROCESS ROUTINE - END  -->
+
+
+
+
+
+
+<!-- FORE CANVAS PROGRAM -->
+<script id="forevert" type="vert">
+	attribute vec4 pos;
+
+	varying vec2 Coord;
+
+	void main() {
+		gl_Position = vec4(pos.xy, 0.0, 1.0);
+		Coord = pos.zw;
+	}
+</script>
+
+<script id="forefrag" type="frag">
+	precision mediump float;
+
+	varying vec2 Coord;
+
+	uniform sampler2D texture;
+	uniform float time;
+	//uniform float useAlpha;
+
+	void main() {
+		float multiplier = time * 0.5;
+		gl_FragColor = vec4(texture2D(texture, Coord).xyz * multiplier, multiplier / 3.0);
+	}
+</script>
+<!-- FORE CANVAS PROGRAM - END -->
+
+
+
+<!-- FORE CANVAS LENS FLARE -->
+<script id="lensvert" type="vert">
+	attribute vec4 pos;	//pos.w == quads ID
+	attribute vec2 coord;
+
+	uniform mat4 transforms[5];
+
+	varying vec2 Coord;
+	varying float ID;
+
+	void main() {
+		vec4 transformed = transforms[int(pos.w)] * vec4(pos.xyz, 1.0);
+		gl_Position = vec4(transformed.xyz, 1.0);
+
+		Coord = coord;
+		ID = pos.w;
+	}
+</script>
+
+<script id="lensfrag" type="frag">
+	precision mediump float;
+
+	varying vec2 Coord;
+	varying float ID;
+
+	uniform sampler2D texture;
+	uniform float opacity;
+
+	void main() {		
+		vec4 t = texture2D(texture, Coord);
+		float op = opacity;
+
+		if(ID == 0.0) op *= 0.8;
+		if(ID == 1.0) { 
+			op = pow(op, 0.5);
+			op *= 0.95;
+		}
+		if(ID == 2.0) op *= 0.75;
+		if(ID == 3.0) op *= 0.35;
+		if(ID == 4.0) op *= 1.55;
+
+		vec4 finalColor = vec4(t.xyz * 1.2, t.a * 2.5 * op);
+
+		gl_FragColor = finalColor;
+	}
+</script>
+<!-- FORE CANVAS LENS FLARE - END -->
+
+
+
+
+
+
+
+
+	<script type="text/javascript" src="shader.js"></script>
+	<script type="text/javascript" src="gl-matrix-min.js"></script>
+	<script type="text/javascript" src="camera_v1.05.js"></script>	
+	<script type="text/javascript" src="watercolor.js"></script>
+
+
+
+
+	<style>
+
+	* {
+		margin: 0;
+		font-family: Lobster;
+	}
+
+	html, body { 
+		overflow: hidden;
+		width: 100%; 
+		height: 100%;
+	}
+
+
+	#container {
+		position: relative;
+		width: 100%;
+		height:100%;
+		/* javascript setta overflow-y to scroll */
+		overflow-y: scroll;
+		overflow-x: hidden;
+		padding-right: 300px;
+	}
+
+	#canvas, #forecanvas {
+		position: fixed;
+		top: 0;
+	}
+
+	#forecanvas {
+		z-index: 1000;
+		pointer-events: none;
+	}
+
+
+	/***********  CANVAS MENU BLOCK       ************/
+	#canvas_menu {
+		width: 20vw;
+		height: 100vh;	
+
+		background: rgb(255,255,255);
+		position: absolute;
+		top:0;
+		right: -20vw;
+
+		-webkit-transform: rotate(0deg);
+  		-moz-transform: rotate(0deg);
+  		-o-transform: rotate(0deg);
+  		transform: rotate(0deg);
+
+  		-webkit-transition: .5s ease-in-out;
+  		-moz-transition: .5s ease-in-out;
+  		-o-transition: .5s ease-in-out;
+  		transition: .5s ease-in-out;
+	}
+
+	#canvas_menu.toggled {
+		box-shadow: 0px 0px 70px 10px black;
+		-webkit-transform: translate(-20vw, 0px);
+  		-moz-transform: translate(-20vw, 0px);
+  		-o-transform: translate(-20vw, 0px);
+  		transform: translate(-20vw, 0px);
+	}
+	/***********  CANVAS MENU BLOCK - end ************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	/********** HAMBURGER MENU NAV BAR & ANIMATION **************/
+	#hamburger_menu_icon {
+		width: 2.8vw;
+  		height: 1.8vw;
+  		position: absolute;
+  		top: 0;
+  		right: 0;
+  		margin: 1.8vw;
+
+  		-webkit-transform: rotate(0deg);
+  		-moz-transform: rotate(0deg);
+  		-o-transform: rotate(0deg);
+  		transform: rotate(0deg);
+
+  		-webkit-transition: .5s ease-in-out;
+  		-moz-transition: .5s ease-in-out;
+  		-o-transition: .5s ease-in-out;
+  		transition: .5s ease-in-out;
+  		cursor: pointer;
+	}
+
+	#hamburger_menu_icon.open {
+		-webkit-transform: translate(-14vw, 0px);
+  		-moz-transform: translate(-14vw, 0px);
+  		-o-transform: translate(-14vw, 0px);
+  		transform: translate(-14vw, 0px);
+	}
+
+	#hamburger_menu_icon span {
+  		display: block;
+  		position: absolute;
+
+  		height: 26%;
+  		width: 100%;
+  		background: #888888;
+  		border-radius: 0.7vw;
+  		opacity: 1;
+  		left: 0;
+
+  		-webkit-transform: rotate(0deg);
+  		-moz-transform: rotate(0deg);
+  		-o-transform: rotate(0deg);
+  		transform: rotate(0deg);
+
+  		-webkit-transition: .25s ease-in-out;
+  		-moz-transition: .25s ease-in-out;
+  		-o-transition: .25s ease-in-out;
+  		transition: .25s ease-in-out;
+	}
+
+	#hamburger_menu_icon span:nth-child(1) {
+  		top: 0;
+	}
+
+	#hamburger_menu_icon span:nth-child(2) {
+  		top: 40%;
+	}
+
+	#hamburger_menu_icon span:nth-child(3) {
+  		top: 80%;
+  	}
+
+  	/*hamburger menu icon whose class is open, that's more specific than the plain id, which is why those rules apply */
+  	#hamburger_menu_icon.open span:nth-child(1) {
+  		top: 40%;
+  		background: #BB0000;
+  		-webkit-transform: rotate(135deg);
+  		-moz-transform: rotate(135deg);
+  		-o-transform: rotate(135deg);
+  		transform: rotate(135deg);
+	}
+
+	#hamburger_menu_icon.open span:nth-child(2) {
+	  opacity: 0;
+	  left: -100%;
+	}
+
+	#hamburger_menu_icon.open span:nth-child(3) {
+	  top: 40%;
+	  background: #BB0000;
+	  -webkit-transform: rotate(-135deg);
+	  -moz-transform: rotate(-135deg);
+	  -o-transform: rotate(-135deg);
+	  transform: rotate(-135deg);
+	}
+	/********** HAMBURGER MENU NAV BAR & ANIMATION - end ********/
+
+
+
+
+
+
+
+
+
+
+
+	/***** TEMPORARY : SCROLL DOWN *****/
+	.scrolldown_animation {
+		transition: opacity 0.6s ease-in-out;
+		opacity: 0;
+	}
+
+	.toggleOpacity {
+		opacity: 1;
+	}
+
+	.scrolldown_mouse {
+		width:  3vw;
+		height: 3vw;
+
+		position: absolute;
+		/* height of scrolldown_text + 10px */
+		bottom: calc(3vw + 10px);
+		right: 0;
+		left: 48.5vw;
+
+
+		background: url("anim.png") no-repeat;
+		background-size: 4650% 4649%;
+		background-position: 2.75% 33.5%;
+
+		animation: scrollDownMouseAnim 2s ease-in-out infinite;
+	}
+
+	.scrolldown_text {
+		width:  6vw;
+		height: 3vw;
+
+		position: absolute;
+		bottom: 5px;
+		right: 0;
+		left: 47vw;
+
+		background: url("anim.png") no-repeat;
+		background-size: 2050% 4100%;
+		background-position: 1.41% 35.9%;
+	}
+
+	.scrolldown_circle {
+		width:  calc(6.5vw);
+		height: calc(6.5vw);
+
+		border-radius: 100%;
+		border: 2px solid gray;
+
+		position: absolute;
+		bottom: 0;
+		right: 0;
+		left: 46.5vw;
+
+		animation: scrollDownCircleAnim 1s linear infinite;
+	}
+
+	@media (orientation: portrait) {
+		.scrolldown_text {
+			width:  12vh;
+			height: 6vh;
+		}
+
+		.scrolldown_mouse {
+			width:  5vh;
+			height: 5vh;
+
+			position: absolute;
+			/* height of scrolldown_text + 10px */
+			bottom: calc(6vh + 5px);
+		}
+	}
+
+	@keyframes scrollDownMouseAnim {
+		0% { transform: translate(0, 0); }
+		10% { transform: translate(0, 1vh); }
+		20% { transform: translate(0, 0); }
+		30% { transform: translate(0, 1vh); }
+		40% { transform: translate(0, 0); }
+
+		100% { transform: translate(0, 0); }
+	}
+
+	@keyframes scrollDownCircleAnim {
+		0% { opacity: 0; transform: scale(0, 0); }
+		50% { opacity: 0.75; transform: scale(0.25, 0.25); }
+		75% { opacity: 0.4; transform: scale(0.45, 0.45); }
+		100% { opacity: 0; transform: scale(0.85, 0.85); }
+	}
+	/***** TEMPORARY : SCROLL DOWN - END *****/
+
+
+
+
+	#block_0 {
+		position: absolute;
+		top: 100vh;
+		width: 100vw;
+		height: 100vh;
+		left:0;
+
+		background: linear-gradient(to left, 
+			#00A5FF 0%, 
+			#00A5FF 0.8%,
+			rgba(0,0,0,0.97) 0.85%);
+
+		transform: translate(-100vw, 0px);
+	}
+
+	#block_2 {
+		position: absolute;
+		top: 100vh;
+		width: 100vw;
+		height: 100vh;
+		left:0;
+
+		/*background: linear-gradient(to right, 
+			rgba(255,255,255,0.17) 0%, 
+			rgba(99, 205, 255, 0.7) 30%, 
+			rgba(99, 205, 255, 1) 70%);*/
+
+		background: linear-gradient(to right, 
+			#00A5FF 0%, 
+			#00A5FF 0.8%,
+			rgba(99, 165, 255, 0) 0.85%,  
+			rgba(99, 165, 255, 0.7) 20%, 
+			rgba(99, 165, 255, 1) 55%);
+
+		transform: translate(100vw, 0px);
+	}
+
+	#block_1 {
+		/*box-shadow: 0px 0px 20px -3px black;*/
+		position: absolute;
+		top: calc(100vh);
+		left: 0;
+		width:  100vw;
+		height: 100vh;
+
+		background: linear-gradient(to right, rgba(255,255,255,0.17) 0%,rgba(255,255,255,1) 15%,rgba(255,255,255,1) 85%,rgba(255,255,255,0.17) 100%);
+		/*animation: b1_opacity 10.0s ease-in-out infinite;*/
+		opacity: 0.9;
+		will-change: opacity;
+
+
+		z-index: 5;
+	}
+
+	@keyframes b1_opacity {
+		0%   {opacity: 0.92;}
+		50%  {opacity: 0.7;}
+		100% {opacity: 0.92;}
+	}
+
+	#block_1_over {
+		/*box-shadow: 0px 0px 20px -3px black;*/
+		position: absolute;
+		top: calc(100vh);
+		width:  100vw;
+		height: 100vh;
+
+		opacity: 1;
+
+		z-index: 6;
+	}
+
+	#b1_greetings {
+
+		z-index: 10;
+		position: absolute;
+		margin: 0 auto 0 auto;
+		bottom: 5vw;
+		right: 0;
+		left: 0;
+
+		/**
+		era width: 1vw; height: 0;
+		**/
+		width: 100vw;
+		height: 15vw;
+
+		/*** javascript lo fa crescere fino a 15vw e 5vw di bottom ***/
+
+
+		transform: scale(0, 0);
+
+
+		box-sizing: border-box;
+		border-top: 	0.7vw solid #00A5FF; /*#C6B69B;*/
+		border-bottom: 	0.7vw solid #00A5FF; /*#C6B69B;*/
+
+		font-family: sans-serif;
+		background: black;
+		overflow: hidden;
+	}
+
+	#text {
+		position: absolute;
+		margin: auto;
+		bottom: 0;
+		right: 0;
+		left: 0;
+		width: 70vw;
+		height: 65%;
+
+		overflow: hidden;
+	}
+
+	#text div {
+		will-change: width, transform, opacity;
+		width:  100%;
+		height: 100%;
+		z-index: 2;
+		background: black;
+		position: absolute;
+		margin: auto;
+		bottom: 0;
+		right: 0;
+		left: 0;
+		top: 0;
+	}
+
+	#text p {
+		text-align: justify;
+		position: absolute;
+		display: block;
+		color: white;
+
+		font-size: 1.2vw;
+		font-family: sans-serif;
+		
+		opacity: 0;
+		width: 70vw;
+	}
+
+	#beyondpixels {
+		will-change: transform, opacity;
+    	position: absolute;
+    	left: 38vw;
+	}
+
+	#beyondpixels span {
+		will-change: transform, opacity;
+
+		display: inline-block;
+		position:relative;
+		top: 1.2vw;
+		color: white;
+		font-size: 2.2vw;
+		margin: 0vw 1vw 0vw 1vw;
+		transform: translate(0vw, -7vw);
+		opacity: 0;
+	}
+
+	#webgl {
+		will-change: opacity;
+		position: absolute;
+		margin: auto;
+		bottom: 0;
+		left: 0;
+		top: 0;
+		width:  15vw;
+		height: 7vw;
+		background: url("anim.png");
+		background-position: 0% 26.6%;
+		background-size: 700% 1500%;
+		opacity: 0;
+		/*animation: logosOpacity 2.5s ease-in-out infinite;*/
+	}
+
+	#golang {
+		will-change: opacity;
+		position: absolute;
+		margin: auto;
+		bottom: 0;
+		right: 0;
+		top: 0;
+		width:  15vw;
+		height: 10vw;
+		background: url("anim.png");
+		background-position: 15.75% 27.5%;
+		background-size: 630% 945%;
+		opacity: 0;
+		/*animation: logosOpacity 2.5s ease-in-out infinite;*/
+	}
+
+	@keyframes logosOpacity {
+    	0%   {opacity: 1;}
+    	50%  {opacity: 0.36;}
+    	100% {opacity: 1;}
+	}
+
+
+	#masked_slider {
+		will-change: opacity;
+		position: absolute;
+		overflow: hidden;
+		margin: auto;
+		right: 0;
+		left: 0;
+		top: 1%;
+
+
+		/*** JAVASCRIPT LI SETTA A 40vw E 20.88vw **/
+		width:  60%;
+		height: 60%;
+
+
+		opacity: 0;
+
+		background: white;
+	}
+
+	#mask {
+		position: absolute;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background: url("firma.png");
+		background-size: cover; /*oppure just 100% 100%*/
+		background-position: center center;
+		background-repeat: no-repeat;
+		z-index: 10;
+	}
+
+	#under_mask_image {
+		position: absolute;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background: url("landscape.jpg");
+		background-size: cover;
+		background-position: center center;
+		background-repeat: no-repeat;
+	}
+
+	#under_mask_image2 {
+		position: absolute;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background: url("landscape2.jpg");
+		background-size: cover;
+		background-position: center center;
+		background-repeat: no-repeat;
+	}
+
+	#mask_ribbon {
+		width: 100%; 
+		height: 5%; 
+		/*margin: auto;*/
+		/* questo valore è la metà della grandezza del masked slider */
+		left: -20vw;
+		bottom: 40%; 
+		background: #00a5ff; 
+		position: absolute;
+
+		border-radius: 1000px;
+	}
+
+	.pat_black {
+		will-change: transform, opacity;
+		/*background: url("ptn_black.png");*/
+		background: url("anim.png");
+		background-repeat: repeat-y;
+		background-position: 100.1% 36.3%;
+		background-size: 21000% 320%;
+		height: 0.1vh;
+		width: 10px;
+	}
+	.pat_white {
+		will-change: transform, opacity;
+		background: url("anim.png");
+		background-repeat: repeat-y;
+		background-position: 99.7% 36.3%;
+		background-size: 21000% 320%;
+		height: 0.1vh;
+		width: 10px;
+		z-index: 2;
+	}
+	.ptn_left {
+		position: absolute;
+		top: 0;
+		left: 1.5vw;
+	}
+	.ptn_right {
+		position: absolute;
+		bottom: 0;
+		right: 1.5vw;
+	}
+
+	.arrow {
+		position: absolute;
+		width:  8vw;
+		height: 8vw;
+		bottom: calc(5vw - 4vw);
+		z-index: 10;
+
+		opacity: 0;
+
+		background: url("anim.png");
+		background-size: 1300% 1300%;
+	}
+
+	.arrowleft {
+		will-change: transform, opacity;
+		left: 0;
+		background-position: 33.9% 27.5%;
+		/*animation: arrow_anim 2s infinite;*/
+	}
+
+	.arrowright {
+		will-change: transform, opacity;
+		right: 0;
+		background-position: 42.7% 27.5%;
+		/*animation: arrow_anim 2s infinite;*/
+	}
+
+	@keyframes arrow_anim_left {
+    	0%   {transform: translate(10vw, 0vw); opacity: 0;}
+    	90%  {transform: translate(0vw,  0vw); opacity: 1;}
+    	100% {transform: translate(0vw,  0vw); opacity: 0;}
+	}
+	@keyframes arrow_anim_right {
+    	0%   {transform: translate(-10vw, 0vw); opacity: 0;}
+    	90%  {transform: translate(0vw,  0vw); opacity: 1;}
+    	100% {transform: translate(0vw,  0vw); opacity: 0;}
+	}
+
+
+
+
+
+
+
+
+
+
+	/****** ITALY ******/
+	.italylarge {
+		will-change: transform, opacity;
+		width:  8.03vw;
+		height: 11.7vw;
+		position: absolute;
+		bottom: calc(20vw - 1px - 11.7vw);
+		background: url("anim.png");
+		display:none;
+	}
+
+	.italysmall {
+		will-change: transform, opacity;
+		width:  6vw;
+		height: 8vw;
+		position: absolute;
+		bottom: calc(20vw - 1px - 11.7vw);
+		background: url("anim.png");
+		display:none;
+	}
+
+	#italy1 {
+		background-position: 0% 44.2%;
+		background-size:	 1000% 666.667%;
+		/** ricordati che il top/bottom/right/left è sempre definito rispetto al parente **/
+		left: 30vw;
+	}
+
+	#italy2 {
+		/** perchè 11.111 ? provo a spiegarti: quando metti backgorund position = 100%  per spostarlo in orizzontale, il 100% sta ad indicare che è stato spostato tutto di modo da far vedere FINO all'ultimo pixel della parte destra dell'immagine, in parole povere è come mettere right: 0 all'immagine. E questo cambia tutto, perchè non ti devi spostare più di un 10%, siccome di spazio 'libero' per muoversi c'è il 90% e il background-position: 100% si calcola su quel 90%. **/
+		background-position: 11.111% 44.2%;
+		background-size:	 1000% 666.667%;
+		/** ricordati che il top/bottom/right/left è sempre definito rispetto al parente **/
+		left: 38vw;
+	}
+
+	#italy3 {
+		background-position: 22.222% 44.2%;
+		background-size:	 1000% 666.667%;
+		/** ricordati che il top/bottom/right/left è sempre definito rispetto al parente **/
+		left: 46vw;
+	}
+
+	#italy4 {
+		background-position: 33.333% 44.2%;
+		background-size:	 1000% 666.667%;
+		/** ricordati che il top/bottom/right/left è sempre definito rispetto al parente **/
+		left: 54vw;
+	}
+
+	#italy5 {
+		background-position: 44.444% 44.2%;
+		background-size:	 1000% 666.667%;
+		/** ricordati che il top/bottom/right/left è sempre definito rispetto al parente **/
+		left: 62vw;
+	}
+
+
+	#italy1s {
+		background-position: 0% 44.2%;
+		background-size:	 1000% 666.667%;
+		/** ricordati che il top/bottom/right/left è sempre definito rispetto al parente **/
+		left: 2.5vw;
+		opacity: 0.6;
+	}
+
+	#italy2s {
+		background-position: 11.111% 44.2%;
+		background-size:	 1000% 666.667%;
+		/** ricordati che il top/bottom/right/left è sempre definito rispetto al parente **/
+		left: 8.5vw;
+		opacity: 0.7;
+	}
+
+	#italy3s {
+		background-position: 22.222% 44.2%;
+		background-size:	 1000% 666.667%;
+		/** ricordati che il top/bottom/right/left è sempre definito rispetto al parente **/
+		left: 14.5vw;
+		opacity: 0.8;
+	}
+
+	#italy4s {
+		background-position: 33.333% 44.2%;
+		background-size:	 1000% 666.667%;
+		/** ricordati che il top/bottom/right/left è sempre definito rispetto al parente **/
+		left: 20.5vw;
+		opacity: 0.9;
+	}
+
+	#italy5s {
+		background-position: 44.444% 44.2%;
+		background-size:	 1000% 666.667%;
+		/** ricordati che il top/bottom/right/left è sempre definito rispetto al parente **/
+		left: 26.5vw;
+		opacity: 1;
+	}
+
+
+
+
+	#italy6s {
+		background-position: 0% 44.2%;
+		background-size:	 1000% 666.667%;
+		/** ricordati che il top/bottom/right/left è sempre definito rispetto al parente **/
+		right: 26.5vw;
+		opacity: 1;
+	}
+
+	#italy7s {
+		background-position: 11.111% 44.2%;
+		background-size:	 1000% 666.667%;
+		/** ricordati che il top/bottom/right/left è sempre definito rispetto al parente **/
+		right: 20.5vw;
+		opacity: 0.9;
+	}
+
+	#italy8s {
+		background-position: 22.222% 44.2%;
+		background-size:	 1000% 666.667%;
+		/** ricordati che il top/bottom/right/left è sempre definito rispetto al parente **/
+		right: 14.5vw;
+		opacity: 0.8;
+	}
+
+	#italy9s {
+		background-position: 33.333% 44.2%;
+		background-size:	 1000% 666.667%;
+		/** ricordati che il top/bottom/right/left è sempre definito rispetto al parente **/
+		right: 8.5vw;
+		opacity: 0.7;
+	}
+
+	#italy10s {
+		background-position: 44.444% 44.2%;
+		background-size:	 1000% 666.667%;
+		/** ricordati che il top/bottom/right/left è sempre definito rispetto al parente **/
+		right: 2.5vw;
+		opacity: 0.6;
+	}
+
+	/****** ITALY - END ******/
+
+
+
+
+
+
+
+
+
+
+	#bluecolumn {
+		will-change: transform, opacity;
+		width: 0.5vw;
+		min-width: 11px;
+		/** if you modify the height you need to change also the bottom and the kavascript keyframe routine **/
+		height: 30vh;
+
+		opacity: 0;
+
+		background: #00A5FF;
+		position: absolute;
+		left: 10vw;
+		bottom: 20vw;
+	}
+
+	#signcontainer {
+		position: absolute;
+		width: 88vw;
+		height: 100vh;
+		left: 11.0vw;
+		overflow: hidden;
+		font-size: 1.7vw;
+		color: #00A5FF;
+	}
+
+	#onamission {
+		will-change: transform, opacity;
+		opacity: 0;
+		position: absolute;
+		left: 0.5vw;
+		bottom: calc(20vw + 25vh);
+	}	
+
+	#onamission2 {
+		will-change: transform, opacity;
+		opacity: 0;
+		position: absolute;
+		left: 0.5vw;
+		bottom: calc(20vw + 25vh - 2vw);
+	}	
+
+	#onamission3 {
+		will-change: transform, opacity;
+		opacity: 0;
+		position: absolute;
+		left: 0.5vw;
+		bottom: calc(20vw + 25vh - 4vw);
+	}	
+
+
+
+
+
+
+
+
+
+	#b1_background {
+		will-change: transform, opacity;
+		width: 150%;
+		height: 150%;
+		position: absolute;
+		margin: auto;
+		bottom:0;
+		right:0;
+		left:0;
+		top:0;
+
+		opacity: 0;
+
+		background: url("anim.png");
+		background-size: 190% 1400%;
+		background-position: 5% 70%;
+
+		animation: b1_backgroundanim 7.5s ease-in-out infinite;
+	}
+
+	@keyframes b1_backgroundanim {
+		0% { transform: translate(0vw, 0vw); }
+		50% { transform: translate(4vw, 0vw); }
+		100% { transform: translate(0vw, 0vw); }
+	}
+
+
+	</style>
+
+
+
+
+</head>
+<body>
+	<canvas id="canvas" style="border:none;"></canvas>
+
+	<div id="container">
+
+
+		<div id="canvas_menu">
+
+
+
+		</div>
+		<div id="hamburger_menu_icon">
+  			<span></span>
+  			<span></span>
+  			<span></span>
+		</div>
+
+
+
+		<div class="scrolldown_animation">
+			<div class="scrolldown_mouse"></div>
+			<div class="scrolldown_text"></div>
+			<div class="scrolldown_circle"></div>
+		</div>
+
+
+
+		<div id="block_0"></div>
+		<div id="block_2"></div>
+
+
+		<div id="block_1">
+			<div id="masked_slider">
+				<div id="under_mask_image"></div>
+				<div id="under_mask_image2"></div>
+				<div id="mask"></div>
+				<div id="mask_ribbon"></div>
+			</div>
+
+			<div id="ms_static"></div>
+			<div id="ms_loading">
+				<div></div>
+			</div>
+		</div>
+
+
+
+
+		<div id="block_1_over">
+			<div id="bluecolumn"></div>
+			<div id="signcontainer">
+				<div id="onamission">On a personal mission</div>
+				<div id="onamission2">To build the highest quality</div>
+				<div id="onamission3">Webcities! :)</div>
+
+			</div>
+
+			<div id="italy1s" class="italysmall"></div>
+			<div id="italy2s" class="italysmall"></div>
+			<div id="italy3s" class="italysmall"></div>
+			<div id="italy4s" class="italysmall"></div>
+			<div id="italy5s" class="italysmall"></div>
+
+			<div id="italy6s" class="italysmall"></div>
+			<div id="italy7s" class="italysmall"></div>
+			<div id="italy8s" class="italysmall"></div>
+			<div id="italy9s" class="italysmall"></div>
+			<div id="italy10s"class="italysmall"></div>
+
+			<div id="italy1" class="italylarge"></div>
+			<div id="italy2" class="italylarge"></div>
+			<div id="italy3" class="italylarge"></div>
+			<div id="italy4" class="italylarge"></div>
+			<div id="italy5" class="italylarge"></div>
+
+
+
+			<div id="b1_greetings">
+
+				<div id="b1_background"></div>
+
+
+				<div id="webgl"> </div>
+				<div id="golang"></div>
+
+				<div id="beyondpixels">
+					<span>Beyond</span>
+					<span>the</span>
+					<span>Pixels</span>
+				</div>
+
+
+				<div id="text">
+					<div></div>
+					<p>
+					Welcome Aboard. This site is a personal repository of webapplications done in golang and WebGl. I've been experimenting with many technologies at once to succesfully recreate many different applications that could run on any modern browser. From simple websocket-ready interactive chats to full blown 3D world exploration in plain WebGl. I'm actively programming in few different languages: HTML, CSS, Javascript, Golang, C++ and technologies: websockets, WebGl, Three.js, webAudio, mysql and vps on digitalocean on a daily basis. Click the down arrow for contact info or to leave me a message
+					</p>
+				</div>
+
+				<div class="pat_white ptn_left"></div>
+				<div class="pat_white ptn_right"></div>
+			</div>
+
+			<div class="pat_black ptn_left"></div>
+			<div class="pat_black ptn_right"></div>
+
+			<div class="arrow arrowleft"></div>
+			<div class="arrow arrowright"></div>
+		</div>
+
+
+	</div> <!-- container - END -->
+
+	<img src="anim.png" id="maintexture" style="display: none;">
+
+
+	<canvas id="forecanvas"></canvas>
+
+</body>
+</html>

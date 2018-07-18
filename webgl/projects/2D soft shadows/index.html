@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+
+	<script type="text/javascript" src="fx-min.js"></script>
+
+
+
+
+<script type="vert" id="transfervert">
+	attribute vec2  pos;
+	varying   vec2  Coord;
+	void main() 
+	{
+		gl_Position = vec4(pos, 0.0, 1.0);
+		Coord       = pos * 0.5 + 0.5;
+	}
+</script>
+
+<script type="frag" id="transferfrag">
+	precision mediump float;
+	varying vec2  Coord;
+	uniform sampler2D shadows;
+	void main() 
+	{
+		gl_FragColor = texture2D(shadows, Coord);
+	}
+</script>
+
+
+
+
+    <script type="vert" id="lightvert">
+		attribute vec4  pos;
+		attribute highp vec4  coord;
+		attribute highp vec4  param;
+		attribute highp vec4  param2;
+		attribute highp vec4  param3;
+		attribute highp vec4  param4;
+	
+		uniform mat4 projection;
+		uniform mat4 model;
+		uniform mat4 view;
+
+		varying highp vec4  Coord;	
+		varying highp vec4  FragPos;
+		varying highp vec4  Param;	
+		varying highp vec4  Param2;  	
+		varying highp vec4  Param3;	
+		varying highp vec4  Param4;	
+
+	
+		void main() 
+		{
+			gl_Position = projection * view * model * vec4(pos.xy, 0.0, 1.0);
+			Coord = coord;
+			FragPos = /* model * */pos;
+			Param   = param;
+			Param2  = param2;
+			Param3  = param3;
+			Param4  = param4;
+		}
+	</script>
+	
+	<script type="frag" id="lightfrag">
+		precision highp float;
+	
+		varying vec4  Coord; 	
+		varying vec4  FragPos;	
+		varying vec4  Param;  	
+		varying vec4  Param2; 	
+		varying vec4  Param3; 	
+		varying vec4  Param4; 	
+
+ 
+		void main() 
+		{
+			vec2 to_v1 = normalize( vec2(FragPos.xy - Coord.xy) ); 
+			vec2 to_v2 = normalize( vec2(FragPos.xy - Coord.zw) );
+			float dot1 = dot(to_v1, Param2.zw);
+			float dot2 = dot(to_v2, Param2.xy);
+
+			float t = 1.0;
+			if(dot1 > Param.x && Param3.x > 1.0) 
+			{ t -= 1.0 - acos(dot1) / Param.z; }
+
+			if(dot2 > Param.y && Param3.y > 1.0) 
+			{ t -= 1.0 - acos(dot2) / Param.w; }
+
+			gl_FragColor = vec4(t, t, t, 1.0);
+		}
+	</script>
+<script type="vert" id="postprocvert">
+	attribute vec2  pos;
+	attribute vec2  coord;
+
+	uniform mat4 projection;
+	uniform mat4 model;
+	uniform mat4 view;
+
+	varying vec2  Coord;
+	varying vec2  FragPos;
+
+	void main() 
+	{
+		gl_Position = projection * view * model * vec4(pos, 0.0, 1.0);
+		Coord = coord;
+		FragPos = pos;
+	}
+</script>
+
+<script type="frag" id="postprocfrag">
+	precision mediump float;
+
+	varying vec2  Coord;
+	varying vec2  FragPos;
+
+	uniform sampler2D lightMap;
+	uniform vec3	  lightColor;
+	uniform vec2	  lightPos;
+	uniform float	  radius;
+
+	void main() 
+	{
+		float alpha = texture2D(lightMap, Coord).x;
+		
+		float dist = length(lightPos.xy - FragPos.xy);
+		float b = 0.0001  * dist        / radius;
+		float c = 0.00001 * dist * dist / radius;
+		float att = 1.0 / (1.0 + b + c);
+		alpha = att * alpha;
+
+		vec4 col = vec4(lightColor * alpha, 1.0);
+		gl_FragColor = col;
+	}
+</script>
+	<script type="vert" id="dovert">
+	attribute vec3 pos;
+	attribute vec3 color;
+	attribute vec3 center;
+
+	uniform mat4 projection;
+	uniform mat4 model;
+	uniform mat4 view;
+
+	varying vec3 Color;
+	varying vec3 FragPos;
+	varying vec3 Center;
+	varying vec2 Screen_Co;
+
+	void main() {
+		vec4 projected_pos = projection * view * model * vec4(pos, 1.0);
+		gl_Position = projected_pos;
+		FragPos = pos;
+		Color = color;
+		Center = center;
+		Screen_Co = (projected_pos.xy / projected_pos.w) * 0.5 + 0.5;
+	}
+	</script>
+
+	<script type="frag" id="dofrag">
+	precision mediump float;
+
+	varying vec3 Color;
+	varying vec3 FragPos;
+	varying vec3 Center;
+	varying vec2 Screen_Co;
+
+	uniform float mult;
+	uniform float mult2;
+	uniform float lightCount;
+	uniform vec2 lightPos;
+	uniform vec3 lightColor;
+	uniform sampler2D shadows;
+
+	uniform float debug_light_mode;
+
+	void main() {
+		float alphamap_value = texture2D(shadows, Screen_Co).x;
+		{
+		float radius = mult;
+		float dist = length(lightPos.xy - FragPos.xy);
+		float b = 0.0001  * dist        / radius;
+		float c = 0.00001 * dist * dist / radius;
+		float att = 1.0 / (1.0 + b + c);
+		alphamap_value = att * alphamap_value;
+		}
+		vec3 shadowColor    = vec3(alphamap_value) * lightColor;
+		vec3 ambientLight   = Color * 0.035;
+		vec2 center_to_frag  = normalize(FragPos.xy - Center.xy);
+		vec2 center_to_light = normalize(lightPos - Center.xy);
+
+		float c 			 = pow(Center.z, 3.0);
+		ambientLight		 *= Center.z;
+		float b  			 = max(dot(center_to_frag, center_to_light), 0.0) * c;
+		float d = 1.0 - length(lightPos - Center.xy) / max((mult2 * 40.0), 40.0);
+		if(d < 0.0) d = 0.0;
+		b += d;
+
+		if(debug_light_mode < 0.1) {
+			gl_FragColor = vec4(Color * shadowColor * b * 1.2 + ambientLight, 1.0);
+		}	
+		if(debug_light_mode > 0.9) {
+			gl_FragColor = mix(
+							vec4(Color * alphamap_value * 0.1 + shadowColor * b * 1.1, 1.0),
+							vec4(Color * shadowColor * b + ambientLight, 1.0),
+							1.0 - min(length(lightPos - Center.xy) / max(pow(mult, 2.0), 40.0), 1.0)
+						);
+		}
+		if(debug_light_mode > 1.9) {
+			gl_FragColor = vec4(Color * alphamap_value * 0.1 + shadowColor * b * 1.9, 1.0);
+		}
+		if(debug_light_mode > 2.9) {
+			gl_FragColor = mix(
+							vec4(Color * alphamap_value * 0.1 + shadowColor * b * 1.1, 1.0),
+							vec4(Color * shadowColor * b + ambientLight, 1.0),
+							(1.0 - min(length(lightPos - Center.xy) / max(pow(mult, 2.0), 40.0), 1.0)) * 0.5 + 0.5
+						);
+		}		
+	}
+	</script>
+
+
+
+
+
+
+	<style>
+	* {
+		margin: 0;
+	}
+
+	html, body {
+		overflow: hidden;
+	}
+
+	#list_container {
+		pointer-events: none;
+		font-family:    consolas;
+		font-size:      0.9em;
+		position:absolute;
+		bottom: 0;
+		left:   0;
+		margin: 10px;
+	}
+
+	#descriptor_container {
+		display:      inline-block;
+		text-align:   right;
+		margin-right: 10px;
+	}
+
+	#values_container {
+		display:    inline-block;
+		text-align: left;
+		position:   relative;
+		top:	    0;
+	}
+
+	p {
+		color: white;
+		text-shadow: 0px 0px 3px black, 0px 0px 3px black;
+	}
+
+	#list_container > p {
+		font-size: 0.8em;
+		text-shadow: none;
+	}
+
+	</style>
+
+</head>
+
+
+<body>
+
+
+	<canvas id="canvas" style="border: none;"></canvas>
+
+	<div id="list_container">
+		<p>Press N to spawn a light</p>
+		<p>Press M to change light Color</p>
+		<p>Press L to decrease ligth radius</p>
+		<p>Press K to increase ligth radius</p>
+		<p>Press 9 to increase ligth falloff</p>
+		<p>Press 0 to decrease ligth falloff</p>
+		<p>Right Mouse Click to move the light source</p>
+		<p>Left  Mouse Click to interact with objects</p>
+		<p>Press H to hide this menu</p>
+		<p style="margin-bottom: 10px;"> </p>
+
+		<div id="descriptor_container">
+			<p>Falloff_mult:</p>
+			<p>Light Radius:</p>
+			<p>Number of Lights:</p>
+			<p>Light Mode:</p>
+		</div>
+
+		<div id="values_container">
+			<p></p>
+			<p></p>
+			<p></p>
+			<p></p>
+		</div>
+	</div>
+
+
+</body>
+</html>

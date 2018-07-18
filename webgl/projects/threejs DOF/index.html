@@ -1,0 +1,59 @@
+﻿<!--
+Servono i rendertarget (texture) con precisione Float per la depth texture, altrimenti i 256 livelli della precisione Unsigned Byte danno un'effetto "blocky" (anche perchè i calcoli non sono lineari)
+
+Il manual dof funziona meglio perchè per quanto ne so è più prevedibile e non ho ben capito perchè la cosa automatizzata non va come vorrei. Per settare il manual dof, devi cercare 
+per cui è necessario settare nelle opzioni:
+        shaderFocus: true,
+        fstop: 0.01,
+        manualdof: true,
+        
+"float ndofstart = 100.0; // near dof blur start",
+		
+"float ndofdist = 200.0; // near dof blur falloff distance",
+		
+"float fdofstart = 100.0; // far dof blur start",
+		
+"float fdofdist = 300.0; // far dof blur falloff distance",
+
+dentro lo shader, i valori sono espressi in metri ed indicano:
+
+• fdofstart        se il focus è a depth 300, a che distanza inizia il dof del far plane? Con i parametri sopra, inizierebbe a 400 e sarebbe al massimo a 600 (fdofdist)
+
+• ndofstart        se il focus è a depth 300, a che distanza inizia il dof del near plane? Con i parametri sopra, inizierebbe a 200 e sarebbe al massimo a 100 (ndofdist)
+
+
+    -->
+
+
+
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title></title>
+
+    <script src='three.js'></script>
+    <script src='OrbitControls.js'></script>
+    <script src='dat.gui.min.js'></script>
+    <script src="BokehShader2.js"></script>
+    <script src='OBJLoader.js'></script>    
+    <script src='main.js'></script>
+
+    <style>
+        * {
+            margin: 0;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+    </style>
+</head>
+<body>
+    
+</body>
+</html>

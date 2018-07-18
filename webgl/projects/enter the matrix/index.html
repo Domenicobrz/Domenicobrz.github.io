@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+
+
+<script type="vert" id="vertex">
+	attribute vec3 pos;
+	//il terzo e quarto elemento sono corrispondenti a rowID e columnID
+	attribute vec4 coord;
+
+	uniform mat4 projection;
+	uniform mat4 model;
+	uniform mat4 view;
+
+	uniform sampler2D floatingTex;	
+
+
+	uniform vec4 values[128];
+	uniform float world_width;
+	uniform float quadSize;
+
+
+	uniform float rows;	
+	uniform float columns;
+
+	uniform float Time;
+	uniform float rotator;
+
+
+	varying vec2 out_toffsets;	
+	varying vec4 texture_values;
+	varying float distance;
+	varying float time;
+
+
+
+	void main()
+	{
+		distance = sqrt(pos.x * pos.x + pos.y * pos.y) * 0.75; 
+
+		vec3 position = vec3(pos.x, pos.y, pos.z);
+
+		vec3 posi2 = vec3(0.0);
+		if(coord.x == 0.0)
+			posi2 = position + vec3(quadSize / 2.0, 0.0, 0.0);
+		else
+			posi2 = position + vec3(-quadSize / 2.0, 0.0, 0.0);
+
+		vec4 projectedpos = projection * view * model * vec4(posi2, 1.0);
+
+		//int index = int(((position.x + world_width / 2.0) / world_width) * 512.0);
+		int index = int((projectedpos.x / projectedpos.w * 0.5 + 0.5) * 275.0);
+
+		int mod = index - ((index / 4) * 4);
+		float zpos;
+		if(mod == 0) zpos = values[index / 4].x * 0.033;
+		if(mod == 1) zpos = values[index / 4].y * 0.033;
+		if(mod == 2) zpos = values[index / 4].z * 0.033;
+		if(mod == 3) zpos = values[index / 4].w * 0.033;
+		//float zpos = values[index] * 0.033;
+
+		float yval = abs(position.y) / 15.0;
+		float xval = abs(projectedpos.x / projectedpos.w);//abs(position.x) / (world_width / 2.0);
+		if( yval > 1.0 ) yval = 1.0;
+
+		//position.x += sin(rotator / 25.0 + coord.w) * zpos * 0.1;
+		float howmuchmorez = zpos * (1.0 - xval*0.5);
+		position.z += howmuchmorez;// * (1.0 - yval) * (1.0 - xval); 
+		position.x *= 1.0;
+
+
+		//z seguirà una sinewave che cambia in base alla forza del suono
+		/*float frequency = 1.0 + values[100] * 80.0;
+		float fastness = 1.0 + values[100] * 30.0;
+		float loudness = values[100] * 10.0;
+		position.z += sin(rotator + (projectedpos.x / projectedpos.w * 0.5 + 0.5) * 10.0) * loudness * (1.0 - xval);*/
+
+
+
+
+
+		gl_Position = projection * view * model * vec4(position, 1.0);
+
+
+
+		float so = 1.0 / rows;
+		float to = 1.0 / columns;
+
+
+		
+		
+
+		texture_values = texture2D(floatingTex, 
+			vec2(coord.w*to, coord.z*so));
+
+		//fa una query sulla texture per dirmi in questo quad quale lettera ci va, ritorna un numero fra 0 e 7
+		float xoffs = texture_values.r;
+
+		//ci sono 8 lettere
+		float textoffset = 1.0 / 16.0;
+		//xoffset == numero fra 0 e 7
+		float xoffset = xoffs * textoffset;
+
+		if(coord.x > 0.9)
+			xoffset += textoffset;
+
+
+		out_toffsets = vec2(xoffset, coord.y);
+
+		time = Time;
+	}
+</script>
+
+
+<script type="frag" id="fragment">
+	precision highp float;
+
+	uniform sampler2D glyphs;
+
+	varying float time;
+	varying vec2 out_toffsets;
+	varying float distance;
+	varying vec4 texture_values;
+
+
+	//sennò interpolo fra i colori che voglio io e sti cazzi non devo per forza essere legato a questi 3
+	vec3 interpolateColor(float time)
+	{
+		//blue to red
+		if(time > 60.0)
+		{
+			float red  = (time - 60.0) / 30.0;
+			float blue = 1.0 - (time - 60.0) / 30.0;
+			return vec3(red, 0.0, blue);
+		}
+
+		//green to blue
+		if(time > 30.0)
+		{
+			float blue  = (time - 30.0) / 30.0;
+			float green = 1.0 - (time - 30.0) / 30.0;
+			return vec3(0.0, green, blue);
+		}
+
+		//red to green
+		float green  = time / 30.0;
+		float red = 1.0 - time / 30.0;
+		return vec3(red, green, 0.0);
+	}
+
+
+	vec3 RealinterpolateColor(float time)
+	{
+		float timeoffset = 90.0 / 6.0;
+		float discriminant = 0.0;
+
+		//il discriminant è il famoso numero fra 0 e 1
+		if(time > timeoffset * 5.0)
+		{
+			discriminant = (time - timeoffset * 5.0) / timeoffset;
+			return vec3(1.0, 0.0, 1.0 - discriminant);
+		}
+
+		if(time > timeoffset * 4.0)
+		{
+			discriminant = (time - timeoffset * 4.0) / timeoffset;
+			return vec3(discriminant, 0.0, 1.0);
+		}
+
+		if(time > timeoffset * 3.0)
+		{
+			discriminant = (time - timeoffset * 3.0) / timeoffset;
+			return vec3(0.0, 1.0 - discriminant, 1.0);
+		}
+
+		if(time > timeoffset * 2.0)
+		{
+			discriminant = (time - timeoffset * 2.0) / timeoffset;
+			return vec3(0.0, 1.0, discriminant);
+		}
+
+		if(time > timeoffset * 1.0)
+		{
+			discriminant = (time - timeoffset * 1.0) / timeoffset;
+			return vec3(1.0 - discriminant, 1.0, 0.0);
+		}
+
+		if(time > 0.0)
+		{
+			discriminant = time / timeoffset;
+			return vec3(1.0, discriminant, 0.0);
+		}
+		
+		return vec3(0.0, 0.0, 0.0);
+	}
+
+	vec3 CustominterpolateColor(float time)
+	{
+		float timeoffset = 90.0 / 6.0;
+		float discriminant = 0.0;
+
+		if(time > timeoffset * 5.0)
+		{
+			discriminant = (time - timeoffset * 5.0) / timeoffset;
+
+			vec3 to      = vec3(0.0, 1.0, 0.57);
+			vec3 from    = vec3(1.0, 0.0, 0.0);
+
+			return vec3(to * discriminant + from * (1.0 - discriminant));
+		}
+
+		if(time > timeoffset * 4.0)
+		{
+			discriminant = (time - timeoffset * 4.0) / timeoffset;
+			discriminant = pow(discriminant, 3.0);
+
+			vec3 to      = vec3(1.0, 0.0, 0.0);
+			vec3 from    = vec3(1.0, 0.0, 1.0);
+
+			return vec3(to * discriminant + from * (1.0 - discriminant));
+		}
+
+		if(time > timeoffset * 3.0)
+		{
+			discriminant = (time - timeoffset * 3.0) / timeoffset;
+
+			vec3 to      = vec3(1.0, 0.0, 1.0);
+			vec3 from    = vec3(0.0, 0.0, 1.0);
+
+			return vec3(to * discriminant + from * (1.0 - discriminant));
+		}
+
+		if(time > timeoffset * 2.0)
+		{
+			discriminant = (time - timeoffset * 2.0) / timeoffset;
+			discriminant = pow(discriminant, 0.7);
+
+			vec3 to      = vec3(0.0, 0.0, 1.0);
+			vec3 from    = vec3(0.0, 1.0, 1.0);
+
+			return vec3(to * discriminant + from * (1.0 - discriminant));
+		}
+
+		if(time > timeoffset * 1.0)
+		{
+			discriminant = (time - timeoffset * 1.0) / timeoffset;
+			discriminant = pow(discriminant, 1.7);
+
+			vec3 to      = vec3(0.0, 1.0, 1.0);
+			vec3 from    = vec3(0.0, 1.0, 0.33);
+
+			return vec3(to * discriminant + from * (1.0 - discriminant));
+		}
+
+		if(time > 0.0)
+		{
+			discriminant = time / timeoffset;
+
+			vec3 to      = vec3(0.0, 1.0, 0.33);
+			vec3 from    = vec3(0.0, 1.0, 0.57);
+
+			return vec3(to * discriminant + from * (1.0 - discriminant));
+		}
+		
+		return vec3(0.0, 0.0, 0.0);
+	}
+
+
+
+
+	void main()
+	{
+
+		vec4 col = texture2D(glyphs, out_toffsets);
+		if(col.a == 0.0) discard;
+		/*gl_FragColor = vec4(col.xyz / 1.0, 1.0);*/
+
+		//a time aggiungo la distanza dal centro del quad attuale
+		float tottime = mod(time + -distance * 1.3, 90.0);
+
+		vec3 colz = CustominterpolateColor(tottime);//RealinterpolateColor(tottime);
+		float alpha = texture_values.g;
+
+		if(texture_values.g > 0.85)
+		{
+			//colz = mix(colz, vec3(1.0, 1.0, 1.0), 
+			//				(texture_values.g - 0.85) / 0.15);
+
+
+
+
+
+
+			//buono anche questo, 0.5 0.5 0.5 best results
+			colz += vec3(0.45, 0.65, 0.65) * (texture_values.g - 0.85) / 0.15;
+
+			if(colz.r > 1.0) colz.r = 1.0;
+			if(colz.g > 1.0) colz.g = 1.0;
+			if(colz.b > 1.0) colz.b = 1.0;
+
+
+
+
+
+			/*float missing_r = 1.0 - colz.r;
+			float missing_g = 1.0 - colz.g;
+			float missing_b = 1.0 - colz.b;
+
+			colz += vec3(missing_r, missing_g, missing_b) * 0.59 * (texture_values.g - 0.85) / 0.15;*/
+
+
+
+
+
+			alpha = 1.0;
+		}
+		else
+		{
+			alpha = texture_values.g / 0.85;
+		}
+
+
+		gl_FragColor = vec4(colz, col.r * alpha);
+	}
+</script>
+
+
+
+
+
+<script type="vert" id="fvertex">
+	attribute vec2 pos;
+
+	uniform float screenRatio;
+
+	varying vec2 coord;
+	varying vec2 skullCoord;
+
+	void main()
+	{
+		gl_Position = vec4(pos * 2.0 - 1.0, 0.0, 1.0);
+
+		coord = pos;
+
+		if(screenRatio > 1.77)	{
+			if(coord.x == 0.0)
+			{
+				skullCoord.x = -(screenRatio - 1.77) / 4.0;
+				skullCoord.y = coord.y;
+			}
+			else
+			{
+				skullCoord.x = 1.0 + (screenRatio - 1.77) / 4.0;
+				skullCoord.y = coord.y;
+			}
+		}
+		else if(screenRatio < 1.77)
+		{
+			if(coord.y == 0.0)
+			{
+				skullCoord.y = -(1.77 - screenRatio) / 2.0;
+				skullCoord.x = coord.x;
+			}
+			else
+			{
+				skullCoord.y = 1.0 + (1.77 - screenRatio) / 2.0;
+				skullCoord.x = coord.x;
+			}
+		}
+		else
+		{
+			skullCoord = coord;
+		}
+	}
+</script>
+<script type="frag" id="ffragment">
+	precision mediump float;
+
+	uniform sampler2D blurtexture;
+	uniform sampler2D displaytexture;
+	uniform sampler2D skulltexture;
+	uniform float blurAlpha;
+	uniform float textureAlpha;
+	uniform float textureBlurAlpha;
+
+	varying vec2 coord;
+	varying vec2 skullCoord;
+
+	void main()
+	{
+		float r = texture2D(skulltexture, skullCoord).r;
+		float g = pow(r, 1.0);
+		float missing = g + (1.0 - g) * textureAlpha;
+
+		vec4 display = texture2D(displaytexture, coord) * 0.78 * missing;
+		vec4 blur = texture2D(blurtexture, coord) * 205.5 * blurAlpha * missing;
+
+		if(textureBlurAlpha > 0.0)
+		{
+			if(r > 0.0)
+			{
+				blur = texture2D(blurtexture, coord) * 205.5 * blurAlpha * (1.0 + g * textureBlurAlpha * 2.0) * missing;
+			}
+		}
+
+		gl_FragColor = display + blur;
+	}
+</script>
+
+
+
+
+
+
+
+<!--    PING PONG BLUR ROUTINE    -->
+<script type="vert" id="pvertex">
+	attribute vec2 pos;
+
+	varying vec2 coord;
+
+	void main()
+	{
+		gl_Position = vec4(pos * 2.0 - 1.0, 0.0, 1.0);
+
+		coord = pos;
+	}
+</script>
+<script type="frag" id="pfragment">
+	precision mediump float;
+
+	uniform sampler2D texture;
+	uniform float hor;
+
+	varying vec2 coord;
+
+	void main()
+	{
+
+		//if(displaypass)
+		//{
+		//    bisogna passare alla pong texture solo le lettere con un certo threshold di alpha altrimenti le blurra tutte indiscriminatamente
+		//}
+
+		float gaussian[9];
+		/*gaussian[0] = 0.227027;
+		gaussian[1] = 0.194594;
+		gaussian[2] = 0.121621;
+		gaussian[3] = 0.054054;
+		gaussian[4] = 0.016216;*/
+
+
+		gaussian[0] = 0.2270*0.61;
+		gaussian[1] = 0.2102*0.61;
+		gaussian[2] = 0.1962*0.61;
+		gaussian[3] = 0.1312*0.61;		
+		gaussian[4] = 0.0862*0.61;
+		gaussian[5] = 0.0462*0.61;
+		gaussian[6] = 0.0262*0.61;
+		gaussian[7] = 0.0099*0.61;		
+		gaussian[8] = 0.0045*0.61;
+
+
+
+		vec3 result = texture2D(texture, coord).rgb * gaussian[0];
+
+
+		if(hor > 10.0)
+		{
+			//displaypass
+			//cosa passiamo in ping?
+			//passiamo tutti i valori della texture powerati per una certa threshold e vediamo che minchia succede
+			vec4 result = texture2D(texture, coord);
+			result.a = pow(result.a, 1.5);
+
+			gl_FragColor = vec4(result);
+			return;
+		}
+		else if(hor > 0.9)
+		{
+			for(int i = 1; i < 9; i++)
+			{
+				vec2 offset = vec2(1.0 / 768.0 * float(i), 0.0);
+
+				result += texture2D(texture, coord + offset).rgb * gaussian[i];
+				result += texture2D(texture, coord - offset).rgb * gaussian[i];
+			}
+		}
+		else 
+		{
+			for(int i = 1; i < 9; i++)
+			{
+				vec2 offset = vec2(0.0, 1.0 / 468.0 * float(i));
+
+				result += texture2D(texture, coord + offset).rgb * gaussian[i];
+				result += texture2D(texture, coord - offset).rgb * gaussian[i];
+			}
+		}
+
+
+		gl_FragColor = vec4(result.xyz, 1.0);
+	}
+</script>
+<!--    PING PONG BLUR ROUTINE - END   -->
+
+
+	<script type="text/javascript" src="fx-min.js"></script>
+
+	<style>
+	* {
+		margin: 0;
+	}
+
+	html, body {
+		overflow: hidden;
+		height: 100vh;
+		background-color: #000;
+	}
+
+	#loading {
+		position:absolute;
+		margin: auto;
+		top:0;
+		bottom:0;
+		left:0;
+		right:0;
+
+		font-size: 37px;
+		text-align: center;
+		width: 100%;
+		height: 37px;
+		font-family: consolas;
+		color: #0f0;
+	}
+	</style>
+
+</head>
+<body>
+
+	<canvas id="canvas" style="border: none;"></canvas>
+
+
+	<div id="loading">Loading Song...</div>
+
+
+	<img id="chars" src="chars22.png" style="display:none;">
+	<img id="skull" src="semi9.jpg" style="display:none;">
+
+
+
+</body>
+</html>

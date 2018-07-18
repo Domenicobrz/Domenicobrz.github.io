@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+
+    <!-- dependencies -->
+    <script src='dist\build.js'></script>
+    
+    <style>
+        * {
+            margin: 0;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+
+            overflow: hidden;
+        }
+
+        span#quadDimension {
+            font-size: 0.7em;
+            color: white;
+            position: absolute;
+            font-family: Courier New, Courier, monospace;
+            display: block;
+        }
+
+        div.container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+
+            font-family: Courier New, Courier, monospace;
+            font-size: 0.9em;
+
+            padding: 2em;
+            color: white;
+        }
+
+        div.form-group {
+            display: flex;
+            flex-flow: column nowrap;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <span id="quadDimension"></span>
+
+
+    <div class="container">
+        <div role="form">
+            <div class="form-group">
+                <label for="exampleInputFile">Choose a DXF file</label>
+                <input type="file" accept=".dxf" id="dxf" name="file">
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

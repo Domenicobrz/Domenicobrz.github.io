@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+
+
+	<script type="vert" id="dtvert">
+	attribute vec2 pos;
+
+	varying vec2 Coord;
+
+	void main() {
+		gl_Position = vec4(pos * 2.0 - 1.0, 0.0, 1.0);
+		Coord = pos;
+	}
+	</script>
+	
+	<script type="frag" id="dtfrag">
+	precision mediump float;
+
+	varying vec2 Coord;
+
+	uniform sampler2D utexture;
+
+	void main() {
+		gl_FragColor = texture2D(utexture, Coord) * vec4(0.0, 0.647, 1.0, 1.0);
+	}
+	</script>
+
+
+
+
+	<script type="text/javascript" src="gl-matrix-min.js"></script>
+	<script type="text/javascript" src="shader.js"></script>
+	<script type="text/javascript" src="fx.js"></script>
+
+	<style>
+	* {
+		margin: 0;
+	}
+
+	body {
+		background: #333333;
+	}
+
+	#canvas {
+		position: absolute;
+		margin: auto;
+		bottom: 0;
+		right: 0;
+		left: 0;
+		top: 0;
+
+		cursor: pointer;
+	}
+
+	#instructions {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 25%;
+		margin-left: 10px;
+		margin-top:  20px;
+		color: white;
+		font-family: sans-serif;
+		font-size: 0.9em;
+	}
+
+	</style>
+</head>
+<body oncontextmenu="return false;">
+
+	<canvas id="canvas" style="border: none;"></canvas>
+
+	<div id="instructions">
+		<p style="font-size: 1.6em; margin: 20px;">Instructions</p>
+		<p>&bullet; Left mouse button to add dye to the canvas</p>
+		<p>&bullet; Right mouse button to just move velocities</p>
+		<p>&bullet; Press K to reset the canvas</p>
+	</div>
+
+</body>
+</html>

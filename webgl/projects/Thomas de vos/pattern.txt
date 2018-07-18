@@ -1,0 +1,15 @@
+
+pattern1:     mesh.active
+   requires changes to:
+     • forloop iterating meshes array
+     • create a ready() function in mesh class
+     • probably change the routine which sets all meshes to notifyRelease false
+
+
+pattern2:     swapMeshesRoutine 
+   requires:
+     Set every mesh to notify release, as soon as they disappear, swap the      contents of the meshes array. A good time to implement a FSM
+   requires changes to:
+     • mouse controller won't accept inputs if we're on swapping state
+     • a routine to check that all meshes are, infact, unactive
+     • set mouseController.infocus to false, this will immediately release all bound meshes
