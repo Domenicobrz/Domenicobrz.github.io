@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+
+
+
+
+
+    <!-- FRACT ALWAYS RETURNS POSITIVE VALUES! -->
+
+
+
+
+    <script src="Renderer/BRDFs/LambertRTOW.js"></script>
+
+    <script src="Renderer/Camera/basic.js"></script>
+    <script src="Renderer/Camera/move.js"></script>
+
+    <script src="Renderer/Primitives/sphere.js"></script>
+
+    <script src="Scene/scene.js"></script>
+
+    <script src="Renderer/display.js"></script>
+    <script src="Renderer/main.js"></script>
+
+    <script src="shader.js"></script>
+    <script src="vue.js"></script>
+    <script src="main.js"></script>
+
+
+    <style>
+        * {
+            margin: 0;
+        }
+
+        html, body {
+            overflow-x: hidden;
+        }
+    </style>
+</head>
+<body>
+    <!--guarda gli HTML/CSS MUST DO and implement something new!-->   
+    <!--                    USA EMMET E SASS                    -->   
+    <canvas id="canvas"></canvas>
+
+
+
+
+    <div id="app">
+        <input type="button" value="load" @click="loadRender">        
+        <input type="file" id="filess" style="display:none"/>
+        
+        
+        <input type="button" value="save" @click="saveRender">
+        <p>{{ saveRenderText }}</p>
+        <input type="button" :value="StartStopRendering" @click="render = !render">
+        <a v-if="renderResultReady" :href="downloadLink" :download="renderResultDownload" class="renderResultAnchor">
+            Render result after {{ numSamples }}
+        </a>
+    </div>
+
+    <div id="statCounter">
+        <p> Samples taken: {{ samples }} </p>
+    </div>
+
+
+
+</body>
+</html>
