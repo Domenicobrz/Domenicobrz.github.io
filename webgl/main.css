@@ -467,7 +467,7 @@ nav.header_social_icon_links {
   align-items: center;
   align-content: center; }
 
-span.portfolio_text {
+h1.portfolio_text {
   font-family: 'Sacramento', cursive;
   font-size: 2.5rem;
   color: #333;
@@ -476,7 +476,7 @@ span.portfolio_text {
   padding: 0.5rem;
   background: white; }
   @media all and (min-width: 1600px) {
-    span.portfolio_text {
+    h1.portfolio_text {
       margin-top: 3.7rem;
       margin-bottom: 0.3rem;
       font-size: 3.5rem; } }
@@ -756,7 +756,7 @@ hr.header_separator {
       font-size: 0.9em;
       color: #777; }
 
-.footer_main_b2 span.footer_featured {
+.footer_main_b2 h3.footer_featured {
   margin: 2em 0 0.25em 0;
   color: #444;
   font-family: 'Source Sans Pro', sans-serif;
@@ -766,10 +766,10 @@ hr.header_separator {
   text-transform: uppercase;
   display: none; }
   @media all and (min-width: 1150px) {
-    .footer_main_b2 span.footer_featured {
+    .footer_main_b2 h3.footer_featured {
       display: block; } }
   @media all and (min-width: 1600px) {
-    .footer_main_b2 span.footer_featured {
+    .footer_main_b2 h3.footer_featured {
       font-size: 1.4em; } }
 
 .footer_main_b2 span.footer_featured_desc {
@@ -834,7 +834,11 @@ hr.header_separator {
     font-size: 0.8em;
     text-align: center;
     text-decoration: underline;
-    color: #606060; }
+    color: #606060;
+    transition: color .3s; }
+    .main_links_box a:hover,
+    .contact_info_box a:hover {
+      color: #222; }
   .main_links_box span,
   .contact_info_box span {
     display: block;
@@ -883,7 +887,10 @@ hr.header_separator {
     @media all and (min-width: 720px) {
       .social_links_box > a {
         margin: 0 0 1.4em 0.9em; } }
+    .social_links_box > a:hover > svg {
+      fill: #00a5ff; }
     .social_links_box > a > svg {
+      transition: fill .3s;
       width: 1em;
       height: 1em;
       fill: #444; }
@@ -916,19 +923,21 @@ hr.header_separator {
   .footer_sub p {
     text-align: center;
     padding: 0.7em; }
-    .footer_sub p span:first-child {
+    .footer_sub p small {
       font-size: 0.75em;
       color: #ddd; }
-    .footer_sub p span:nth-child(2) {
+    .footer_sub p span {
       font-family: 'Sacramento', cursive;
       font-size: 1.5em;
       display: block;
       margin: 0.5em 0 0 0;
       color: #ddd; }
-      .footer_sub p span:nth-child(2) > span {
-        font-size: 0.75em; }
+      .footer_sub p span > svg {
+        width: 0.75em;
+        height: 0.75em;
+        fill: #ddd; }
       @media all and (min-width: 650px) {
-        .footer_sub p span:nth-child(2) {
+        .footer_sub p span {
           margin: 0 0 0 3em;
           display: inline; } }
 
