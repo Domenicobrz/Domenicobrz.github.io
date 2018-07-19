@@ -1,0 +1,49 @@
+svg.mhMenuIcon {
+  position: absolute;
+  right: 10px;
+  bottom: 2px;
+  width: 45px;
+  height: 45px;
+  z-index: 3; }
+  svg.mhMenuIcon path {
+    stroke-width: 4.5; }
+  svg.mhMenuIcon path:nth-child(1) {
+    stroke: #fff; }
+  svg.mhMenuIcon path:nth-child(2) {
+    stroke: #ccc; }
+  svg.mhMenuIcon path:nth-child(3) {
+    stroke: #aaa; }
+  svg.mhMenuIcon path:nth-child(4) {
+    stroke: #888; }
+  svg.mhMenuIcon path:nth-child(1) {
+    stroke-dashoffset: -166;
+    stroke-dasharray: 166; }
+  svg.mhMenuIcon path:nth-child(2) {
+    stroke-dashoffset: 180;
+    stroke-dasharray: 222; }
+  svg.mhMenuIcon path:nth-child(4) {
+    stroke-dashoffset: 108;
+    stroke-dasharray: 166; }
+  svg.mhMenuIcon path:nth-child(3) {
+    transition: opacity 0.6s ease, transform 0.6s ease; }
+  svg.mhMenuIcon path:nth-child(1) {
+    transition: stroke-dasharray 0.6s ease; }
+  svg.mhMenuIcon path:nth-child(2),
+  svg.mhMenuIcon path:nth-child(4) {
+    transition: stroke-dashoffset 0.6s ease; }
+
+svg.mhMenuIcon:hover path:nth-child(1) {
+  stroke-dashoffset: -166;
+  stroke-dasharray: 5; }
+
+svg.mhMenuIcon:hover path:nth-child(2) {
+  stroke-dashoffset: -88;
+  stroke-dasharray: 222; }
+
+svg.mhMenuIcon:hover path:nth-child(3) {
+  transform: translateY(-20px);
+  opacity: 0; }
+
+svg.mhMenuIcon:hover path:nth-child(4) {
+  stroke-dashoffset: -104;
+  stroke-dasharray: 166; }

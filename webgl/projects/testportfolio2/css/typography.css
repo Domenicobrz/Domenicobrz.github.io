@@ -1,0 +1,40 @@
+/* fonts actually in use */
+@font-face {
+  font-family: 'Anders';
+  src: url("../assets/fonts/Anders.ttf") format("truetype"); }
+
+@font-face {
+  font-family: 'Josefin Slab';
+  src: url("../assets/fonts/JosefinSlab-Regular.ttf") format("truetype"); }
+
+@font-face {
+  font-family: 'Sorts Mill';
+  src: url("../assets/fonts/GoudyStM-webfont.woff") format("woff"); }
+
+@font-face {
+  font-family: 'SharpUnity';
+  src: url("../assets/fonts/SharpUnity-Extrabold.woff") format("woff"); }
+
+@font-face {
+  font-family: 'MuseoSansBold';
+  src: url("../assets/fonts/MuseoSansBold.woff") format("woff"); }
+
+@font-face {
+  font-family: 'MuseoSansRegular';
+  src: url("../assets/fonts/MuseoSansRegular.woff") format("woff"); }
+
+@font-face {
+  font-family: 'MuseoSansBlack';
+  src: url("../assets/fonts/MuseoSansBlack.ttf") format("truetype"); }
+
+@font-face {
+  font-family: 'MuseoSans300';
+  src: url("../assets/fonts/MuseoSans-300.woff2") format("woff2"); }
+
+@font-face {
+  font-family: 'MuseoSans500';
+  src: url("../assets/fonts/MuseoSans-500.woff2") format("woff2"); }
+
+@font-face {
+  font-family: 'MuseoSans900';
+  src: url("../assets/fonts/MuseoSans-900.woff2") format("woff2"); }

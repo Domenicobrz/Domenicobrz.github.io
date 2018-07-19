@@ -1,0 +1,340 @@
+.masthead {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    font-size: 1.15em;
+
+    overflow: hidden;
+}
+
+.mhCurtain {
+    pointer-events: none;
+    background: rgb(30,30,30);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+
+    z-index: 4;
+
+    transition: opacity 1.35s linear;
+
+    &.active {
+        opacity: 0;
+    }
+}
+
+.mhCentral {
+    position: relative;
+    width: 100%;
+    height: calc(100% - 85px);
+
+    @if debug == true { background: rgba(0,255,0,0.015); }
+}
+
+.mhCentralSquare {
+    position: absolute;
+
+    $squareSize: 18.5em;
+    width:  $squareSize;
+    height: $squareSize;
+    // background: rgba(0,0,0,0.3);
+
+    top: calc(50% -  #{$squareSize / 2});
+    left: calc(50% - #{$squareSize / 2});    
+
+    transform: rotate(45deg);
+
+    border: 2.5em solid rgba(0,0,0, 0.15);
+
+    opacity: 0;
+    transition: opacity 1.25s ease;
+
+    &::after {
+        position: absolute;
+        content: " ";
+
+        width:  #{$squareSize - 5em};
+        height: #{$squareSize - 5em};
+
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        border: 2px solid rgba(255,255,255, 1); 
+    }
+
+    &::before {
+        position: absolute;
+        content: " ";
+
+        width:  #{$squareSize + 0.4em};
+        height: #{$squareSize + 0.4em};
+
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        border: 2px solid rgba(255,255,255, 0.15);     
+    }
+}
+
+.mhSignature {
+    position: absolute;
+    bottom: 10px;
+    left: 15px;
+    color:rgba(255,255,255,0.3);
+
+    @media all and (max-width: 700px) {
+        display: none;
+    } 
+}
+
+html.fonts-loaded {
+    .mhSignature {
+        font-family: "Josefin Slab";
+    }
+}
+
+.mhBarsIconsContainer {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+.mhSocial {
+    position: relative;
+    display: block;
+    margin: auto;
+
+    display: flex;
+
+    $iconSize: 1.5;
+
+    width: ($iconSize*8 + 0.7*8) + em;
+
+    & a > svg {
+        width:  $iconSize + em;
+        height: $iconSize + em;
+        margin-right: 0.7em;
+    }
+
+    @for $i from 1 through 8 {
+        & a:nth-child(#{$i}) > svg { 
+            fill: rgba(255,255,255, 1 - $i/11);
+        }
+    }
+}
+
+// .mhMusicBars {
+//     position: relative;
+//     height: 2em;
+//     width:  2em;
+//     margin: auto;
+//     margin-bottom: 1em;
+
+//     display: flex;
+//     flex-flow: row nowrap;
+//     align-content: center;
+//     align-items: center;
+
+//     cursor: pointer;
+
+//     span {
+//         width: 3px;
+//         display: block;
+//         margin-right: 2px;
+//         background: white;
+//         opacity: 0.5;
+//     }
+
+//     span:nth-child(1) { height: 0.9em; }
+//     span:nth-child(2) { height: 0.9em; }
+//     span:nth-child(3) { height: 0.9em; }
+//     span:nth-child(4) { height: 0.9em; }
+
+//     &.active {
+//         span { opacity: 1; }
+//         span:nth-child(1) { height: 0.9em; }
+//         span:nth-child(2) { height: 1.7em; }
+//         span:nth-child(3) { height: 1.2em; }
+//         span:nth-child(4) { height: 0.6em; }
+
+//         @for $i from 1 through 4 {
+//             span:nth-child(#{$i}) { 
+//                 animation: musicBars #{0.4 + (random(25) / 100)}s #{(random(100) / 100)}s ease-in infinite;
+//             }
+//         }
+//     }
+// }
+
+.mhMusicBars {
+    position: relative;
+    height: 2em;
+    width:  4em;
+    margin: auto;
+    margin-bottom: 1em;
+
+    overflow: hidden;
+
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-content: flex-end;
+    align-items: flex-end;
+
+    cursor: pointer;
+
+    span {
+        width: 3px;
+        display: block;
+        margin-right: 2px;
+        background: white;
+        opacity: 0.5;
+
+        transform: translateY(50%);
+    }
+
+    span:nth-child(1) { height: 0.9em; }
+    span:nth-child(2) { height: 0.9em; }
+    span:nth-child(3) { height: 0.9em; }
+    span:nth-child(4) { height: 0.9em; }
+
+    &.active {
+        span { opacity: 1; }
+        span:nth-child(1) { height: 0.9em; }
+        span:nth-child(2) { height: 1.1em; }
+        span:nth-child(3) { height: 1.4em; }
+        span:nth-child(4) { height: 1.05em; }
+
+        @for $i from 1 through 4 {
+            span:nth-child(#{$i}) { 
+                animation: musicBars #{0.4 + (random(25) / 100)}s #{(random(100) / 100)}s ease-in infinite;
+            }
+        }
+    }
+}
+
+
+@keyframes musicBars {
+    0% {   transform: translateY(50%);}
+    50% {  transform: translateY(5%); }
+    100% { transform: translateY(50%);}
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+
+
+
+
+// .mhOverlay {
+//     width: 100%;
+//     height: 100%;
+//     position: absolute;
+//     top: 0;
+//     pointer-events: none;
+
+
+
+//     z-index: 3;
+
+//     opacity: 1;
+
+
+//     background: url(https://i.pinimg.com/736x/49/07/ff/4907ffa3658d3821a6206495778fa201--blurred-background-light-colors.jpg);
+//     mix-blend-mode: exclusion;
+
+//     // background: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlXDu7IXWIdtlWO1_gfXKmqSDJQXfjKcTZRV1T8-2guXB_8YPU6w);
+//     // mix-blend-mode: overlay;
+
+//     // background: url(https://thumbs.dreamstime.com/b/beautiful-vintage-color-meadow-background-blurred-sunset-flare-purple-red-yellow-orangecolor-filter-effect-used-51818931.jpg);
+//     // mix-blend-mode: darken;
+
+//     // background: url(https://www.wallpaperup.com/uploads/wallpapers/2014/03/11/296437/7ea2d68cfb8c3295df74f937102b5171-500.jpg);
+//     // mix-blend-mode: screen;
+//     // opacity: 0.5;
+
+//     // background: url(https://www.wallpaperup.com/uploads/wallpapers/2014/03/11/296437/7ea2d68cfb8c3295df74f937102b5171-500.jpg);
+//     // mix-blend-mode: hard-light;
+
+//     // background: url(https://www.wallpaperup.com/uploads/wallpapers/2014/03/11/296437/7ea2d68cfb8c3295df74f937102b5171-500.jpg);
+//     // mix-blend-mode: darken;
+
+//     // background: url(https://i.pinimg.com/236x/45/29/dc/4529dce6af0b4c3dfb2ad29395490461--gradient-background-blurred-background.jpg);
+//     // mix-blend-mode: multiply;
+//     // opacity: 0.85;
+
+//     background-size: 100% 100%;
+
+//     // background: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVE_UZdoT0x5rM6LZy1qFC_mkFACWQBZqILqIYPErX2DYGHAgH);
+//     // mix-blend-mode: exclusion; // or overlay
+
+//     animation: blendanim 20s linear infinite;
+// }
+
+// @keyframes blendanim{
+//     0% {
+//        opacity: 0; 
+//     }
+//     57% {
+//         opacity: 0;
+//     }
+//     60% {
+//        opacity: 1;         
+//     }
+//     97% {
+//        opacity: 1;         
+//     }
+//     100% {
+//        opacity: 0;         
+//     }
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**** Media queries ****/
+@media all and (min-width: 1601px) {
+    .masthead {
+        font-size: 1.55em;
+    }
+
+    .mhMusicBars {
+        font-size: 1.12em;
+
+        span {
+            width: 4px;
+            margin-right: 2px;
+        }
+    }
+}
+
+@media all and (max-width: 1600px) {
+    // .mhCentralSquare {
+    //     font-size: 0.8em;
+    // }
+}
+
+@media all and (max-width: 600px) {
+    .mhCentralSquare {
+        font-size: 0.75em;
+    }
+}

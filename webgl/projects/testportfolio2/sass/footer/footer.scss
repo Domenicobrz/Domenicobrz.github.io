@@ -1,0 +1,527 @@
+footer.pageFooter {
+    position: relative;
+    background: #212121;
+    
+    overflow: hidden;
+}
+
+footer.pageFooter::before {
+    content: " ";
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 15px;
+
+    background: linear-gradient(to top, #212121, #171717);
+}
+
+
+div.fcontainer {
+    position: relative;
+    min-height: calc(100vh - 2em);
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-content:  center;
+    align-items: center;
+
+    font-size: 1em;
+}
+
+div.fcentered {
+    margin: 4em 0;
+    position: relative;
+
+    font-size: 0.8em;
+
+    @if $debug == true {
+        background: rgba(255,255,255, 0.05);
+    }
+
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+    align-content:  center;
+    align-items: center;
+
+    text-align: center;
+    min-height: 70vh;
+}
+
+div.footerRow {
+    position: relative;
+
+    @if $debug == true {
+        background: rgba(255,255,255, 0.05);
+    }
+}
+
+div.footerRowSpacer {
+    position: relative;
+    height: 8em;
+    width: 100%;
+
+    @if $debug == true {
+        background: rgba(255,55,55, 0.05);
+    }
+}
+
+div.fewe {
+    position: relative;
+    font-size: 1.15em;
+    color: white;
+
+    & > span {
+        display: block;
+        letter-spacing: 0.15em;
+    }
+
+    span:nth-child(1) {
+        font-size: 4.3em;        
+    }
+
+    span:nth-child(2) {
+        font-size: 2.8em;
+    }
+}
+
+div.fLeaveMessage {
+    position: relative;
+    font-size: 2em;
+    color: white;  
+}
+
+input.fTypeMessage {
+    color: white;
+    font-size: 2.3em;
+    width: 28.5em;
+
+    background: none;
+    border: none;
+    border-bottom: 2px solid white;
+    text-align: center;
+
+    padding-bottom: 0.3em;
+    padding-left:   4em;
+    padding-right:  4em;
+    margin-bottom: 1.0em;   
+}
+
+div.fInputContainer {
+    position: relative;
+}
+
+svg.fInputArrow {
+    position: absolute;
+    width:  10em  * 0.8;
+    height: 2.2em * 0.8;
+    right: 7em;
+    top: 0.5em;
+
+    transition: opacity .45s, right .45s;
+}
+
+input.fTypeMessage:focus + svg.fInputArrow {
+    right: -2em;
+    opacity: 0;
+}
+
+p.fGiveFeedback { 
+    color: white;
+    font-size: 2em;
+
+    text-align: center;
+
+    margin-bottom: 0.5em;   
+}
+
+div.fcentered svg[id*="svgRateStar"] {
+    width:  6em;
+    height: 6em;
+    padding: 0 0.5em;
+
+    path {
+        stroke: white;
+        stroke-width: 1;
+        fill: none;
+        transition: stroke-width .45s ease;        
+    }
+
+    circle {
+        stroke: white;
+        stroke-width: 1;
+        fill: none;
+        stroke-dasharray: 360;
+        stroke-dashoffset: -360;
+        opacity: 0.3;
+        transition: stroke-dashoffset .45s ease, opacity .45s ease;
+    }
+
+    &.active {
+        cursor: pointer;
+
+        circle {
+            stroke-dashoffset: 0;
+            opacity: 0.78;        
+        }   
+        path {
+            stroke-width: 2;
+        }    
+    }
+}
+
+nav[class*="fLinkRow"] {
+    position: relative;
+    margin-bottom: 1.2em;
+    color: white;
+    font-size: 1.25em;
+    letter-spacing: 0.15em;
+    
+    a { margin: 0 2em; }
+}
+
+nav.fLinkRow1, 
+nav.fLinkRow3 {
+    opacity: 0.5;
+}
+
+nav.fLinkRow2 {
+    opacity: 1;
+}
+nav.fLinkRow3 {
+    margin-bottom: 0;
+}
+
+// div.fcentered small {
+footer.pageFooter small {
+    position: relative;
+    display: block;
+    text-align: center;
+    padding-bottom: 1em;
+    font-size: 1.35em;
+    color: rgba(255,255,255, 0.6);
+    letter-spacing: 0.2em;
+
+    span {
+        font-weight: bold;
+        color: rgba(255,255,255, 1);    
+    }
+}
+
+img.fgeoicon {
+    display: block;
+
+    @media screen and (max-width: 1600px) {
+        width:  80px;
+        height: 91px;
+    }
+
+    position: relative;
+
+    margin: auto;
+}
+
+html.fonts-loaded {
+    div.fewe { font-family: "Anders"; }
+    div.fLeaveMessage { font-family: "Josefin Slab"; }
+    input.fTypeMessage { font-family: "Sorts Mill"; }
+    p.fGiveFeedback { font-family: "Josefin Slab"; }   
+    nav.fLinkRow1 { font-family: "Sorts Mill"; } 
+    // div.fcentered small { font-family: "Sorts Mill"; }
+    footer.pageFooter small { font-family: "Sorts Mill"; }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* *************** */
+/* Background Svgs */
+/* *************** */
+footer.pageFooter {
+    svg {
+        transition: all .2s ease;
+    }
+}
+
+
+svg[id*="footerSvg"] {
+    position: absolute;
+}
+
+svg#footerSvg1 {
+    width: 100%;
+    height: auto;
+    top: 0;
+    left: 0;
+
+    fill: none;
+    stroke: white;
+    stroke-width: 0.09;
+
+    path.dashed {
+        stroke-dasharray: 0.68999997, 0.68999997;
+        stroke-linejoin: bevel;
+    }
+
+    path.dashed:nth-child(4) {
+        opacity: 0.35;
+    }
+
+    path:nth-child(1) {
+        stroke-dasharray: 215;
+        stroke-dashoffset: 215;
+        animation: footerSvgAnim2 10s 1s ease infinite;
+    }
+
+    path:nth-child(2) {
+        stroke-dasharray: 160;
+        stroke-dashoffset: 160;
+        animation: footerSvgAnim1 8.5s ease infinite;
+    }
+}
+
+svg#footerSvg4 {
+    path#fs4p1 {
+        stroke-dasharray: 90;
+        stroke-dashoffset: 90;
+        animation: footerSvgAnim3 7.5s 2s ease infinite;
+    }
+}
+
+$footerSvgAnimDashArrays:  160, 215, 90;
+@for $i from 1 through 3 {
+    @keyframes footerSvgAnim#{$i} {
+        0% { 
+            stroke-dasharray:  nth($footerSvgAnimDashArrays, $i);
+            stroke-dashoffset: nth($footerSvgAnimDashArrays, $i);    
+        }
+
+        10% {
+            stroke-dasharray: nth($footerSvgAnimDashArrays, $i);
+            stroke-dashoffset: 0;        
+        }
+
+        90% {
+            stroke-dasharray: nth($footerSvgAnimDashArrays, $i);
+            stroke-dashoffset: 0;        
+        }
+
+        100% {
+            stroke-dasharray: nth($footerSvgAnimDashArrays, $i);
+            stroke-dashoffset: nth($footerSvgAnimDashArrays, $i) * -1;        
+        }
+    }
+}
+
+svg#footerSvg2 {
+    width:  38vw;
+    height: 38vw;
+    right: -10vw; 
+    top:   -8vw; 
+
+    circle:nth-child(1) {
+        stroke: white;
+        fill: none;
+        stroke-dasharray: 0.5 0.5; 
+        stroke-width: 0.13;
+        opacity: 0.85;
+    }
+    circle:nth-child(2) {
+        stroke: white;
+        fill: none;
+        stroke-width: 0.08;
+        opacity: 0.3;
+    }
+}
+
+svg#footerSvg3 {
+    width:  180vh;
+    height: 180vh;
+    top:    -2vh; 
+    left:   -23vh;
+
+    stroke: white;
+    fill: none;
+    stroke-dasharray: 0.25 0.25; 
+    stroke-width: 0.03;
+    opacity: 0.65;
+}
+
+svg#footerSvg4 {
+    width:  80vw;
+    bottom: -3vw; 
+    right:  -24vw;
+
+    stroke: white;
+    fill: none;
+    stroke-dasharray: 0.25 0.25; 
+    stroke-width: 0.03;
+
+    #fs4p1, #fs4p2 {
+        stroke-dasharray: none;    
+    }
+    #fs4p3 {
+        stroke-dasharray: 0.35 0.35;    
+    }
+
+    #fs4t1 { stroke-width: 0.085; }
+    #fs4t2 { stroke-width: 0.06; stroke-dasharray: none; opacity: 0.2; }
+    #fs4t3 { stroke-width: 0.06; opacity: 0.55; }
+    #fs4t4 { stroke-width: 0.06; stroke-dasharray: none; opacity: 0.4; }
+    #fs4t5 { stroke-width: 0.16; stroke-dasharray: 0.6 0.6; }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* *************** */
+/* Media queries */
+/* *************** */
+@media all and (max-aspect-ratio: 12/10) {
+    svg#footerSvg1 {
+        width: 150%;
+        height: auto;
+        left: -25%;
+    }
+
+    svg#footerSvg2 {
+        display: none;
+    }
+
+    svg#footerSvg4 {
+        width:  149vh;
+        height: auto;
+        bottom: -17vh; 
+        right:  -47vh;
+    }
+}
+
+
+
+
+/** bigger screens media queries **/
+@media all and(min-width: 1550px) {
+    div.fcentered {
+        font-size: 1.0em;
+    }
+}
+@media all and(min-width: 1750px) {
+    div.fcentered {
+        font-size: 1.15em;
+    }
+}
+@media all and(min-width: 1900px) {
+    div.fcentered {
+        font-size: 1.2em;
+    }
+}
+/** bigger screens media queries - END **/
+
+
+
+
+
+
+
+
+
+/** smaller screens media queries **/
+@media all and(max-width: 660px) {
+    input.fTypeMessage {
+        padding-left: 0.5em;
+        padding-right: 0.5em;
+        width: 21.5em;
+    }
+
+    svg.fInputArrow {
+        right: 4em;
+    }
+}
+
+@media all and(max-width: 660px) {
+    input.fTypeMessage {
+        padding-left: 0.5em;
+        padding-right: 0.5em;
+        width: 21.5em;
+    }
+
+    svg.fInputArrow {
+        right: 4em;
+    }
+}
+
+@media all and(max-width: 600px) {
+    div.fcentered {
+        font-size: 0.7em;
+    }
+
+    nav[class*="fLinkRow"] {
+        font-size: 1.4em;
+
+        a {
+            display: inline-block;
+            margin: 3px 2em;
+        }
+    }
+}
+
+@media all and(max-width: 410px) {
+    div.fcentered {
+        font-size: 0.6em;
+    }
+
+    nav.fLinkRow1 {
+        display: none;
+    }
+    nav.fLinkRow2 {
+        display: none;
+    }    
+    nav.fLinkRow3 {
+        font-size: 1.2em;
+        a {
+            display: inline-block;
+            margin: 3px 1em;
+        }
+    }
+
+    input.fTypeMessage {
+        width: 18.5em;
+    }
+
+    svg.fInputArrow {
+        right: 2em;
+    }
+}
+/** smaller screens media queries - END **/

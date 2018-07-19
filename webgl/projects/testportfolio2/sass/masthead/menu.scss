@@ -1,0 +1,180 @@
+svg.mhMenuIcon {
+    @media all and (max-aspect-ratio: 11/10) {
+        display: none;
+    }
+    
+    cursor: pointer;
+
+    position: absolute;
+    right:  1em;
+    bottom: 2px;
+
+    width:  3.5em;
+    height: 3.5em;
+
+    z-index: 3;
+
+    path {
+        stroke-width: 4.5;
+    }
+
+
+    path:nth-child(1) { stroke: #fff; }
+    path:nth-child(2) { stroke: #ccc; }
+    path:nth-child(3) { stroke: #aaa; }
+    path:nth-child(4) { stroke: #888; }
+
+    path:nth-child(1) {
+        stroke-dashoffset: -166;
+        stroke-dasharray:   166;
+    }    
+    path:nth-child(2) {
+        stroke-dashoffset: 180;
+        // stroke-dashoffset: 0;
+        stroke-dasharray:  222;
+    }
+    path:nth-child(4) {
+        stroke-dashoffset: 108;
+        stroke-dasharray:  166;
+    }
+
+
+    $menuAnimDuration: .6s;
+
+    // transitions 
+    path:nth-child(3) {
+        transition: opacity $menuAnimDuration ease, transform $menuAnimDuration ease;;
+    }
+    path:nth-child(1) {
+        transition: stroke-dasharray $menuAnimDuration ease; 
+    }
+    path:nth-child(2),
+    path:nth-child(4) {
+        transition: stroke-dashoffset $menuAnimDuration ease; 
+    }
+}
+
+svg.mhMenuIcon.active {
+    path:nth-child(1) {
+        stroke-dashoffset: -166;
+        stroke-dasharray:   5;
+    }  
+    path:nth-child(2) {
+        stroke-dashoffset: -88;
+        stroke-dasharray:  222;
+    }
+    path:nth-child(3) {
+        transform: translateY(-20px);
+        opacity: 0;
+    }    
+    path:nth-child(4) {
+        stroke-dashoffset: -104;
+        stroke-dasharray:  166;
+    }
+}
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*** menu cells ***/
+.mhOpenMenuContainer {
+    @media all and (max-aspect-ratio: 11/10) {
+        display: none;
+    }
+  
+  
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+  
+    width: 100%;
+    height: 100%;
+  
+    display: flex;
+    flex-flow: row nowrap;
+  
+    transition: opacity .4s ease-out, transform .4s ease-out;
+  
+    opacity: 0;
+    transform: scale(1.4, 1.4);
+
+    &.active {
+       opacity: 1;
+       transform: scale(1, 1);
+    }
+}
+
+
+
+.mhMenuCell {
+    width: 25%;
+    height: 100%;
+    position: relative;
+
+    box-sizing: border-box;
+    border-right: 1px dashed rgba(255, 255, 255, 0.5);
+
+    @media all and (min-width: 1600px) {
+        border-right: 2px dashed rgba(255, 255, 255, 0.5);
+    }
+
+    a {
+        transition: color .2s ease;
+        font-family: "Anders", sans-serif;
+        font-size: 7vh;
+        color: white;
+        text-align: center;
+        display: block;
+        transform: translate(0%, -50%);
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        text-shadow: 0 0 4px black, 0 0 4px black;
+        // font-weight: bold;
+
+        &:hover {
+            color: rgb(255, 248, 210);
+        }
+
+        z-index: 2;        
+    }
+
+    svg {
+        fill: white;
+        opacity: 0.25;
+        width:  25vh;
+        height: 25vh;
+
+        position: absolute;
+
+        top: 50%;
+        left: 50%;
+
+        transition: fill .2s ease;
+
+        transform: translate(-50%, -50%);
+        z-index: 1;
+    }
+
+    a:hover + svg {
+        fill: rgb(255, 248, 210);
+    }
+}
+
+$colorlist: (rgba(15, 15, 15, 0.75), rgba(30, 30, 30, 0.85), rgba(55, 55, 55, 0.75), rgba(75, 75, 75, 0.75));
+// $colorlist: (rgba(15, 15, 15, 0.5), rgba(30, 30, 30, 0.65), rgba(75, 75, 75, 0.45), rgba(110, 110, 110, 0.5));
+@for $i from 1 through 4 {
+    .mhMenuCell:nth-child(#{$i}) {
+        background: nth($colorlist, $i);
+    }
+}

@@ -1,0 +1,7 @@
+canvas#mainCanvas {
+    position: fixed;
+    top: 0; left: 0;
+
+    /* somehow deleting this line will make vertical scrollbars disappear */
+    z-index: 0;
+}

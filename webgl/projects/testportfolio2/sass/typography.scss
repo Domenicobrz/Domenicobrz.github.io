@@ -1,0 +1,93 @@
+// potresti creare diversi mixin con diverse modular scale ed applicare alla fine del documento quale mixin utilizzare
+
+// font size
+$fs: 1em;
+
+// font size plus
+$fsp1: 1.618em;
+$fsp2: 2.618em;
+$fsp3: 4.236em;
+$fsp4: 6.854em;
+$fsp5: 11.089em;
+$fsp6: 17.942em;
+$fsp7: 29.030em;
+
+// font size minus
+$fsm1: 0.618em;
+$fsm2: 0.382em;
+$fsm3: 0.236em;
+$fsm4: 0.146em;
+$fsm5: 0.09em;
+$fsm6: 0.056em;
+$fsm7: 0.0346em;
+
+
+// Font Template
+// @font-face {
+//   font-family: 'Museo Sans';
+//   src: url('webfont.eot'); /* IE9+ Compat Modes */
+//   src: url('webfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+//        url('webfont.woff2') format('woff2'), /* Super modern browsers */
+//        url('webfont.woff') format('woff'), /* Modern browsers */
+//        url('webfont.ttf')  format('truetype'), /* Safari, Android, iOS */
+//        url('webfont.svg#FontName') format('svg'); /* Legacy iOS */
+// }
+
+
+
+/* fonts actually in use */
+@font-face {
+  font-family: 'Anders';
+  src: url('../assets/fonts/Anders.ttf') format('truetype'); 
+}
+@font-face {
+  font-family: 'Josefin Slab';
+  src: url('../assets/fonts/JosefinSlab-Regular.ttf') format('truetype'); 
+}
+@font-face {
+  font-family: 'Sorts Mill';
+  src: url('../assets/fonts/GoudyStM-webfont.woff') format('woff');
+}
+
+
+
+
+
+
+
+
+
+// @font-face {
+//   font-family: 'SharpUnity';
+//   src: url('../assets/fonts/SharpUnity-Extrabold.woff') format('woff'); 
+// }
+
+// @font-face {
+//   font-family: 'MuseoSansBold';
+//   src: url('../assets/fonts/MuseoSansBold.woff') format('woff'); 
+// }
+
+// @font-face {
+//   font-family: 'MuseoSansRegular';
+//   src: url('../assets/fonts/MuseoSansRegular.woff') format('woff'); 
+// }
+
+// @font-face {
+//   font-family: 'MuseoSansBlack';
+//   src: url('../assets/fonts/MuseoSansBlack.ttf') format('truetype'); 
+// }
+
+// @font-face {
+//   font-family: 'MuseoSans300';
+//   src: url('../assets/fonts/MuseoSans-300.woff2') format('woff2'); 
+// }
+
+// @font-face {
+//   font-family: 'MuseoSans500';
+//   src: url('../assets/fonts/MuseoSans-500.woff2') format('woff2'); 
+// }
+
+// @font-face {
+//   font-family: 'MuseoSans900';
+//   src: url('../assets/fonts/MuseoSans-900.woff2') format('woff2'); 
+// }

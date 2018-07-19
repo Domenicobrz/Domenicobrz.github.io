@@ -1,0 +1,17 @@
+c++ circular reference
+
+
+https://fonts.google.com/specimen/Josefin+Slab
+https://fonts.google.com/specimen/Cormorant+Garamond    <--  at 500
+https://fonts.google.com/specimen/Sorts+Mill+Goudy
+
+
+SET FONT COOKIE - SET FONT COOKIE - SET FONT COOKIE
+// cookie setup
+https://www.filamentgroup.com/lab/font-events.html
+
+
+what about pre-computing geometries?
+what about pre-computing geometries?
+what about pre-computing geometries?
+what about pre-computing geometries?

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="204.84mm" height="139.34mm" version="1.1" viewBox="0 0 204.84497 139.33643" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+
+ <g transform="translate(-2.2988 -23.078)">
+  <path d="m206.66 112.37-204.34 49.989" style="fill:none;stroke-width:.115;stroke:#000"/>
+  <path d="m207.13 116.27-114.83 28.091" style="fill:none;stroke-width:.12925;stroke:#000"/>
+  <circle transform="rotate(4.3893)" cx="103.09" cy="136.86" r=".63187" style="fill:none;stroke-width:.129;stroke:#000"/>
+  <path d="m61.662 147.86-28.534-106.9" style="fill:none;stroke-dasharray:0.38999997, 0.38999997;stroke-linejoin:bevel;stroke-width:.13;stroke:#000"/>
+  <path d="m56.861 148.99-28.534-106.9" style="fill:none;stroke-dasharray:0.38999997, 0.38999997;stroke-linejoin:bevel;stroke-width:.13;stroke:#000"/>
+  <path d="m134.37 130-28.534-106.9" style="fill:none;stroke-dasharray:0.38999997, 0.38999997;stroke-linejoin:bevel;stroke-width:.13;stroke:#000"/>
+ </g>
+</svg>

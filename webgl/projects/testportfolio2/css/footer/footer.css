@@ -1,0 +1,157 @@
+footer.pageFooter {
+  position: relative;
+  background: #212121; }
+
+footer.pageFooter::before {
+  content: " ";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 15px;
+  background: linear-gradient(to top, #212121, #171717); }
+
+div.fcontainer {
+  position: relative;
+  min-height: calc(100vh - 2em);
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  font-size: 1em; }
+
+div.fcentered {
+  margin: 4em 0;
+  position: relative;
+  font-size: 0.8em;
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
+  align-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 70vh; }
+
+div.footerRow {
+  position: relative; }
+
+div.footerRowSpacer {
+  position: relative;
+  height: 4em;
+  width: 100%; }
+
+div.fewe {
+  position: relative;
+  font-size: 1.25em;
+  color: white; }
+  div.fewe > span {
+    display: block;
+    letter-spacing: 0.15em; }
+  div.fewe span:nth-child(1) {
+    font-size: 4.3em; }
+  div.fewe span:nth-child(2) {
+    font-size: 2.8em; }
+
+div.fLeaveMessage {
+  position: relative;
+  font-size: 2em;
+  color: white; }
+
+input.fTypeMessage {
+  color: white;
+  font-size: 2.3em;
+  width: 28.5em;
+  background: none;
+  border: none;
+  border-bottom: 2px solid white;
+  text-align: center;
+  padding-bottom: 0.3em;
+  margin-bottom: 1.0em; }
+
+p.fGiveFeedback {
+  color: white;
+  font-size: 2em;
+  text-align: center;
+  margin-bottom: 0.5em; }
+
+div.fcentered svg {
+  width: 6em;
+  height: 6em;
+  padding: 0 0.5em; }
+  div.fcentered svg path {
+    stroke: white;
+    stroke-width: 1;
+    fill: none;
+    transition: stroke-width .45s ease; }
+  div.fcentered svg circle {
+    stroke: white;
+    stroke-width: 1;
+    fill: none;
+    stroke-dasharray: 360;
+    stroke-dashoffset: -360;
+    opacity: 0.3;
+    transition: stroke-dashoffset .45s ease, opacity .45s ease; }
+  div.fcentered svg.active {
+    cursor: pointer; }
+    div.fcentered svg.active circle {
+      stroke-dashoffset: 0;
+      opacity: 0.78; }
+    div.fcentered svg.active path {
+      stroke-width: 2; }
+
+nav[class*="fLinkRow"] {
+  position: relative;
+  margin-bottom: 1.2em;
+  color: white;
+  font-size: 1.25em;
+  letter-spacing: 0.15em; }
+  nav[class*="fLinkRow"] a {
+    margin: 0 2em; }
+
+nav.fLinkRow1,
+nav.fLinkRow3 {
+  opacity: 0.5; }
+
+nav.fLinkRow2 {
+  opacity: 1; }
+
+nav.fLinkRow3 {
+  margin-bottom: 0; }
+
+footer.pageFooter small {
+  position: relative;
+  display: block;
+  text-align: center;
+  padding-bottom: 1em;
+  font-size: 1.35em;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.2em; }
+  footer.pageFooter small span {
+    font-weight: bold;
+    color: white; }
+
+img.fgeoicon {
+  display: block;
+  position: relative;
+  width: 10em;
+  height: auto;
+  margin: auto; }
+
+html.fonts-loaded div.fewe {
+  font-family: "Anders"; }
+
+html.fonts-loaded div.fLeaveMessage {
+  font-family: "Josefin Slab"; }
+
+html.fonts-loaded input.fTypeMessage {
+  font-family: "Sorts Mill"; }
+
+html.fonts-loaded p.fGiveFeedback {
+  font-family: "Josefin Slab"; }
+
+html.fonts-loaded nav.fLinkRow1 {
+  font-family: "Sorts Mill"; }
+
+html.fonts-loaded footer.pageFooter small {
+  font-family: "Sorts Mill"; }

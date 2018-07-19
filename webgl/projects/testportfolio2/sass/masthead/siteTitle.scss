@@ -1,0 +1,116 @@
+.siteTitle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    opacity: 0;
+    transition: opacity 1.25s ease;
+
+    width: 33em;
+    font-size: 1.5em;
+}
+
+.siteTitle_DB {
+    position: relative;
+    text-align: center;
+    margin-bottom: 0.85em;
+
+    svg {
+        display: inline-block;
+        width:  2.2em;
+        height: 2.2em;
+        stroke: white;
+        stroke-width: 25;
+    }
+
+    svg:nth-child(1) { transform: scale(-1, 1); }
+    svg:nth-child(2) { margin-left: -0.9em; }
+}
+
+.siteTitle_Creative {
+    position: relative;
+    text-align: center;
+    margin-bottom: 0.65em;
+
+    svg {
+        display: inline-block;
+        width:  2.6em;
+        height: 2.6em;
+        stroke: white;
+        stroke-width: 11.5;
+    }
+
+    svg:nth-child(5) { margin-left: -0.8em; }
+    svg:nth-child(6) { margin-left: -1em; }
+    svg:nth-child(7) { margin-left: -1em; }
+    svg:nth-child(8) { margin-left: -0.8em; }
+
+
+    @for $i from 1 through 8 {
+        svg:nth-child(#{$i}) { 
+            animation: siteTitleAnimGrow    #{3.0 + random(2000) / 1000}s #{(random(1000) / 1000 )}s ease infinite,
+                       siteTitleAnimOpacity #{3.0 + random(2000) / 1000}s #{(random(1000) / 1000 )}s ease infinite; 
+        }
+    }
+
+}
+
+.siteTitle_Coding {
+    position: relative;
+    text-align: center;
+
+    svg {
+        display: inline-block;
+        width:  1.8em;
+        height: 1.8em;
+        stroke: white;
+        stroke-width: 7;
+    }
+    svg:nth-child(4) { margin-left: -0.8em; }
+    svg:nth-child(5) { margin-left: -0.8em; }
+
+    @for $i from 1 through 8 {
+        svg:nth-child(#{$i}) { 
+            animation: siteTitleAnimOpacity2 #{3.0 + random(2000) / 1000}s #{(random(1000) / 1000 )}s ease infinite; 
+        }
+    }
+}
+
+@keyframes siteTitleAnimGrow {
+    0% { transform: scale(1, 1); }
+    50% { transform: scale(1.2, 1.2); }
+    100% { transform: scale(1, 1); }
+}
+
+@keyframes siteTitleAnimOpacity {
+    0%   { opacity: 1; }
+    15%  { opacity: 1; }
+    50%  { opacity: 0.45; }
+    85%  { opacity: 1; }
+    100% { opacity: 1; }
+}
+
+@keyframes siteTitleAnimOpacity2 {
+    0%   { opacity: 1; }
+    50%  { opacity: 0.57; }
+    100% { opacity: 1; }
+}
+
+
+
+
+
+
+
+// @media all and (max-width: 1450px) {
+//     .siteTitle {
+//         font-size: 1.5em;
+//     }
+// }
+@media all and (max-width: 600px) {
+    .siteTitle {
+        width: 28em;
+        font-size: 1.15em;    
+    }
+}
