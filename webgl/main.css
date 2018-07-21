@@ -502,7 +502,7 @@ hr.header_separator {
 
 .header_spinner2 {
   position: absolute;
-  top: 52%;
+  top: 55.5%;
   left: 50%;
   width: 215px;
   height: 215px;
@@ -519,7 +519,7 @@ hr.header_separator {
 
 .header_spinner_closer2 {
   position: absolute;
-  bottom: 37%;
+  bottom: 32%;
   width: 100%;
   height: 100%;
   z-index: -1;
@@ -530,7 +530,7 @@ hr.header_separator {
 
 .header_spinner {
   position: absolute;
-  top: 52%;
+  top: 55.5%;
   left: 50%;
   width: 200px;
   height: 200px;
@@ -597,7 +597,7 @@ hr.header_separator {
   width: 100%;
   height: 100%;
   z-index: -1;
-  top: 73.5%;
+  top: 78.5%;
   background: white; }
   @media all and (min-width: 1600px) {
     .header_spinner_closer {

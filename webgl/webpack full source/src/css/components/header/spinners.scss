@@ -1,7 +1,7 @@
 
 .header_spinner2 {
         position: absolute;
-        top: 52%;
+        top: 55.5%;
         left: 50%;
 
         width:  215px;
@@ -22,7 +22,7 @@
 
 .header_spinner_closer2 {
     position: absolute;
-    bottom: 37%;
+    bottom: 32%;
     @media all and (min-width: $large-screen-breakpoint) {
         bottom: 33%;
     }
@@ -39,7 +39,7 @@
 .header_spinner {
     position: absolute;
 
-    top: 52%;
+    top: 55.5%;
     left: 50%;
 
     width:  200px;
@@ -141,7 +141,7 @@
 
     z-index: -1;
 
-    top: 73.5%;
+    top: 78.5%;
     @media all and (min-width: $large-screen-breakpoint) {
         top: 77%;
     }
