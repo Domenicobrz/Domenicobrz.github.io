@@ -1,0 +1,170 @@
+<!doctype html> <html lang=en> <head> <meta charset=UTF-8> <meta name=viewport content="width=device-width,initial-scale=1"> <title></title> <script type=x-shader/x-vertex id=vertexshader> attribute vec3  nextvertex;
+        attribute float vertindex;
+        attribute float lineindex;
+
+        uniform float time;
+
+        varying vec4 camColor;
+        varying vec2 envdir;
+
+        #define M_PI 3.1415926535897932384626433832795
+
+        mat4 rotationMatrix(vec3 axis, float angle) {
+            axis = normalize(axis);
+            float s = sin(angle);
+            float c = cos(angle);
+            float oc = 1.0 - c;
+
+            return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
+                        oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
+                        oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
+                        0.0,                                0.0,                                0.0,                                1.0);
+        }
+
+        float rand(vec2 n) { 
+            return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
+        }
+
+        float noise(vec2 n) {
+            const vec2 d = vec2(0.0, 1.0);
+            vec2 b = floor(n), f = smoothstep(vec2(0.0), vec2(1.0), fract(n));
+            return mix(mix(rand(b), rand(b + d.yx), f.x), mix(rand(b + d.xy), rand(b + d.yy), f.x), f.y);
+        }
+
+        void main() {
+
+
+            bool noAnim = false; 
+
+            float rand1 = rand(vec2(lineindex * 0.016, 1.0)); 
+            float rand2 = rand(vec2(lineindex * 0.133, 3.0)); 
+            float rand3 = rand(vec2(lineindex * 0.089, 2.0)); 
+    
+            float noise1 = noise(vec2(lineindex * 0.016, 1.0)); 
+            float noise2 = noise(vec2(lineindex * 0.133, 3.0)); 
+            float noise3 = noise(vec2(lineindex * 0.089, 2.0)); 
+
+            float animationDuration = 4.0 * rand2 + 4.0;
+            float maxTranslation     = animationDuration * 2.0 * (rand3 + 0.2);
+            float currentTranslation  = time              * 2.0 * (rand3 + 0.2);
+            float xTranslation = mod(currentTranslation, maxTranslation);
+            float yTranslation = (rand3 * 2.0 - 1.0) * 0.5;
+            float zTranslation = (rand1 * 2.0 - 1.0) * 0.5;
+
+            vec3 translationAmount = vec3(-xTranslation, yTranslation * xTranslation, zTranslation * xTranslation);
+            float rotationAmount = -time * (1.1 + rand1);
+            
+            vec3 translation = (position + nextvertex) / 2.0;
+            vec3 newPosition = position - translation;
+            newPosition = (rotationMatrix(vec3(1.0, 0.0, 0.0), rotationAmount) * vec4(newPosition, 1.0)).xyz;
+            newPosition += translation + translationAmount;
+    
+            vec3 nextVertNewPosition = nextvertex - translation;
+            nextVertNewPosition = (rotationMatrix(vec3(1.0, 0.0, 0.0), rotationAmount) * vec4(nextVertNewPosition, 1.0)).xyz;
+            nextVertNewPosition += translation + translationAmount;
+           
+
+
+
+            // In this case we're not animating lines, so revert back to defaults
+            if (fract(lineindex / 3.0) > 0.3) {
+                newPosition = position;
+                nextVertNewPosition = nextvertex;
+                translationAmount = vec3(0.0);
+                noAnim = true;
+            }
+
+
+
+
+
+
+
+            /****** LINE PROJECTION AND EXPANSION *******/
+            /****** LINE PROJECTION AND EXPANSION *******/
+
+            vec4 v1clip = projectionMatrix * modelViewMatrix * vec4( newPosition,   1.0 );
+            v1clip /= v1clip.w;
+            vec4 v2clip = projectionMatrix * modelViewMatrix * vec4( nextVertNewPosition, 1.0 );
+            v2clip /= v2clip.w;
+            
+            vec2 v1 = v1clip.xy;
+            vec2 v2 = v2clip.xy;
+
+            vec2 linedir = normalize(v1 - v2);
+            vec2 linenormal = vec2(-linedir.y, linedir.x);
+
+
+            // float lineSize = 0.01 * pow((1.0 - v1clip.z / v1clip.w), 3.0);
+            // float lineSize = 0.0015;
+            // float lineSize = /*0.0015 +*/ noise(vec2(lineindex * 0.13, time)) * 0.0035;
+            // float lineSize = 0.0005 + noise(vec2(lineindex * 0.13, time)) * 0.0025;
+            float lineSize = 0.0005 + noise(vec2(lineindex * 0.13, time)) * 0.0033;
+            vec2 offset = vec2(0.0);
+
+            if (vertindex < 0.1) {
+                offset = +lineSize * linenormal;
+            } else if (vertindex > 0.9 && vertindex < 1.1) {
+                offset = -lineSize * linenormal;                
+            } else if (vertindex > 1.9 && vertindex < 2.1) {
+                offset = -lineSize * linenormal;                                
+            } else {
+                offset = +lineSize * linenormal;                                
+            }
+
+            v1 += offset;
+
+            vec4 finalPos = vec4(v1.x * v1clip.w, v1.y * v1clip.w, v1clip.z, v1clip.w); 
+            gl_Position = finalPos;
+
+            /****** LINE PROJECTION AND EXPANSION - END *******/
+            /****** LINE PROJECTION AND EXPANSION - END *******/
+
+
+            
+            float alphaColor = noise(vec2(lineindex * 5.0, time));
+            alphaColor /= (1.0 + pow(-translationAmount.x, 3.1) * 0.05);
+            float animPhase = mod(time, animationDuration) / animationDuration;
+            
+            if ( !noAnim ) {
+                if( animPhase < 0.15) {
+                    alphaColor *= (animPhase) * (1.0 / 0.15);
+                } else if ( animPhase > 0.85 ) {
+                    alphaColor *= 1.0 - (animPhase - 0.85) * (1.0 / 0.15);
+                } 
+            }
+
+
+
+
+            /****** LINE COLOR *******/
+            vec3 line3Ddir = reflect(normalize(newPosition - cameraPosition), normalize(vec3(noise3 * 2.0 - 1.0, 
+                                                                                             noise1 * 2.0 - 1.0, 
+                                                                                             noise2 * 2.0 - 1.0))); 
+
+            envdir = vec2(   (atan(line3Ddir.z, line3Ddir.x) + (M_PI / 1.0)) / M_PI,      line3Ddir.y * 0.5 + 0.5 );
+
+            // float n1 = noise(vec2(rotationAmount * 0.3, lineindex)) * 2.0 - 1.0;
+            // float n2 = noise(vec2(lineindex, rotationAmount * 0.3)) * 2.0 - 1.0;
+            // envdir = vec2(n1, n2);
+
+
+            camColor = vec4(1.0, 1.0, 1.0, alphaColor);
+            camColor.xyz *= 1.6 * noise3 * noise2 * noise1;
+            // if (mod(lineindex, 1.0) > 1.0) {
+            // if (fract(lineindex / 3.0) > 0.3) {            
+            //     camColor.x = 0.0;
+            //     camColor.y = 0.0;
+            //     camColor.z = 0.0;
+            // }
+
+            /****** LINE COLOR - END *******/
+        } </script> <script type=x-shader/x-fragment id=fragmentshader> varying vec4 camColor;
+        varying vec2 envdir;
+
+        uniform sampler2D uTexEqui;
+        
+        void main() {
+            vec4 col = texture2D(uTexEqui, envdir) * camColor * 1.5;
+            gl_FragColor = col;
+        } </script> <style>body,html{overflow:hidden;width:100%;height:100%}*{margin:0}</style> </head> <body> <script type="text/javascript" src="bundle.js"></script></body> </html>
