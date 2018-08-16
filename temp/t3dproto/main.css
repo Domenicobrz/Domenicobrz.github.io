@@ -1,0 +1,135 @@
+html, body {
+  box-sizing: border-box;
+  margin: 0; }
+
+*, *:before, *:after {
+  box-sizing: inherit; }
+
+.view-container {
+  width: 100%;
+  height: 100vh; }
+
+.main-canvas-container {
+  width: 100%;
+  height: 55%;
+  position: relative;
+  background: black; }
+
+div[class*="sec-canvas"] {
+  width: calc(20% - 0.1em); }
+  div[class*="sec-canvas"]:not(:last-child) {
+    margin-right: 0.5em; }
+  div[class*="sec-canvas"] canvas {
+    position: absolute;
+    top: 0;
+    left: 0; }
+
+.displacement-components-container {
+  display: flex;
+  flex-flow: column nowrap;
+  height: 45%;
+  padding: 0.5em 0.5em;
+  overflow: hidden; }
+  .displacement-components-container .secondary-canvas-container {
+    display: flex;
+    flex-flow: row nowrap;
+    flex: 1 1 auto; }
+    .displacement-components-container .secondary-canvas-container div {
+      position: relative;
+      display: flex;
+      flex-flow: column;
+      justify-content: center;
+      align-items: center; }
+      .displacement-components-container .secondary-canvas-container div.active {
+        background: #fff; }
+        .displacement-components-container .secondary-canvas-container div.active canvas {
+          opacity: 0.25; }
+        .displacement-components-container .secondary-canvas-container div.active input {
+          opacity: 1;
+          pointer-events: inherit;
+          z-index: 1; }
+      .displacement-components-container .secondary-canvas-container div input {
+        width: 10em;
+        height: 1em;
+        position: absolute;
+        -webkit-transform: rotate(90deg);
+                transform: rotate(90deg);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s; }
+  .displacement-components-container .components-icons-container {
+    margin-top: 0.5em;
+    border-top: 1px solid #ccc;
+    padding-top: 0.5em;
+    display: flex;
+    flex-flow: row nowrap; }
+    .displacement-components-container .components-icons-container > div {
+      border: 1px solid #ccc;
+      width: calc((100vw - 1em) / 5 - 0.5em + 2px);
+      height: calc((100vw - 1em) / 5 - 0.5em + 2px);
+      position: relative;
+      cursor: pointer;
+      transition: background .4s, border-radius .4s; }
+      .displacement-components-container .components-icons-container > div:not(:last-child) {
+        margin-right: 0.5em; }
+      .displacement-components-container .components-icons-container > div:hover {
+        background: #ccc;
+        border-radius: 17%; }
+      .displacement-components-container .components-icons-container > div.active {
+        background: #addaff;
+        border-radius: 17%;
+        border: none; }
+      .displacement-components-container .components-icons-container > div img {
+        width: 100%;
+        height: auto; }
+
+/* Special styling for WebKit/Blink */
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 1.5em;
+  width: 2.5em;
+  border-radius: 3px;
+  background: #ffffff;
+  border: 1px solid #555;
+  cursor: pointer;
+  margin-top: -0.5em;
+  /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */ }
+
+/* All the same stuff for Firefox */
+input[type=range]::-moz-range-thumb {
+  height: 1.5em;
+  width: 2.5em;
+  border-radius: 3px;
+  background: #ffffff;
+  cursor: pointer; }
+
+/* All the same stuff for IE */
+input[type=range]::-ms-thumb {
+  height: 1.5em;
+  width: 2.5em;
+  border-radius: 3px;
+  background: #ffffff;
+  cursor: pointer; }
+
+input[type=range]::-webkit-slider-runnable-track {
+  width: 90%;
+  height: 0.5em;
+  cursor: pointer;
+  border-radius: 1.3px;
+  background: #333; }
+
+input[type=range]::-moz-range-track {
+  width: 90%;
+  height: 0.5em;
+  cursor: pointer;
+  border-radius: 1.3px;
+  background: #333; }
+
+input[type=range]::-ms-track {
+  width: 100%;
+  height: 0.5em;
+  cursor: pointer;
+  border-color: transparent;
+  color: transparent;
+  background: #333; }
+
