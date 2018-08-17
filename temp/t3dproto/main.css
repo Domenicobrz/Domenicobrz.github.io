@@ -11,63 +11,85 @@ html, body {
 
 .main-canvas-container {
   width: 100%;
-  height: 55%;
+  height: 50%;
   position: relative;
   background: black; }
 
 div[class*="sec-canvas"] {
-  width: calc(20% - 0.1em); }
-  div[class*="sec-canvas"]:not(:last-child) {
-    margin-right: 0.5em; }
+  flex: 0 0 5em;
+  background: #ccc;
+  margin-right: 3px;
+  cursor: pointer;
+  position: relative;
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Safari */
+  /* Konqueror HTML */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+                          supported by Chrome and Opera */ }
   div[class*="sec-canvas"] canvas {
     position: absolute;
     top: 0;
     left: 0; }
+  div[class*="sec-canvas"].active {
+    background: #0af; }
+    div[class*="sec-canvas"].active canvas {
+      opacity: 0.5; }
+  div[class*="sec-canvas"]:nth-child(3n+2) {
+    background: #aaa; }
+  div[class*="sec-canvas"]:nth-child(3n+3) {
+    background: #ddd; }
+
+.view-container input[type="range"].displacement-range {
+  width: 80%;
+  height: 5%;
+  padding: 0.5em 0;
+  margin: auto;
+  display: block; }
 
 .displacement-components-container {
   display: flex;
   flex-flow: column nowrap;
   height: 45%;
-  padding: 0.5em 0.5em;
   overflow: hidden; }
   .displacement-components-container .secondary-canvas-container {
     display: flex;
     flex-flow: row nowrap;
-    flex: 1 1 auto; }
-    .displacement-components-container .secondary-canvas-container div {
-      position: relative;
-      display: flex;
-      flex-flow: column;
-      justify-content: center;
-      align-items: center; }
-      .displacement-components-container .secondary-canvas-container div.active {
-        background: #fff; }
-        .displacement-components-container .secondary-canvas-container div.active canvas {
-          opacity: 0.25; }
-        .displacement-components-container .secondary-canvas-container div.active input {
-          opacity: 1;
-          pointer-events: inherit;
-          z-index: 1; }
-      .displacement-components-container .secondary-canvas-container div input {
-        width: 10em;
-        height: 1em;
-        position: absolute;
-        -webkit-transform: rotate(90deg);
-                transform: rotate(90deg);
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.4s; }
+    flex: 1 1 auto;
+    overflow: hidden; }
   .displacement-components-container .components-icons-container {
-    margin-top: 0.5em;
     border-top: 1px solid #ccc;
-    padding-top: 0.5em;
+    padding: 0.5em 0;
     display: flex;
-    flex-flow: row nowrap; }
+    flex-flow: row nowrap;
+    overflow: hidden;
+    will-change: transform;
+    background: #eee; }
     .displacement-components-container .components-icons-container > div {
       border: 1px solid #ccc;
-      width: calc((100vw - 1em) / 5 - 0.5em + 2px);
-      height: calc((100vw - 1em) / 5 - 0.5em + 2px);
+      flex: 0 0 3.5em;
+      height: 3.5em;
       position: relative;
+      line-height: 3.5em;
+      text-align: center;
+      -webkit-touch-callout: none;
+      /* iOS Safari */
+      -webkit-user-select: none;
+      /* Safari */
+      /* Konqueror HTML */
+      -moz-user-select: none;
+      /* Firefox */
+      -ms-user-select: none;
+      /* Internet Explorer/Edge */
+      user-select: none;
+      /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
       cursor: pointer;
       transition: background .4s, border-radius .4s; }
       .displacement-components-container .components-icons-container > div:not(:last-child) {
@@ -81,80 +103,73 @@ div[class*="sec-canvas"] {
         border: none; }
       .displacement-components-container .components-icons-container > div img {
         width: 100%;
-        height: auto; }
+        height: auto;
+        pointer-events: none; }
 
-input[type=range] {
-  -webkit-appearance: none;
-  /* Hides the slider so that custom slider can be made */
-  width: 100%;
-  /* Specific width is required for Firefox. */
-  background: transparent;
-  /* Otherwise white in Chrome */
-  border-color: transparent;
-  color: transparent; }
-
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none; }
-
-input[type=range]:focus {
-  outline: none;
-  /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */ }
-
-input[type=range]::-ms-track {
-  width: 100%;
-  cursor: pointer;
-  /* Hides the slider so custom styles can be added */
-  background: transparent;
-  border-color: transparent;
-  color: transparent; }
-
-/* Special styling for WebKit/Blink */
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  height: 1.5em;
-  width: 2.5em;
-  border-radius: 3px;
-  background: #ffffff;
-  border: 1px solid #555;
-  cursor: pointer;
-  margin-top: -0.5em;
-  /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */ }
-
-/* All the same stuff for Firefox */
-input[type=range]::-moz-range-thumb {
-  height: 1.5em;
-  width: 2.5em;
-  border-radius: 3px;
-  background: #ffffff;
-  cursor: pointer; }
-
-/* All the same stuff for IE */
-input[type=range]::-ms-thumb {
-  height: 1.5em;
-  width: 2.5em;
-  border-radius: 3px;
-  background: #ffffff;
-  cursor: pointer; }
-
-input[type=range]::-webkit-slider-runnable-track {
-  width: 90%;
-  height: 0.5em;
-  cursor: pointer;
-  border-radius: 1.3px;
-  background: #333; }
-
-input[type=range]::-moz-range-track {
-  width: 90%;
-  height: 0.5em;
-  cursor: pointer;
-  border-radius: 1.3px;
-  background: #333; }
-
-input[type=range]::-ms-track {
-  width: 100%;
-  height: 0.5em;
-  cursor: pointer;
-  border-color: transparent;
-  color: transparent;
-  background: #333; }
+.view-container {
+  /* Special styling for WebKit/Blink */
+  /* All the same stuff for Firefox */
+  /* All the same stuff for IE */ }
+  .view-container input[type=range] {
+    -webkit-appearance: none;
+    /* Hides the slider so that custom slider can be made */
+    width: 100%;
+    /* Specific width is required for Firefox. */
+    background: transparent;
+    /* Otherwise white in Chrome */
+    border-color: transparent;
+    color: transparent; }
+  .view-container input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; }
+  .view-container input[type=range]:focus {
+    outline: none;
+    /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */ }
+  .view-container input[type=range]::-ms-track {
+    width: 100%;
+    cursor: pointer;
+    /* Hides the slider so custom styles can be added */
+    background: transparent;
+    border-color: transparent;
+    color: transparent; }
+  .view-container input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 0.75em;
+    width: 2.5em;
+    border-radius: 2px;
+    background: #ffffff;
+    border: 1px solid #555;
+    cursor: pointer;
+    margin-top: -0.25em;
+    /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */ }
+  .view-container input[type=range]::-moz-range-thumb {
+    height: 0.75em;
+    width: 2.5em;
+    border-radius: 2px;
+    background: #ffffff;
+    cursor: pointer; }
+  .view-container input[type=range]::-ms-thumb {
+    height: 0.75em;
+    width: 2.5em;
+    border-radius: 2px;
+    background: #ffffff;
+    cursor: pointer; }
+  .view-container input[type=range]::-webkit-slider-runnable-track {
+    width: 90%;
+    height: 0.5em;
+    cursor: pointer;
+    border-radius: 1.3px;
+    background: #333; }
+  .view-container input[type=range]::-moz-range-track {
+    width: 90%;
+    height: 0.5em;
+    cursor: pointer;
+    border-radius: 1.3px;
+    background: #333; }
+  .view-container input[type=range]::-ms-track {
+    width: 100%;
+    height: 0.5em;
+    cursor: pointer;
+    border-color: transparent;
+    color: transparent;
+    background: #333; }
 
