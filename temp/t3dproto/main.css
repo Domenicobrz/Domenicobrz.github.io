@@ -47,22 +47,28 @@ div[class*="sec-canvas"] {
     background: #ddd; }
 
 .view-container input[type="range"].displacement-range {
-  width: 80%;
+  position: absolute;
+  top: 0.35em;
+  left: 0;
+  width: 100%;
   height: 5%;
-  padding: 0.5em 0;
-  margin: auto;
-  display: block; }
+  display: block;
+  margin: 0;
+  padding: 0;
+  z-index: 2; }
 
 .displacement-components-container {
   display: flex;
   flex-flow: column nowrap;
-  height: 45%;
+  height: 50%;
   overflow: hidden; }
   .displacement-components-container .secondary-canvas-container {
+    position: relative;
     display: flex;
     flex-flow: row nowrap;
     flex: 1 1 auto;
-    overflow: hidden; }
+    overflow: hidden;
+    padding-top: 1.25em; }
   .displacement-components-container .components-icons-container {
     border-top: 1px solid #ccc;
     padding: 0.5em 0;
@@ -154,13 +160,13 @@ div[class*="sec-canvas"] {
     background: #ffffff;
     cursor: pointer; }
   .view-container input[type=range]::-webkit-slider-runnable-track {
-    width: 90%;
+    width: 100%;
     height: 0.5em;
     cursor: pointer;
     border-radius: 1.3px;
     background: #333; }
   .view-container input[type=range]::-moz-range-track {
-    width: 90%;
+    width: 100%;
     height: 0.5em;
     cursor: pointer;
     border-radius: 1.3px;
