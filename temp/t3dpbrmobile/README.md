@@ -1,1 +1,0 @@
-# photorealistic-webgl-renderer
