@@ -262,7 +262,7 @@ function mobilePBRmaterial(params) {
     if (params.color)
         material.uniforms.albedo.value = params.color;
 
-    material.uniforms.brdfLUT.value = (new THREE.TextureLoader()).load( 'assets/envmaps/brdf_lut_3.png' );
+    material.uniforms.brdfLUT.value = (new THREE.TextureLoader()).load( 'assets/envmaps/brdf_lut_5.png' );
     material.uniforms.envMapIntensity.value = params.envMapIntensity;
     material.uniforms.uRoughness.value = params.roughness;
     material.uniforms.uMetallic.value  = params.metallic;
