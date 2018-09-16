@@ -5,13 +5,15 @@ var posts = [
     { imgPath: "images/wolfheader.jpg",  link: "http://domenicobrz.github.io/webgl/projects/wolf-header/", description: "", tags: ["threejs"] },
     { imgPath: "images/thematrix.jpg",  link: "http://domenicobrz.github.io/webgl/projects/enter the matrix/", description: "", tags: ["webgl"] },
 
-    { imgPath: "images/reflections.jpg",  link: "http://domenicobrz.github.io/webgl/projects/Reflections/", description: "", tags: ["webgl"] },
-    { imgPath: "images/flyingsimulator.jpg",  link: "http://domenicobrz.github.io/webgl/projects/flying simulation/", description: "", tags: ["webgl"] },
+    { imgPath: "images/ssr.png",  link: "http://domenicobrz.github.io/webgl/projects/SSR/", description: "", tags: ["webgl"] },
+
     { imgPath: "images/2dsoftshadows.jpg",  link: "http://domenicobrz.github.io/webgl/projects/2D soft shadows/", description: "", tags: ["webgl", "geometry"] },
+    { imgPath: "images/flyingsimulator.jpg",  link: "http://domenicobrz.github.io/webgl/projects/flying simulation/", description: "", tags: ["webgl"] },
     { imgPath: "images/marchingcubes.jpg",  link: "http://domenicobrz.github.io/webgl/projects/marching cubes/", description: "", tags: ["webgl", "geometry"] },
     { imgPath: "images/cpufluid.jpg",  link: "http://domenicobrz.github.io/webgl/projects/CPU Fluid simulation/", description: "", tags: ["webgl"] },
     
     { imgPath: "images/audiowaves.jpg", link: "http://domenicobrz.github.io/webgl/projects/Wavelengths visualizer/", description: "", tags: ["webgl"] },
+    { imgPath: "images/reflections.jpg",  link: "http://domenicobrz.github.io/webgl/projects/Reflections/", description: "", tags: ["webgl"] },
     { imgPath: "images/dxfparser.jpg", link: "http://domenicobrz.github.io/webgl/projects/DXF-Parser/", description: "", tags: ["webgl"] },
     { imgPath: "images/marblenoise.jpg", link: "http://domenicobrz.github.io/webgl/projects/Marble noise experiment/", description: "", tags: ["webgl"] },
     { imgPath: "images/noisefield.jpg", link: "http://domenicobrz.github.io/webgl/projects/Noisefield/", description: "", tags: ["webgl"] },

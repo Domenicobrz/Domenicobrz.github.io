@@ -1,6 +1,5 @@
 function compute_icosahedronTF_lines(now, deltatime) {
 
-    // swapping buffers in the hope it works (it wont)
     var temp  = IcosahedronLinesTFProgram.buffer;
     IcosahedronLinesTFProgram.buffer = IcosahedronLinesProgram.buffer;
     IcosahedronLinesProgram.buffer   = temp;

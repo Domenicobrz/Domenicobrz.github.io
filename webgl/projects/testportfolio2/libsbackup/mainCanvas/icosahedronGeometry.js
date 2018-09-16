@@ -64,7 +64,7 @@ function generate_icosahedron_wlines() {
             var midpointv1v2 = [ (v1[0] + v2[0]) * 0.5, (v1[1] + v2[1]) * 0.5,  (v1[2] + v2[2]) * 0.5];
 
 
-            // TODO: the hashing function is PAINFULLY slow. find something else 
+            // TODO: the hashing function is slow. find something else 
             var hash1 = strhash("x" + midpointv0v1[0] + "y" + midpointv0v1[1] + "z" + midpointv0v1[2]);
             if(verticeshashtable[hash1] === undefined) {
                 vertices.push(midpointv0v1);

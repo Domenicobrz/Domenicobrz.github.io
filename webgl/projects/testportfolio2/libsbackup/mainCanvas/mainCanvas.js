@@ -1,33 +1,21 @@
 window.addEventListener('load', init);
 
-function init() {
-
 /*
+TODO: Filter blur sulle lettere
 
-FILTER: BLUR  SULLE LETTERE ED ANIMARE IL TUTTO  !!!
-
+inspiration:
 http://alexandrerochet.com/
-
-
-
 http://maxwellito.github.io/vivus/
 
-https://stackoverflow.com/questions/13163129/ray-triangle-intersection
 
 
-
-fai la sfera come in frosti (generative art pg 105 credo) e applica l'overlay che c'è in wgl/8/ quando c'è il tema dark nella pagina
-
-
-
-
-
-lullaby il genre 
-Carillon lo strumento
+music genre: lullaby 
+instrument: Carillon
 https://www.youtube.com/watch?v=b3BMp7yBqws
-
 */
 
+
+function init() {
 
     var canvas = document.getElementById("mainCanvas");
 	canvas.width  = innerWidth;
@@ -113,14 +101,12 @@ function draw(now) {
 
     // draw_background(now, deltatime);
 
-    // console.time('lol');
     draw_static_background(now, deltatime);
     draw_icosahedron(now, deltatime);
     draw_icosahedron_lines(now, deltatime);
     draw_luminous_points(now, deltatime);
 
     postprocess_blit_in_main_FBO(now, deltatime);
-    // console.timeEnd('lol');
 }
 
 
@@ -131,5 +117,5 @@ function draw(now) {
 // lines needs to be in a transform feedback, points (at least as of now, think about it again) do not.
 // fix a bit the code and separate it, it already stinks
 // separate program's creation from the icosahedron creation
-//http://www.hxa.name/minilight/
-//https://geometrian.com/programming/tutorials/radcol/index.php
+// http://www.hxa.name/minilight/
+// https://geometrian.com/programming/tutorials/radcol/index.php
