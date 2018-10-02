@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="author" content="Script Tutorials" />
+    <title>HDR test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+   
+   
+    <link href="css/main.css" rel="stylesheet" type="text/css" />
+    
+
+    <script src="js/dependencies/three.js"></script>
+    <script src="js/dependencies/OrbitControls.js"></script>
+    <script src="js/dependencies/stats.min.js"></script>
+    <script src="js/dependencies/dat.gui.min.js"></script>
+
+    <script src="js/dependencies/new-ctm-loader/lzma.js"></script>
+    <script src="js/dependencies/new-ctm-loader/ctm.js"></script>
+    <script src="js/dependencies/new-ctm-loader/CTMLoader.js"></script>
+
+    <script src="js/dependencies/loaders/EXRLoader.js"></script>
+    <script src="js/dependencies/loaders/EquirectangularToCubeGenerator.js"></script>
+
+    <script src="js/dependencies/pmrem/PMREMGenerator.js"></script>
+    <script src="js/dependencies/pmrem/PMREMCubeUVPacker.js"></script>
+
+    
+    <script>
+var scene;      
+var sceneCube;
+var camera;    
+var cameraCube;
+var renderer;   
+var controls;
+
+var cubeMesh;
+
+window.addEventListener('load', init);
+
+function init () { // Initialization
+
+    renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
+    renderer.autoClear = false;    
+    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setSize( innerWidth, innerHeight );
+    renderer.domElement.style.position = "relative";
+    document.querySelector(".main-canvas-container").appendChild( renderer.domElement );
+
+
+	camera = new THREE.PerspectiveCamera( 20, innerWidth / innerHeight, 1, 200 );
+	camera.position.z = 40;
+	camera.position.y = 0;
+
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x252525);
+
+    sceneCube = new THREE.Scene();
+    cameraCube = new THREE.PerspectiveCamera( 80, innerWidth / innerHeight, 1, 1000 );
+
+
+    // prepare controls (OrbitControls)
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.target = new THREE.Vector3(0, 0, 0);
+    controls.maxDistance = 2000;
+
+    new THREE.TextureLoader().load( 'assets/envmaps/venice_dawn_1.jpg', function ( texture ) {
+        
+        texture = texture;
+        texture.magFilter = THREE.LinearMipMapLinearFilter;
+        texture.minFilter = THREE.LinearMipMapLinearFilter;
+        var cubemapGenerator = new THREE.EquirectangularToCubeGenerator( texture, 512 );
+        var cubeMapTexture = cubemapGenerator.update( renderer );
+
+        var pmremGenerator = new THREE.PMREMGenerator( cubeMapTexture );
+        pmremGenerator.update( renderer );
+
+        var pmremCubeUVPacker = new THREE.PMREMCubeUVPacker( pmremGenerator.cubeLods );
+        pmremCubeUVPacker.update( renderer );
+
+        exrCubeRenderTarget = pmremCubeUVPacker.CubeUVRenderTarget;
+        
+        
+        createBox(exrCubeRenderTarget.texture);
+    } );
+
+
+    initGUI();
+    animate();
+}
+
+
+
+// Animate the scene
+function animate() {
+    requestAnimationFrame(animate);
+
+    controls.update();
+    
+    cameraCube.rotation.copy( camera.rotation );
+
+    renderer.render( sceneCube, cameraCube);
+    renderer.render( scene, camera );
+}
+
+
+function initGUI() {
+    var controller = {
+        roughness: 0.8,
+        metalness: 0,
+    };
+
+    var gui = new dat.GUI();
+
+    gui.add(controller, 'roughness', 0, 1).onChange(function(value) {
+        window.boxMaterial.roughness = value;
+    });   
+    gui.add(controller, 'metalness', 0, 1).onChange(function(value) {
+        window.boxMaterial.metalness = value;
+    });    
+}
+
+function createBox(texture) {
+
+		window.boxMaterial = new THREE.MeshPhysicalMaterial( 
+    	    {   color: 0xffffff, 
+    	        envMap: texture,
+    	        roughness: 0.8,
+    	        metalness: 0,
+    	        envMapIntensity: 1.0,
+                reflectivity: 0.9,
+        	} );
+
+	
+    	var boxgeometry = new THREE.BoxGeometry( 10, 10, 10 );
+		var mesh = new THREE.Mesh( boxgeometry, boxMaterial );
+		mesh.scale.set(0.3, 0.3, 0.3);
+		scene.add(mesh);
+}
+
+
+
+
+let modifiedLightMaps = `
+#if defined( RE_IndirectDiffuse )
+	#ifdef USE_LIGHTMAP
+
+		vec3 lightMapIrradiance = texture2D( lightMap, vUv2 ).xyz * lightMapIntensity;
+
+		#ifndef PHYSICALLY_CORRECT_LIGHTS
+
+			lightMapIrradiance *= PI; // factor of PI should not be present; included here to prevent breakage
+
+		#endif
+
+		irradiance += lightMapIrradiance;
+
+	#endif
+
+	#if defined( USE_ENVMAP ) && defined( PHYSICAL ) // && defined( ENVMAP_TYPE_CUBE_UV )
+
+		irradiance += getLightProbeIndirectIrradiance( /*lightProbe,*/ geometry, maxMipLevel );
+
+	#endif
+#endif
+
+#if defined( USE_ENVMAP ) && defined( RE_IndirectSpecular )
+	radiance += getLightProbeIndirectRadiance( /*specularLightProbe,*/ geometry, Material_BlinnShininessExponent( material ), maxMipLevel );
+
+	#ifndef STANDARD
+		clearCoatRadiance += getLightProbeIndirectRadiance( /*specularLightProbe,*/ geometry, Material_ClearCoat_BlinnShininessExponent( material ), maxMipLevel );
+	#endif
+#endif
+`;
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    </script>
+
+</head>
+<body>
+
+    <div class="view-container">
+        <div class="main-canvas-container"> 
+        
+        </div>
+    </div>
+
+</body>
+</html>
