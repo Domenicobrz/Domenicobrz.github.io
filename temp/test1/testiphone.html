@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="author" content="Script Tutorials" />
+    <title>HDR test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+   
+   
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            
+            overflow: hidden;
+            margin: 0;
+        }
+
+        #result {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            background: red;
+        }
+    </style>
+    
+
+   
+    <script>
+
+        window.addEventListener("load", init);
+
+        function init() {
+            var resultElem = document.querySelector("#result");
+
+            if(isIphoneUp6())
+                resultElem.style.background = "#0f0";
+        }
+
+        function isIphoneUp6() {
+            var isIPhone = false;
+            isIPhone = !!navigator.userAgent.match(/iPhone/i);
+
+            if(isIPhone){
+                var iHeight = window.screen.height;
+                var iWidth = window.screen.width;
+                if ((iWidth === 375 && iHeight === 667) || (iWidth === 414 && iHeight === 736)) {
+                    return true;
+                }
+            } else {        
+                return false;
+            }
+        }
+
+    </script>
+
+</head>
+<body>
+
+    <div id="result"></div>
+
+</body>
+</html>
