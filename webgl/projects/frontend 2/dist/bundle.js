@@ -54610,9 +54610,6 @@ function loadAssets() {
         texture.minFilter = THREE.LinearFilter;    
         backgroundTexture = texture;
         assetDownloaded();
-
-        // required to make sure the texture doesn't end up being undefined
-        loadHorse();
     });
     // var video = document.getElementById( 'mainvideo' );
     // var texture = new THREE.VideoTexture(video);
@@ -54647,6 +54644,11 @@ function loadAssets() {
         // if we downloaded the last asset make sure we call render(); before we call downloadSectionUpdate
         if(assetsToLoad !== 0)
             downloadingSectionUpdate(assetsDownloaded);
+
+        if(assetsToLoad === 1) {
+            // required to make sure the textures don't end up being undefined
+            setTimeout(loadHorse, 50);
+        }
 
         if(assetsToLoad !== 0) return;
 
