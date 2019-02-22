@@ -1,0 +1,117 @@
+.main-section-container .section3 {
+    $height: 33em;
+    
+    width:  29em;
+    // we know height and top in advance, so lets use this information instead of using translateY
+    height: $height;
+    top: -$height / 2;
+    right: 1.5em;
+
+    @if $debug {
+        background: rgba(0,0,255, 0.05);
+    }
+
+    display: flex;
+    flex-flow: column nowrap;
+
+
+
+
+
+
+
+
+
+    opacity: 0;
+    pointer-events: none;
+    &.active {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+
+
+
+
+
+    
+
+
+
+    .s3-pastel-img {
+        width: 100%;
+        height: auto;
+        margin: -4em 0 -1em 0; 
+    }
+
+    .s3_letters_flex_row {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+
+        padding: 0.7em 1em 0 1em;
+
+        p {
+            font-family: $font-header2;
+            flex: 0 0 auto;
+            color: #444;
+            // font-weight: bold;
+            font-size: 1.9em;
+            letter-spacing: 0.07em;
+        }
+
+        span {
+            flex: 1 0 auto;
+            text-align: left;
+            color: #888;
+            padding: 0 0 0 1em;
+            font-family: $font-paragraph1;
+            font-size: 0.85em;
+            margin-bottom: -0.4em;
+
+        }
+    }
+
+    .s3-divider {
+        display: block;
+        margin: 1em 0 0 auto;
+        width: 47%;
+        height: 0.25em;
+        background: #444;
+        outline: none;
+        border: none;
+    }
+
+    .s3-sec-header-text {
+        font-family: $font-header1;
+        color: #444;
+        font-size: 2.65em;
+        letter-spacing: 0.07em;
+        text-align: right;
+        margin: 0.3em 0 0 0;
+    }
+
+    .s3-footer-list-element {
+        display: block;
+        text-align: right;
+        font-family: $font-paragraph1;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        font-size: 0.8em;
+        color: #888;
+        margin: 0 0 0 0;
+
+        &:first-of-type {
+            margin: 1.5em 0 0 0;
+        }
+    }
+
+    img.s3-fake-logos {
+        position: absolute;
+        width: 43%;
+        
+        height: auto;
+        bottom: 3em;
+        left: 1em;
+    }
+}

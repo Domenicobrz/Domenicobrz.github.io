@@ -1,0 +1,41 @@
+@import "globals/reset";
+@import "globals/colors";
+@import "globals/variables";
+@import "globals/mixins";
+
+@import "components/main";
+@import "components/secondary";
+@import "components/hexmenu";
+@import "components/downloading";
+
+@import "components/sections/section1";
+@import "components/sections/section2";
+@import "components/sections/section3";
+@import "components/sections/section4";
+@import "components/sections/section5";
+
+
+
+
+
+* {
+    margin: 0;
+    @include noSelect;
+}
+
+html, body {
+    width:  100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.main-canvas-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.content-container {
+    width: 100%;
+    height: 100%;
+}

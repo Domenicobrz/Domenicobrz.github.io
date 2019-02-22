@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend experiments 2</title>
+
+<!-- 
+    <script src='libs/dependencies/three.js'></script>
+    <script src='libs/dependencies/OBJLoader.js'></script>
+    <script src='libs/dependencies/OrbitControls.js'></script>
+    <script src='libs/dependencies/anime.js'></script>
+    <script src='libs/dependencies/dat.gui.js'></script>
+
+    <script src='libs/shaders/mesh.js'></script>
+    <script src='libs/shaders/composite.js'></script>
+    <script src='libs/shaders/planes.js'></script>
+    <script src='libs/shaders/fxaa.js'></script>
+
+    <script src='libs/icons.js'></script>
+    <script src='libs/fx.js'></script>
+    <script src='libs/musicCanvas.js'></script>
+    <script src='libs/sectionAnimations.js'></script>
+    <script src='libs/s4chart.js'></script>
+    <script src='libs/s5clock.js'></script>
+    <script src='libs/utils.js'></script>
+    <script src='libs/main.js'></script> -->
+
+    <script src='dist/bundle.js'></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Bree+Serif"        rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css?family=Pacifico"          rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css?family=Text+Me+One"       rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css?family=Quattrocento+Sans" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="dist/main.css">
+
+</head>
+<body>
+    
+    <div class="main-canvas-container"></div>
+    <video id="mainvideo" muted loop style="display: none;"></video> 
+    <!-- <audio id="mainaudio" src="assets/audio/High on Fire.mp3" type="audio/mpeg" style="display: none;"></audio> -->
+
+    <div class="content-container">
+        <div class="main">
+
+
+            <div class="main-dark-overlay"></div>
+            <canvas id="music-canvas"></canvas>
+
+
+            <nav class="top-menu">
+                <a>Keiyng</a>
+                <span>/</span>
+                <a>Tyja</a>
+                <span>/</span>
+                <a>Takjr</a>
+                <span>/</span>
+                <a>CGfaas</a>
+            </nav>
+
+
+
+            <div class="hexagon-container">
+                <div class="hexagon active">
+                    <!-- <div class="hex-bg"></div> -->
+                    <img class="hex-bg" src="assets/images/testhexagonbg.png" />
+                    <img class="hex-curtain" src="assets/images/testhexagonfullcurtain.png" />
+                    <!-- <div class="hex-curtain"></div> -->
+                    <img class="hex-image" src="assets/images/testhexagon4.png" />
+                    <span class="hex-number">0</span>
+                    <span class="hex-number">1</span>
+                </div>
+
+                <div class="sep-container active">
+                    <span class="sep-circle"></span>
+                    <span class="sep-circle"></span>
+                    <span class="sep-circle"></span>
+                    <span class="sep-circle"></span>
+                </div>
+
+                <div class="hexagon">
+                    <!-- <div class="hex-bg"></div> -->
+                    <img class="hex-bg" src="assets/images/testhexagonbg.png" />
+                    <img class="hex-curtain" src="assets/images/testhexagonfullcurtain.png" />
+                    <!-- <div class="hex-curtain"></div> -->
+                    <img class="hex-image" src="assets/images/testhexagon4.png" />
+                    <span class="hex-number">0</span>
+                    <span class="hex-number">2</span>
+                </div>
+
+                <div class="sep-container">
+                    <span class="sep-circle"></span>
+                    <span class="sep-circle"></span>
+                    <span class="sep-circle"></span>
+                    <span class="sep-circle"></span>
+                </div>
+
+                <div class="hexagon">
+                    <!-- <div class="hex-bg"></div> -->
+                    <img class="hex-bg" src="assets/images/testhexagonbg.png" />
+                    <img class="hex-curtain" src="assets/images/testhexagonfullcurtain.png" />
+                    <!-- <div class="hex-curtain"></div> -->
+                    <img class="hex-image" src="assets/images/testhexagon4.png" />
+                    <span class="hex-number">0</span>
+                    <span class="hex-number">3</span>
+                </div>
+
+                <div class="sep-container">
+                    <span class="sep-circle"></span>
+                    <span class="sep-circle"></span>
+                    <span class="sep-circle"></span>
+                    <span class="sep-circle"></span>
+                </div>
+
+                <div class="hexagon">
+                    <!-- <div class="hex-bg"></div> -->
+                    <img class="hex-bg" src="assets/images/testhexagonbg.png" />
+                    <img class="hex-curtain" src="assets/images/testhexagonfullcurtain.png" />
+                    <!-- <div class="hex-curtain"></div> -->
+                    <img class="hex-image" src="assets/images/testhexagon4.png" />
+                    <span class="hex-number">0</span>
+                    <span class="hex-number">4</span>
+                </div>
+
+                <div class="sep-container">
+                    <span class="sep-circle"></span>
+                    <span class="sep-circle"></span>
+                    <span class="sep-circle"></span>
+                    <span class="sep-circle"></span>
+                </div>
+
+                <div class="hexagon">
+                    <!-- <div class="hex-bg"></div> -->
+                    <img class="hex-bg" src="assets/images/testhexagonbg.png" />
+                    <img class="hex-curtain" src="assets/images/testhexagonfullcurtain.png" />
+                    <!-- <div class="hex-curtain"></div> -->
+                    <img class="hex-image" src="assets/images/testhexagon4.png" />
+                    <span class="hex-number">0</span>
+                    <span class="hex-number">5</span>
+                </div>
+            </div>
+
+
+            <div class="main-section-container">
+
+                <div class="section1">
+
+                    <span class="s1-title"> Gtrshs </span>
+                    <hr>
+                    <span class="s1-title2"> saofije <em>aksn</em> ens</span>
+
+                    <svg class="s1-text-divider"> <use xlink:href="#icon-text-divider-1" /> </svg>
+
+                    <span class="s1-text">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
+                            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation 
+                            ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+                            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur
+                    </span>
+
+                    <div class="s1-btns">
+                        <div class="s1-btn"> <svg> <use xlink:href="#icon-calendar" /> </svg> </div> 
+                        <div class="s1-btn"> <svg> <use xlink:href="#icon-autograph" /> </svg> </div> 
+                        <div class="s1-btn"> <svg> <use xlink:href="#icon-save" /> </svg> </div> 
+                    </div>
+
+                    <div class="s1-line1"></div>
+                    <div class="s1-line2"></div>
+
+                </div>
+
+
+                <div class="section2">
+                    <div class="s2-header">
+                        Frl,ns<br> thral<br> sasnetr<br>
+                        <span>korjan dothraki sahfsm ret</span>
+                    </div>
+                    <div class="s2-header-image">
+                        <svg class="s2-header-svg"><use xlink:href="#icon-statistics"/></svg>
+                        <span>Frl dfsj aeb aoso btbejla sf apkl sa</span>
+                    </div>
+                    <svg class="s2-text-divider"> <use xlink:href="#icon-text-divider-1" /> </svg>
+
+                    <div class="s2-entry"> <span>asfhgas bfd </span>    <svg><use xlink:href="#icon-light" /></svg> </div>
+                    <div class="s2-entry"> <span>dfas bfd </span>    <svg><use xlink:href="#icon-mag-glass" /></svg> </div>
+                    <div class="s2-entry"> <span>d bfd </span>    <svg><use xlink:href="#icon-night" /></svg> </div>
+                    <div class="s2-entry"> <span>dfads bfd </span> <svg><use xlink:href="#icon-env" /></svg> </div>
+
+                    <div class="s2-entry"> <span>asfhgas bfd </span>    <svg><use xlink:href="#icon-day" /></svg> </div>
+                    <div class="s2-entry"> <span>xxa sadagewg </span>    <svg><use xlink:href="#icon-sunset" /></svg> </div>
+                    <div class="s2-entry"> <span>asf skyscraper </span>    <svg><use xlink:href="#icon-save" /></svg> </div>
+                    <div class="s2-entry"> <span>corona skt </span>    <svg><use xlink:href="#icon-photos" /></svg> </div>
+
+                    <span class="s2-footer-text-1">Frl,ns thral sasnetr</span>
+                    <span class="s2-footer-text-2">ot asmfubs other skyscrapers!</span>
+
+                </div>
+
+
+                <div class="section3">
+
+                    <img src="assets/images/pastel.png" class="s3-pastel-img" />
+                    <div class="s3_letters_flex_row">
+                        <p>CTrl sans INSFn </p>  
+                        <span>as fkajn nlenohn <br> dnfnas oasn fej</span>
+                    </div>
+                    <div class="s3_letters_flex_row">
+                        <p>Sfa na ireh</p>  
+                        <span>as fkajn nlenohn <br> dnfnas oasn fej</span>
+                    </div>
+                    <hr class="s3-divider">
+                    <p class="s3-sec-header-text">Bwrael asmht alskjnfb</p>
+                    <span class="s3-footer-list-element">hSA BKAìna</span>
+                    <span class="s3-footer-list-element">acs2m csdv</span>
+                    <span class="s3-footer-list-element">asnlf po</span>
+                    <span class="s3-footer-list-element">ascma</span>
+                    <span class="s3-footer-list-element">bmao b2ibfsnk</span>
+                    <img class="s3-fake-logos" src="assets/images/fakelogos.png"/>
+
+                </div>
+
+
+                <div class="section4">
+                    <canvas class="s4-chart"></canvas>
+
+                    <hr class="s4-hr1">
+                    <div class="s4-pending-title">
+                        <span>F</span>
+                        <span>s</span>
+                        <span>f</span>
+                        <span>o</span>
+                        <span>r</span>
+                        <span> </span>
+                        <span>D</span>
+                        <span>m</span>
+                        <span>t</span>
+                        <span>r</span>
+                    </div>
+                    <div class="s4-paragraphs">
+                        <p>Rajsfh als baif ak Sfsa hjao</p>
+                        <p>Rajsfh als baif ak bjss</p>
+                        <p>SJfh ,SMNF idsf bbSwd</p>
+                        <p>asfljNSFNS AKA Nns</p>
+                        <p>Blsakf nans jne</p>
+                        <p>sfln LKAS SN s</p>
+                        <p>Rajsfh als</p>
+                        <p>Rajsfh als bg.</p>
+                    </div>
+                    <div class="s4-rotated-quads">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+
+                </div>
+
+
+
+                <div class="section5">
+                    <h2>Quick!</h2>
+                    <div class="s5-clock-text"></div>
+                    <p>Time's running out! <br> Hire me before someone else does! :)</p>
+                    <a href="https://domenicobrz.github.io/webgl">Visit the rest of my portfolio!</a>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+        <div class="secondary">
+
+            <div class="expander-menu">
+                <div class="expander-plus-icon-1"></div>
+                <div class="expander-plus-icon-2"></div>
+                <div class="expander-expand-btn"></div>
+                
+                <div class="expander-menu-items-container">
+                    <a href="" class="expander-menu-link"> <svg><use xlink:href="#icon-envmap-day" /></svg> Redkfsb s</a>
+                    <a href="" class="expander-menu-link"> <svg><use xlink:href="#icon-envmap-sunset" /></svg> Groi a,sffa</a>
+                    <a href="" class="expander-menu-link"> <svg><use xlink:href="#icon-envmap-night" /></svg> Dmfkas</a>
+                    <a href="" class="expander-menu-link"> <svg><use xlink:href="#icon-env" /></svg> Pai asncd oa</a>
+                    <a href="" class="expander-menu-link"> <svg><use xlink:href="#icon-light" /></svg> Tnjket</a>
+                    <a href="" class="expander-menu-link"> <svg><use xlink:href="#icon-browse" /></svg> Casoeg sa</a>
+                </div>
+            </div>
+
+
+        </div>   
+        
+        
+        <div class="downloading-section">
+
+            <div class="downloading-info">
+                <p>Downloading...</p>
+                <span></span>
+            </div>
+
+        </div>
+
+        <svg class="symbols-container">
+            <!-- filled in by javascript -->
+        </svg>
+    </div>
+
+
+</body>
+</html>

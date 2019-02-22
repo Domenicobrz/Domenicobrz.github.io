@@ -1,0 +1,19 @@
+{
+  "name": "frontend-exp-2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "css": "node-sass scss/main.scss -o dist",
+    "css:watch": "npm run css && node-sass scss/main.scss -wo dist",
+    "gulp": "gulp"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "node-sass": "^4.9.3",
+    "gulp": "^4.0.0",
+    "gulp-concat": "^2.6.1"
+  }
+}

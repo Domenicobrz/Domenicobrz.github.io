@@ -1,0 +1,76 @@
+.main-section-container .section5 {
+    $height: 33em;
+    
+    width:  29em;
+    // we know height and top in advance, so lets use this information instead of using translateY
+    height: $height;
+    top: -$height / 2;
+    right: 1.5em;
+
+    @if $debug {
+        background: rgba(0,255,255, 0.05);
+    }
+
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+
+
+
+
+
+
+
+
+    
+    opacity: 0;
+    pointer-events: none;
+    &.active {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+
+
+
+
+
+    h2 {
+        font-family: $font-header1;
+        font-size: 3.5em;
+        color: #676767;
+        text-align: center;
+    }
+
+    .s5-clock-text {
+        text-align: center;
+        font-family: $font-header2;
+        font-size: 5em;
+        color: #444;
+        text-shadow: 0.1em 0.1em 0.15em rgba(0,0,0,0.2);
+
+        span {
+            font-size: 0.7em;
+            color: #777;
+        }
+    }
+
+    p {
+        font-family: $font-paragraph2;
+        font-size: 1.35em;
+        color: #888;
+        text-align: center;
+        letter-spacing: 0.02em;
+        margin: 2.15em 0 0 0;
+        padding: 0 0.5em;
+    }
+
+    a {
+        font-family: $font-paragraph1;
+        font-size: 1.05em;
+        color: #444;
+        text-align: center;
+        margin: 1em 0 0 0;
+        padding: 0 0.5em;
+    }
+}

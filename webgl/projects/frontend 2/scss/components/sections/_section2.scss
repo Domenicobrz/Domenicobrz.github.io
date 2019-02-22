@@ -1,0 +1,200 @@
+.main-section-container .section2 {
+    $height: 30em;
+    
+    width:  29em;
+    // we know height and top in advance, so lets use this information instead of using translateY
+    height: $height;
+    top: -$height / 2;
+
+    @if $debug {
+        background: rgba(255,0,0, 0.1);
+    }
+
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    justify-items: center;
+    align-items: center;
+    // flex-flow: column nowrap;
+    // justify-content: flex-start;
+    // align-items: center;
+
+    grid-template-columns: 50% 50%; // auto auto;
+    grid-template-rows: repeat(9, auto);
+
+
+
+
+
+
+    
+
+
+
+
+    opacity: 0;
+    pointer-events: none;
+    &.active {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+
+
+
+
+
+
+
+
+
+    .s2-header {
+        grid-column: 1 / 2; 
+        grid-row: 1 / 2;
+
+        font-size: 3em;
+        color: #444;
+        font-family: $font-header2;
+        letter-spacing: 0.04em;
+
+        text-align: right;
+
+        justify-self: right;
+
+        > span {
+            display: block;
+            font-size: 0.3em;
+            color: #777;
+            padding: 0 0 0 4.5em;
+        }
+
+    }
+    .s2-header-image {
+        grid-column: 2 / 3; 
+        grid-row: 1 / 2;
+
+        svg {
+            width:  70%;
+            height: 70%;
+        }
+
+        span {
+            display: block;
+            font-family: $font-paragraph1;
+            font-size: 0.9em;
+            color: #777;
+            text-align: left;
+            padding: 0 4.5em 0 0.5em;
+        }
+    }
+
+    svg.s2-text-divider {
+        grid-column: 1 / 3; 
+        grid-row: 2 / 3;
+
+        height: 2em;
+        fill: #444;
+    }
+
+
+    .s2-entry {
+        &:nth-child(4) {
+            grid-column: 1 / 2; 
+            grid-row: 3 / 4;
+            justify-self: right;    
+        }
+        &:nth-child(5) {
+            grid-column: 2 / 3; 
+            grid-row: 3 / 4;    
+            justify-self: left;    
+        }
+        &:nth-child(6) {
+            grid-column: 1 / 2; 
+            grid-row: 4 / 5;    
+            justify-self: right;    
+        }
+        &:nth-child(7) {
+            grid-column: 2 / 3; 
+            grid-row: 4 / 5;    
+            justify-self: left;    
+        }
+        &:nth-child(8) {
+            grid-column: 1 / 2; 
+            grid-row: 5 / 6;    
+            justify-self: right;    
+        }
+        &:nth-child(9) {
+            grid-column: 2 / 3; 
+            grid-row: 5 / 6;    
+            justify-self: left;    
+        }
+        &:nth-child(10) {
+            grid-column: 1 / 2; 
+            grid-row: 6 / 7;    
+            justify-self: right;    
+        }
+        &:nth-child(11) {
+            grid-column: 2 / 3; 
+            grid-row: 6 / 7;    
+            justify-self: left;    
+        }
+
+
+        transition: background .2s, transform .2s;
+        &:hover {
+            background: #dedede;
+            transform: translateY(-0.2em);
+        }
+
+        box-sizing: border-box;
+        border: 1px solid #aaa;
+        border-radius: 0.3em;
+        padding: 0.5em;
+
+        width: 70%;
+        margin: 0.3em;
+
+        font-size: 0.9em;
+
+        cursor: pointer;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        span {
+            font-family: $font-paragraph2;
+        }
+
+        svg {
+            width:  1.2em;
+            height: 1.2em;
+            fill: #444;
+        }
+    }
+
+
+
+
+    .s2-footer-text-1 {
+        margin-top: 0.7em;
+        grid-column: 1 / 3; 
+        grid-row: 7 / 8;
+        text-align: left;
+        font-size: 1.85em;
+        color: #444;
+        font-family: $font-header1;
+    }
+    
+    .s2-footer-text-2 {
+        grid-column: 1 / 3; 
+        grid-row: 8 / 9;
+        text-align: left;
+        
+        font-size: 0.9em;
+        color: #888;
+        font-family: $font-paragraph1;
+
+        letter-spacing: 0.02em;
+    }
+}

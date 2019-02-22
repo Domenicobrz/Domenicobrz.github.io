@@ -1,0 +1,179 @@
+.main-section-container .section4 {
+    $height: 33em;
+    
+    width:  29em;
+    // we know height and top in advance, so lets use this information instead of using translateY
+    height: $height;
+    top: -$height / 2;
+    right: 1.5em;
+
+    @if $debug {
+        background: rgba(0,255,255, 0.05);
+    }
+
+    display: flex;
+    flex-flow: column nowrap;
+
+
+
+
+
+
+
+
+
+
+    
+    opacity: 0;
+    pointer-events: none;
+    &.active {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+
+
+
+
+
+
+
+
+
+    .s4-chart {
+        position: relative;
+        margin: 0 auto;
+    }
+
+    .s4-hr1 {
+        display: block;
+        width: 80%;
+        border: none;
+        border-bottom: 2px solid #444;
+        margin: 1.5em auto 0 auto;
+        outline: none;
+        background: none;
+    }
+
+    .s4-pending-title {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: center;
+        align-items: flex-start;
+
+        font-size: 1.35em;
+
+        span {
+            position: relative;
+            margin: 0.1em;
+            font-family: $font-header2;
+            color: #444;
+
+            &::before {
+                content: " ";
+                width: 2px;
+                height: 0.5em;
+                position: absolute;
+                top: -0.4em;
+                right: calc(50% - 0.025em);
+                background: rgba(0,0,0,0.3);
+            }
+        }
+
+        span:nth-child(1)  { font-size: 3em; }
+        span:nth-child(2)  { font-size: 2.1em; }
+        span:nth-child(3)  { font-size: 1.6em; }
+        span:nth-child(4)  { font-size: 2em; }
+        span:nth-child(5)  { font-size: 2em; }
+        span:nth-child(6)  { opacity: 0; }
+        span:nth-child(7)  { font-size: 2.5em; }
+        span:nth-child(8)  { font-size: 1.5em; }
+        span:nth-child(9)  { font-size: 2em; }
+        span:nth-child(10) { font-size: 2.8em; }
+
+        @for $i from 1 to 11 {
+            span:nth-child(#{$i}) {
+
+                &::before {
+                    animation: s4-pt-before-anim 5s #{(random(100) / 100)}s ease infinite;
+                }
+
+                animation: s4-pt-span-anim 5s #{(random(100) / 100) * 2}s ease infinite;
+            }
+        }
+    }
+
+    .s4-paragraphs {
+        text-align: center;
+
+        position: relative;
+        margin: 1.5em 0 0 0;
+        
+        line-height: 1.4;
+
+        font-family: $font-header2;
+        color: #444;
+
+        p:nth-child(2n + 2) {
+            color: #777;
+        }
+
+        p:nth-child(1) {
+            font-size: 1.2em;
+        }
+
+        p:nth-child(8) {
+            display: inline-block;
+            border-bottom: 1px solid #444;
+            margin-top: 0.75em;
+        }
+    }
+
+    .s4-rotated-quads {
+        
+        display: flex;
+        flex-flow: row nowrap;
+
+        margin: 1.5em auto 0 auto;
+
+        > div {
+            margin: 0.55em;
+            width: 2em;
+            height: 2em;
+
+            border: 0.5em solid #444;
+
+            &:nth-child(1), 
+            &:nth-child(3) {
+                transform: scale(0.7, 0.7) rotate(45deg);
+            }
+            &:nth-child(2) {
+                transform: rotate(45deg);
+            }
+        }
+    }
+}
+
+@keyframes s4-pt-span-anim {
+    0% {
+        transform: translateY(0%);
+    }
+    50% {
+        transform: translateY(30%);
+    }
+    100% {
+        transform: translateY(0%);
+    }
+}
+
+@keyframes s4-pt-before-anim {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.3);
+    }
+    100% {
+        transform: scale(1);
+    }
+}

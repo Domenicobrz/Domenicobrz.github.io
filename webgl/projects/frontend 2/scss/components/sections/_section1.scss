@@ -1,0 +1,163 @@
+.main-section-container .section1 {
+    $height: 30em;
+    
+    width:  29em;
+    // we know height and top in advance, so lets use this information instead of using translateY
+    height: $height;
+    top: -$height / 2;
+
+    @if $debug {
+        background: rgba(0,255,0, 0.1);
+    }
+
+    // opacity: 0.1;
+
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: center;
+
+
+
+
+
+    
+
+
+
+
+
+    opacity: 0;
+    pointer-events: none;
+    &.active {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+
+
+
+
+
+
+
+
+
+    hr {
+        margin: 0.5em auto 1em auto;
+        display: block;
+        outline: none;
+        border: none;
+        width: 5%;
+        height: 0.2em;
+        background: #444;
+        border-left: 4em solid #9c9c9c;
+    }
+
+    .s1-title {
+        font-family: $font-header1;
+        font-size: 5.5em;
+        color: #444;
+        text-align: center;
+    }
+
+    .s1-title2 {
+        font-family: $font-header2;
+        font-size: 2.25em;
+        color: #656565;
+        text-align: center;
+
+        em {
+            color: #999;
+        }
+    }
+
+    .s1-text {
+        text-align: justify;
+        font-family: "Quattrocento Sans", sans-serif;
+        font-size: 0.9em;
+        color: #777;
+        letter-spacing: 0.08em;
+        padding: 0 6em;
+
+        margin-bottom: 1em;
+    }
+
+
+    .s1-line1 {
+        position: absolute;
+        height: 59%;
+
+        border-left: 2px dashed #444;
+
+        left: 3em;
+        bottom: -2em;
+    } 
+
+    .s1-line2 {
+        position: absolute;
+        width: 67%;
+
+        border-top: 2px dashed #444;
+
+        left: 1em;
+        bottom: 0em;
+    } 
+
+    .s1-text-divider {
+        width: 61%;
+        height: 2em;
+        margin: 0 0 0.5em 0;
+        fill: #9c9c9c;
+    }
+
+    .s1-btns {
+        display: flex;
+        flex-flow: row nowrap;
+
+
+        .s1-btn {
+            position: relative;
+            padding: 1.2em;
+            margin: 0.3em;
+            width:  5em;
+            height: 5em;
+
+            background: #ddd;
+            border-radius: 0.5em;
+            box-sizing: border-box;
+
+            cursor: pointer;
+
+            transition: margin .3s, padding .3s;
+            &:hover {
+                margin:  0 0.3em 0.3em 0.3em;
+                padding: 0.8em 1.2em 1.6em 1.2em;
+            }
+
+
+            svg {
+                width:  100%;
+                height: 100%;
+    
+                fill: #444;                
+            }
+
+            &::before {
+                content: " ";
+                width: 100%;
+                height: 100%;
+
+                position: absolute;
+                top: 0.5em;
+                left: 0em;
+
+                border-radius: 0.5em;
+                background: #aaa;
+
+                z-index: -1;
+            }
+
+        }
+    }
+}
