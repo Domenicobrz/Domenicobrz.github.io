@@ -1306,8 +1306,8 @@ function setAudio()
 
 					document.body.removeChild(clickAnywhereText);
 
-					window.removEventListener("mousedown", clickedSomewhere);
-					window.removEventListener("touchstart", clickedSomewhere);
+					window.removeEventListener("mousedown", clickedSomewhere);
+					window.removeEventListener("touchstart", clickedSomewhere);
 				}
 
 				window.addEventListener("mousedown", clickedSomewhere);
