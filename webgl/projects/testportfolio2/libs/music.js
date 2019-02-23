@@ -120,15 +120,51 @@ function MusicBox(filepath) {
     this.start = function() {
         var centralSquareDOM = document.querySelector(".mhCentralSquare");
         var siteTitleDOM = document.querySelector(".siteTitle");
-        
+
+
+    
         var startIntervalID = setInterval(function(){
+            console.log("there");
             if(musicBoxReady) {
-                source.start();
-                centralSquareDOM.style.opacity = "1";
-                siteTitleDOM.style.opacity = "1";
+
+                if(audioCtx.state == "suspended") {
+                    let clickAnywhereText = document.createElement("p");
+                    clickAnywhereText.textContent = "Click anywhere to start";
+                    clickAnywhereText.style.position = "absolute";
+                    clickAnywhereText.style.top = "2em";
+                    // clickAnywhereText.style.transform = "translateY(-50%)";
+                    clickAnywhereText.style.width = "100%";
+                    clickAnywhereText.style.textAlign = "center";
+                    clickAnywhereText.style.fontFamily = "Josefin Slab";
+                    clickAnywhereText.style.fontSize = "calc(0.95vw + 1em)";
+                    clickAnywhereText.style.color = "white";
+                    document.body.appendChild(clickAnywhereText);
+    
+                    function clickedSomewhere() {
+                        
+                        onAudioContextReady();                    
+    
+                        document.body.removeChild(clickAnywhereText);
+                        window.removeEventListener("mousedown", clickedSomewhere);
+                        window.removeEventListener("touchstart", clickedSomewhere);
+                    }
+    
+                    window.addEventListener("mousedown", clickedSomewhere);
+                    window.addEventListener("touchstart", clickedSomewhere);
+                } else {
+                    onAudioContextReady();
+                }
+
                 window.clearInterval(startIntervalID);
             }
         }, 3000);
+
+
+        function onAudioContextReady() {
+            source.start();
+            centralSquareDOM.style.opacity = "1";
+            siteTitleDOM.style.opacity = "1";
+        }
     };
     /*   public members - END  */
 }

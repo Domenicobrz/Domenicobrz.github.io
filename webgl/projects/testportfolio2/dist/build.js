@@ -1,1 +1,2236 @@
-var _0x0848=['\x0a\x20\x20\x20\x20const\x20float\x20tan225\x20=\x200.4142135623730950488016887242097;\x0a','\x0a\x20\x20\x20\x20//\x20const\x20float\x20cameraZ\x20=\x2045.0;\x0a\x20\x20\x20\x20uniform\x20float\x20uCameraZ;\x0a','\x0a\x20\x20\x20\x20const\x20float\x20sphereRadius\x20=\x2010.0;\x0a\x20\x20\x20\x20const\x20float\x20halfSphereRadius\x20=\x205.0;\x0a\x20\x20\x20\x20const\x20float\x20sphereCircleLength\x20=\x2062.83185307179586476925286766559;\x20//\x20sphereRadius\x20*\x202\x20*\x20PI;\x0a','\x0a\x20\x20\x20\x20const\x20float\x20\x20\x20powerStrenght\x20\x20\x20=\x200.02;\x0a\x20\x20\x20\x20const\x20float\x20\x20\x20reboundStrenght\x20=\x200.975;\x0a','\x20\x20\x20\x20vec4(0.38914890463251887,\x200.3817349169527625274,\x200.38217114972887741,\x200)\x20*\x20colorMult;','\x20\x20\x20\x20vec3(0.5376075549191675,\x200.9749653113259806,\x200.9577071140151332);','\x20\x20\x20\x20vec3(0.49472422263778955,\x200.35799897323872586,\x200.22805524678906958);','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20var\x20shaderPart_colors_TFlineAttractor\x20=\x20\x27','\x27;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20var\x20shaderPart_colors_TFlineShatter\x20=\x20\x27','\x27;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20var\x20shaderPart_colors_offpointsCol1\x20=\x20\x27','\x27;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20var\x20shaderPart_pointsMouseSpeedColor\x20=\x20\x27','\x27;\x0a\x20\x20\x20\x20\x20\x20\x20\x20','data:text/json,','stringify','_blank','focus','\x0afloat\x20rand(vec2\x20c){\x0a\x09return\x20fract(sin(dot(c.xy\x20,vec2(12.9898,78.233)))\x20*\x2043758.5453);\x0a}','.0\x20/\x20freq;\x0a\x09vec2\x20ij\x20=\x20floor(p/unit);\x0a\x09vec2\x20xy\x20=\x20mod(p,unit)/unit;\x0a\x09//xy\x20=\x203.*xy*xy-2.*xy*xy*xy;\x0a\x09xy\x20=\x20.5*(1.-cos(PI*xy));\x0a\x09float\x20a\x20=\x20rand((ij+vec2(0.,0.)));\x0a\x09float\x20b\x20=\x20rand((ij+vec2(1.,0.)));\x0a\x09float\x20c\x20=\x20rand((ij+vec2(0.,1.)));\x0a\x09float\x20d\x20=\x20rand((ij+vec2(1.,1.)));\x0a\x09float\x20x1\x20=\x20mix(a,\x20b,\x20xy.x);\x0a\x09float\x20x2\x20=\x20mix(c,\x20d,\x20xy.x);\x0a\x09return\x20mix(x1,\x20x2,\x20xy.y);\x0a}\x0a\x0afloat\x20pNoise(vec2\x20p,\x20int\x20res){\x0a\x09float\x20persistance\x20=\x20.5;\x0a\x09float\x20n\x20=\x200.;\x0a\x09float\x20normK\x20=\x200.;\x0a\x09float\x20f\x20=\x204.;\x0a\x09float\x20amp\x20=\x201.;\x0a\x09int\x20iCount\x20=\x200;\x0a\x09for\x20(int\x20i\x20=\x200;\x20i<50;\x20i++){\x0a\x09\x09n+=amp*noise(p,\x20f);\x0a\x09\x09f*=2.;\x0a\x09\x09normK+=amp;\x0a\x09\x09amp*=persistance;\x0a\x09\x09if\x20(iCount\x20==\x20res)\x20break;\x0a\x09\x09iCount++;\x0a\x09}\x0a\x09float\x20nf\x20=\x20n/normK;\x0a\x09return\x20nf*nf*nf*nf;\x0a}','\x0a//\x09Classic\x20Perlin\x202D\x20Noise\x20\x0a//\x09by\x20Stefan\x20Gustavson\x0a//\x0avec4\x20permute(vec4\x20x){return\x20mod(((x*34.0)+1.0)*x,\x20289.0);}\x0avec4\x20taylorInvSqrt(vec4\x20r){return\x201.79284291400159\x20-\x200.85373472095314\x20*\x20r;}\x0avec2\x20fade(vec2\x20t)\x20{return\x20t*t*t*(t*(t*6.0-15.0)+10.0);}\x0a\x0afloat\x20cnoise(vec2\x20P){\x0a\x20\x20vec4\x20Pi\x20=\x20floor(P.xyxy)\x20+\x20vec4(0.0,\x200.0,\x201.0,\x201.0);\x0a\x20\x20vec4\x20Pf\x20=\x20fract(P.xyxy)\x20-\x20vec4(0.0,\x200.0,\x201.0,\x201.0);\x0a\x20\x20Pi\x20=\x20mod(Pi,\x20289.0);\x20//\x20To\x20avoid\x20truncation\x20effects\x20in\x20permutation\x0a\x20\x20vec4\x20ix\x20=\x20Pi.xzxz;\x0a\x20\x20vec4\x20iy\x20=\x20Pi.yyww;\x0a\x20\x20vec4\x20fx\x20=\x20Pf.xzxz;\x0a\x20\x20vec4\x20fy\x20=\x20Pf.yyww;\x0a\x20\x20vec4\x20i\x20=\x20permute(permute(ix)\x20+\x20iy);\x0a\x20\x20vec4\x20gx\x20=\x202.0\x20*\x20fract(i\x20*\x200.0243902439)\x20-\x201.0;\x20//\x201/41\x20=\x200.024...\x0a\x20\x20vec4\x20gy\x20=\x20abs(gx)\x20-\x200.5;\x0a\x20\x20vec4\x20tx\x20=\x20floor(gx\x20+\x200.5);\x0a\x20\x20gx\x20=\x20gx\x20-\x20tx;\x0a\x20\x20vec2\x20g00\x20=\x20vec2(gx.x,gy.x);\x0a\x20\x20vec2\x20g10\x20=\x20vec2(gx.y,gy.y);\x0a\x20\x20vec2\x20g01\x20=\x20vec2(gx.z,gy.z);\x0a\x20\x20vec2\x20g11\x20=\x20vec2(gx.w,gy.w);\x0a\x20\x20vec4\x20norm\x20=\x201.79284291400159\x20-\x200.85373472095314\x20*\x20\x0a\x20\x20\x20\x20vec4(dot(g00,\x20g00),\x20dot(g01,\x20g01),\x20dot(g10,\x20g10),\x20dot(g11,\x20g11));\x0a\x20\x20g00\x20*=\x20norm.x;\x0a\x20\x20g01\x20*=\x20norm.y;\x0a\x20\x20g10\x20*=\x20norm.z;\x0a\x20\x20g11\x20*=\x20norm.w;\x0a\x20\x20float\x20n00\x20=\x20dot(g00,\x20vec2(fx.x,\x20fy.x));\x0a\x20\x20float\x20n10\x20=\x20dot(g10,\x20vec2(fx.y,\x20fy.y));\x0a\x20\x20float\x20n01\x20=\x20dot(g01,\x20vec2(fx.z,\x20fy.z));\x0a\x20\x20float\x20n11\x20=\x20dot(g11,\x20vec2(fx.w,\x20fy.w));\x0a\x20\x20vec2\x20fade_xy\x20=\x20fade(Pf.xy);\x0a\x20\x20vec2\x20n_x\x20=\x20mix(vec2(n00,\x20n01),\x20vec2(n10,\x20n11),\x20fade_xy.x);\x0a\x20\x20float\x20n_xy\x20=\x20mix(n_x.x,\x20n_x.y,\x20fade_xy.y);\x0a\x20\x20return\x202.3\x20*\x20n_xy;\x0a}','\x0avec3\x20hash3(\x20vec2\x20p\x20){\x0a\x20\x20\x20\x20vec3\x20q\x20=\x20vec3(\x20dot(p,vec2(127.1,311.7)),\x20\x0a\x09\x09\x09\x09\x20\x20\x20dot(p,vec2(269.5,183.3)),\x20\x0a\x09\x09\x09\x09\x20\x20\x20dot(p,vec2(419.2,371.9))\x20);\x0a\x09return\x20fract(sin(q)*43758.5453);\x0a}','\x0afloat\x20atan2(in\x20float\x20y,\x20in\x20float\x20x)\x0a{\x0a\x20\x20\x20\x20bool\x20s\x20=\x20(abs(x)\x20>\x20abs(y));\x0a\x20\x20\x20\x20return\x20mix(PI/2.0\x20-\x20atan(x,y),\x20atan(y,x),\x20s);\x0a}','\x0amat4\x20rotationMatrix(vec3\x20axis,\x20float\x20angle)\x0a{\x0a\x20\x20\x20\x20axis\x20=\x20normalize(axis);\x0a\x20\x20\x20\x20float\x20s\x20=\x20sin(angle);\x0a\x20\x20\x20\x20float\x20c\x20=\x20cos(angle);\x0a\x20\x20\x20\x20float\x20oc\x20=\x201.0\x20-\x20c;\x0a\x20\x20\x20\x20\x0a\x20\x20\x20\x20return\x20mat4(oc\x20*\x20axis.x\x20*\x20axis.x\x20+\x20c,\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20oc\x20*\x20axis.x\x20*\x20axis.y\x20-\x20axis.z\x20*\x20s,\x20\x20oc\x20*\x20axis.z\x20*\x20axis.x\x20+\x20axis.y\x20*\x20s,\x20\x200.0,\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20oc\x20*\x20axis.x\x20*\x20axis.y\x20+\x20axis.z\x20*\x20s,\x20\x20oc\x20*\x20axis.y\x20*\x20axis.y\x20+\x20c,\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20oc\x20*\x20axis.y\x20*\x20axis.z\x20-\x20axis.x\x20*\x20s,\x20\x200.0,\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20oc\x20*\x20axis.z\x20*\x20axis.x\x20-\x20axis.y\x20*\x20s,\x20\x20oc\x20*\x20axis.y\x20*\x20axis.z\x20+\x20axis.x\x20*\x20s,\x20\x20oc\x20*\x20axis.z\x20*\x20axis.z\x20+\x20c,\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x200.0,\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x200.0,\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x200.0,\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x200.0,\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x201.0);\x0a}','\x0avec4\x20attractVertex(vec4\x20attractor,\x20vec4\x20vertex,\x20out\x20float\x20distanceFromAttractor)\x0a{\x0a\x09\x20vec3\x20normAttr\x20=\x20normalize(attractor.xyz);\x0a\x09\x20vec3\x20normVert\x20=\x20normalize(vertex.xyz);\x0a\x0a\x20\x20\x20\x20\x20float\x20angle\x20=\x20acos(dot(normAttr,\x20normVert));\x0a\x0a\x20\x20\x20\x20\x20float\x20sphereDist\x20=\x20sphericalDistance(normAttr,\x20normVert);\x0a\x09\x20distanceFromAttractor\x20=\x20sphereDist;\x0a\x0a\x09\x20/**\x0a\x09\x20\x20*\x20\x20**Lower**\x20values\x20for\x20compressionStrenght\x20will\x20make\x20compression\x20stronger\x0a\x09\x20\x20*\x20\x20Should\x20be\x20moved\x20to\x20the\x20CPU\x0a\x09\x20\x20*/\x0a\x09\x20float\x20compressionStrenght\x20=\x20clamp(pow(cnoise(vec2(uTime\x20*\x200.1,\x2045.0))\x20*\x200.5\x20+\x200.5,\x202.0)\x20*\x207.0,\x200.2,\x207.0);\x0a\x09\x20float\x20attractorPower\x20=\x20pow(clamp(1.0\x20-\x20sphereDist\x20/\x20(sphereCircleLength\x20*\x200.5),\x200.0,\x201.0),\x20\x20\x20compressionStrenght);\x0a\x09\x20\x0a\x09\x20vec3\x20rotAxis\x20=\x20cross(normAttr,\x20normVert);\x0a\x0a\x20\x20\x20\x20\x20return\x20rotationMatrix(normalize(rotAxis),\x20angle\x20*\x20attractorPower)\x20*\x20vertex;\x0a}','\x0avec4\x20offsetVertexMusic(vec4\x20vertex,\x20vec4\x20startVertex)\x20{\x0a\x09\x0a\x09//\x20at\x20this\x20point\x20tfMouseVelocity\x20is\x20already\x20defined\x20by\x20offsetVertexMouseVelocity();\x0a\x09//\x20so\x20we\x20can\x20just\x20increment\x20it\x20with\x20the\x20incrementor\x20+=\x20operator\x0a\x0a\x20\x20\x20\x20float\x20coord_s\x20=\x201.0\x20-\x20abs(atan2(startVertex.y,\x20startVertex.x)\x20/\x20PI);\x0a\x09float\x20value\x20=\x20texture(uMusicVisualizerData,\x20vec2(coord_s\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20*\x200.7,\x200.5)).x;\x0a\x0a\x20\x20\x20\x20value\x20=\x20((value\x20==\x200.0\x20?\x20-140.0\x20:\x20value)\x20+\x20140.0)\x20*\x200.075;\x20\x0a\x20\x20\x20\x20value\x20=\x20max(value,\x200.0);\x0a\x0a\x20\x20\x20\x20float\x20mult\x20\x20=\x200.0;\x20\x20\x20\x20\x0a\x20\x20\x20\x20vec3\x20displace\x20=\x20normalize(vertex.xyz)\x20*\x20value;\x0a\x0a\x20\x20\x20\x20mult\x20=\x20clamp(1.0\x20-\x20abs(vertex.z)\x20/\x205.0,\x200.0,\x201.0);\x0a\x20\x20\x20\x20mult\x20*=\x20clamp((vertex.y\x20+\x20sphereRadius)\x20*\x200.2,\x200.0,\x201.0);\x0a\x0a\x20\x20\x20\x20vertex.xyz\x20+=\x20displace\x20*\x20mult;\x0a\x0a\x20\x20\x20\x20return\x20vertex;\x0a}','\x0avoid\x20applyVelocityToVertex(inout\x20vec4\x20vertex,\x20int\x20whichVertex)\x20{\x0a\x09if(whichVertex\x20==\x200)\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20vertex.xy\x20+=\x20tfMouseVelocity.xy;\x0a\x20\x20\x20\x20}\x20else\x20{\x20\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20vertex.xy\x20+=\x20tfMouseVelocity.zw;\x0a\x20\x20\x20\x20}\x0a}','#version\x20300\x20es\x0aprecision\x20highp\x20float;\x0a\x0ain\x20vec2\x20\x20Coord;\x0ain\x20float\x20ID;\x0a\x0auniform\x20sampler2D\x20uImage;\x0auniform\x20float\x20uTime;\x0auniform\x20float\x20uMouseSpeed;\x0a\x0aout\x20vec4\x20FragColor;\x0a\x0a\x0a/*\x20CONSTANTS\x20*/\x0a','\x0a\x0a\x0a/*\x20FUNCTIONS\x20*/\x0a','\x0a\x0a\x0avoid\x20main()\x20{\x09\x09\x09\x09\x0a\x0a\x20\x20\x20\x20vec2\x20blurVector\x20=\x20Coord\x20-\x20vec2(0.5);\x0a\x20\x20\x20\x20float\x20distance\x20=\x20length(blurVector);\x0a\x0a\x0a\x20\x20\x20\x20vec2\x20NDCCoord\x20=\x20Coord\x20*\x202.0\x20-\x201.0;\x0a\x0a\x20\x20\x20\x20float\x20angle\x20=\x20atan2(NDCCoord.y,\x20NDCCoord.x);\x0a\x20\x20\x20\x20float\x20angleMultiplier\x20=\x20pow(sin(angle\x20*\x206.0\x20+\x20uTime\x20*\x206.0)\x20*\x20.5\x20+\x20.7,\x202.0)\x20*\x204.67\x20*\x20distance;\x0a\x20\x20\x20\x20//\x20if(distance\x20<\x200.4)\x20angleMultiplier\x20*=\x20distance\x20/\x200.4\x20*\x200.5;\x0a\x20\x20\x20\x20\x0a\x0a\x0a\x0a\x20\x20\x20\x20vec4\x20col1\x20=\x20texture(uImage,\x20Coord\x20+\x200.00135\x20*\x20uMouseSpeed\x20*\x20angleMultiplier);\x0a\x20\x20\x20\x20vec4\x20col2\x20=\x20texture(uImage,\x20Coord\x20-\x200.00135\x20*\x20uMouseSpeed\x20*\x20angleMultiplier);\x0a\x20\x20\x20\x20vec4\x20col\x20=\x20texture(uImage,\x20Coord);\x0a\x20\x20\x20\x20col.x\x20=\x20col1.x;\x0a\x20\x20\x20\x20col.y\x20=\x20col2.y;\x0a\x20\x20\x20\x20\x0a\x20\x20\x20\x20\x0a\x20\x20\x20\x20vec4\x20blurcol;\x0a\x20\x20\x20\x20float\x20activeDistance\x20=\x20max(0.25\x20-\x20uMouseSpeed\x20*\x200.05,\x200.15);\x0a\x0a\x0a\x0a\x20\x20\x20\x20if(distance\x20>\x20activeDistance)\x20{\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20float\x20redistance\x20=\x20(distance\x20-\x20activeDistance)\x20*\x200.175\x20*\x20uMouseSpeed;\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20vec4\x20sample1\x20=\x20texture(uImage,\x20Coord\x20+\x20blurVector\x20*\x200.025\x20*\x20redistance);\x0a\x20\x20\x20\x20\x20\x20\x20\x20vec4\x20sample2\x20=\x20texture(uImage,\x20Coord\x20+\x20blurVector\x20*\x200.05\x20*\x20redistance);\x0a\x20\x20\x20\x20\x20\x20\x20\x20vec4\x20sample3\x20=\x20texture(uImage,\x20Coord\x20+\x20blurVector\x20*\x200.1\x20*\x20redistance);\x0a\x20\x20\x20\x20\x20\x20\x20\x20vec4\x20sample4\x20=\x20texture(uImage,\x20Coord\x20+\x20blurVector\x20*\x200.125\x20*\x20redistance);\x0a\x20\x20\x20\x20\x20\x20\x20\x20vec4\x20sample5\x20=\x20texture(uImage,\x20Coord\x20+\x20blurVector\x20*\x200.15\x20*\x20redistance);\x0a\x20\x20\x20\x20\x20\x20\x20\x20vec4\x20sample6\x20=\x20texture(uImage,\x20Coord\x20+\x20blurVector\x20*\x200.2\x20*\x20redistance);\x0a\x20\x20\x20\x20\x20\x20\x20\x20vec4\x20sample7\x20=\x20texture(uImage,\x20Coord\x20+\x20blurVector\x20*\x200.225\x20*\x20redistance);\x0a\x20\x20\x20\x20\x20\x20\x20\x20vec4\x20sample8\x20=\x20texture(uImage,\x20Coord\x20+\x20blurVector\x20*\x200.25\x20*\x20redistance);\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20blurcol\x20=\x20sample1\x20+\x20sample2\x20+\x20sample3\x20+\x20sample4\x20+\x20sample5\x20+\x20sample6\x20+\x20sample7\x20+\x20sample8;\x0a\x20\x20\x20\x20\x20\x20\x20\x20blurcol\x20*=\x200.125;\x0a\x20\x20\x20\x20\x20\x20\x20\x20col\x20=\x20mix(blurcol,\x20col,\x200.5);\x0a\x20\x20\x20\x20}\x20\x0a\x0a\x20\x20\x20\x20//\x20float\x20blackness\x20=\x201.0\x20-\x20distance\x20/\x200.5;\x0a\x20\x20\x20\x20//\x20FragColor.xyz\x20=\x20col.xyz\x20*\x200.6\x20+\x20col.xyz\x20*\x20blackness\x20*\x200.4;\x0a\x20\x20\x20\x20//\x20FragColor.a\x20=\x201.0;\x0a\x0a\x0a\x0a\x20\x20\x20\x20FragColor\x20=\x20col;\x0a\x20\x20\x20\x20//\x20FragColor\x20=\x20vec4(1.0\x20-\x20col.xyz,\x201.0);\x0a}','#version\x20300\x20es\x0alayout(location\x20=\x200)\x20in\x20vec4\x20pos;\x0alayout(location\x20=\x201)\x20in\x20vec4\x20displacedPos;\x0alayout(location\x20=\x202)\x20in\x20vec4\x20musicDisplacedPos;\x0alayout(location\x20=\x203)\x20in\x20vec4\x20mouseVelocity;\x0alayout(location\x20=\x204)\x20in\x20vec4\x20fx;\x0alayout(location\x20=\x205)\x20in\x20vec4\x20fx2;\x0a\x0auniform\x20mat4\x20projection;\x0auniform\x20mat4\x20model;\x0auniform\x20mat4\x20view;\x20\x20\x0a\x0a#define\x20PI\x203.1415926535897932384626433832795\x0a#define\x20RS\x200.4142135623730950488016887242097\x0a\x0a\x0a\x0auniform\x20float\x20uTime;\x0auniform\x20float\x20uDeltaTime;\x0a\x0a\x0a\x0aout\x20vec4\x20Color;\x0a\x0a\x0a/*\x20\x20defines\x20\x20*/\x0a','\x0a\x0a/*\x20\x20constants\x20declarations\x20\x20*/\x0a','\x20\x20\x20\x0a\x0avoid\x20main()\x20{\x09\x09\x0a\x0a\x20\x20\x20\x20float\x20saveTheAttributes\x20=\x20pos.x\x20+\x20fx.x\x20+\x20mouseVelocity.x\x20+\x20displacedPos.x;\x0a\x0a\x0a\x20\x20\x20\x20vec4\x20transformedPos\x20=\x20musicDisplacedPos;\x0a\x0a\x20\x20\x20\x20\x0a\x20\x20\x20\x20gl_Position\x20=\x20projection\x20*\x20view\x20*\x20model\x20*\x20vec4(transformedPos.xyz,\x20\x20\x201.0);\x0a\x20\x20\x20\x20\x0a\x20\x20\x20\x20float\x20world_point_size\x20=\x200.15;\x0a\x20\x20\x20\x20float\x20distance_from_view\x20=\x20-(view\x20*\x20model\x20*\x20vec4(transformedPos.xyz,\x201.0)).z;\x0a\x20\x20\x20\x20float\x20r\x20=\x20RS;\x20//tan(22.5\x20*\x20(PI\x20/\x20180.0));\x0a\x20\x20\x20\x20float\x20whsize\x20=\x20distance_from_view\x20*\x20r\x20*\x202.0;\x0a\x20\x20\x20\x20float\x20size\x20\x20\x20=\x20(world_point_size\x20/\x20whsize)\x20*\x20canvasHeight;\x0a\x0a\x20\x20\x20\x20//\x20points\x20closer\x20to\x20the\x20attractor\x20will\x20be\x20smaller\x20in\x20size,\x20the\x20distance\x20was\x20measured\x20(inside\x20pointsTF)\x20as\x20the\x20\x0a\x20\x20\x20\x20//\x20Arc\x20length\x20between\x20the\x20two\x20points\x0a\x20\x20\x20\x20float\x20attractorArcDistance\x20=\x20fx.x;\x0a\x20\x20\x20\x20float\x20attrSizeMult\x20\x20\x20\x20\x20\x20\x20\x20\x20=\x20min(fx.x\x20/\x20(sphereCircleLength\x20*\x200.15)\x20+\x200.1,\x201.0);\x0a\x0a\x0a\x0a\x20\x20\x20\x20float\x20sizeSinWave\x20=\x20((sin(uTime\x20*\x203.0\x20+\x20pos.w\x20*\x200.05)\x20*\x200.5\x20+\x200.5)\x20*\x201.5\x20+\x200.6);\x0a\x0a\x0a\x20\x20\x20\x20gl_PointSize\x20=\x20size\x20*\x20attrSizeMult\x20*\x20sizeSinWave;\x0a\x0a\x20\x20\x20\x20Color\x20=\x20vec4(1,1,1,1);\x0a\x0a\x0a\x20\x20\x20\x20float\x20mouseSpeed\x20=\x20length(mouseVelocity.xy);\x0a\x20\x20\x20\x20//if(mod(pos.w,\x202.0)\x20==\x200.0)\x20{\x0a\x20\x20\x20\x20//\x20\x20\x20\x20Color.x\x20=\x20max(1.0\x20-\x20mouseSpeed,\x200.1);\x0a\x20\x20\x20\x20//\x20\x20\x20\x20Color.y\x20=\x20max(1.0\x20-\x20mouseSpeed,\x200.1);\x0a\x20\x20\x20\x20//}\x0a\x0a\x20\x20\x20\x20//if(mod(pos.w,\x202.0)\x20==\x201.0)\x20{\x0a\x20\x20\x20\x20//\x20\x20\x20\x20Color.y\x20=\x20max(1.0\x20-\x20mouseSpeed,\x200.1);\x0a\x20\x20\x20\x20//\x20\x20\x20\x20Color.z\x20=\x20max(1.0\x20-\x20mouseSpeed,\x200.1);\x0a\x20\x20\x20\x20//}\x0a\x0a\x0a\x0a\x0a\x20\x20\x20\x20gl_PointSize\x20*=\x20length(mouseVelocity.xy)\x20*\x200.3\x20+\x201.0;\x0a\x0a\x0a\x0a\x0a\x20\x20\x20\x20//\x20if\x20this\x20is\x20a\x20hidden\x20point\x20let\x20it\x27s\x20opacity\x20grow\x20only\x20if\x20its\x20moving\x0a\x20\x20\x20\x20if(fx2.x\x20>\x200.9)\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20//\x20Color.xyz\x20=\x20vec3(0,1,0);\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20float\x20distanceFromOriginalPos\x20=\x20clamp(length(musicDisplacedPos.xyz)\x20/\x2010.5,\x201.0,\x203.0);\x0a\x20\x20\x20\x20\x20\x20\x20\x20distanceFromOriginalPos\x20=\x20(distanceFromOriginalPos\x20-\x201.0)\x20*\x200.5;\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20vec3\x20col1\x20=\x20','\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20vec3\x20col2\x20=\x20','#version\x20300\x20es\x0aprecision\x20mediump\x20float;\x0a\x0ain\x20vec4\x20Color;\x0a\x0aout\x20vec4\x20FragColor;\x0a\x0avoid\x20main()\x20{\x0a\x20\x20\x20\x20float\x20distance\x20=\x20length(gl_PointCoord\x20-\x20vec2(0.5,\x200.5));\x0a\x20\x20\x20\x20float\x20alpha\x20\x20\x20\x20=\x201.0;\x0a\x20\x20\x20\x20if(distance\x20>\x200.15)\x20alpha\x20=\x201.0\x20-\x20(distance\x20-\x200.15)\x20/\x200.35;\x20\x0a\x20\x20\x20\x20if(distance\x20>\x200.5)\x20discard;\x09\x09\x0a\x20\x20\x20\x20\x0a\x20\x20\x20\x20FragColor\x20=\x20vec4(Color.xyz\x20*\x20pow(alpha,\x203.0)\x20*\x20Color.a,\x200.0);\x0a}','#version\x20300\x20es\x0alayout(location\x20=\x200)\x20in\x20vec4\x20pos;\x0a\x0avoid\x20main()\x20{\x09\x0a\x20\x20\x20\x20gl_Position\x20=\x20pos;\x0a}','#version\x20300\x20es\x0alayout(location\x20=\x200)\x20in\x20vec4\x20pos;\x0alayout(location\x20=\x201)\x20in\x20vec4\x20displacedPos;\x0alayout(location\x20=\x202)\x20in\x20vec4\x20musicDisplacedPos;\x0alayout(location\x20=\x203)\x20in\x20vec4\x20mouseVelocity;\x0alayout(location\x20=\x204)\x20in\x20vec4\x20fx;\x0alayout(location\x20=\x205)\x20in\x20vec4\x20fx2;\x0a\x0a\x0aout\x20vec4\x20tfPosition;\x0aout\x20vec4\x20tfDisplacedPos;\x0aout\x20vec4\x20tfMusicDisplacedPos;\x0aout\x20vec4\x20tfMouseVelocity;\x0aout\x20vec4\x20tfFX;\x0aout\x20vec4\x20tfFX2;\x0a\x0a\x0auniform\x20float\x20uTime;\x0auniform\x20float\x20uDeltaTime;\x0auniform\x20vec3\x20\x20uMouseOrigin;\x0auniform\x20vec3\x20\x20uMouseVelocity;\x0a\x0auniform\x20sampler2D\x20uMusicVisualizerData;\x0a\x0a\x0aout\x20vec3\x20Color;\x0a\x0a\x0a\x0a/*\x20\x20constants\x20declarations\x20\x20*/\x0a','\x20\x20\x20\x0a','\x0a\x0a/*\x20\x20functions\x20declarations\x20\x20*/\x0a','\x0a\x0a\x0avoid\x20main()\x20{\x09\x09\x0a\x0a\x0a\x20\x20\x20\x20float\x20saveTheAttributes\x20=\x20musicDisplacedPos.x;\x0a\x0a\x0a\x20\x20\x20\x20/*\x20DISPLACEMENT\x20ROUTINE\x20\x20--\x20\x20SHOULD\x20BE\x20APPLIED\x20ALSO\x20TO\x20LINESTF.JS\x20*/\x0a\x20\x20\x20\x20/*\x20DISPLACEMENT\x20ROUTINE\x20\x20--\x20\x20SHOULD\x20BE\x20APPLIED\x20ALSO\x20TO\x20LINESTF.JS\x20*/\x0a\x20\x20\x20\x20/*\x20DISPLACEMENT\x20ROUTINE\x20\x20--\x20\x20SHOULD\x20BE\x20APPLIED\x20ALSO\x20TO\x20LINESTF.JS\x20*/\x0a\x0a\x0a\x0a/*\x20noise\x20deflater\x20-\x20will\x20make\x20noise\x20less\x20apparent\x20if\x20the\x20point\x20is\x20close\x20to\x20the\x20deflaterPoint\x20*/\x0a\x20\x20\x20\x0a\x20\x20\x20\x20/*\x20\x20CAN\x20BE\x20OFFLOADED\x20TO\x20THE\x20CPU\x20*/\x0a\x20\x20\x20\x20/*\x20\x20CAN\x20BE\x20OFFLOADED\x20TO\x20THE\x20CPU\x20*/\x0a\x20\x20\x20\x20vec2\x20phitheta\x20=\x20vec2(sin(uTime\x20*\x200.2)\x20*\x20PI,\x20sin(uTime\x20*\x200.1)\x20*\x20PI);\x0a\x20\x20\x20\x20vec3\x20pointOnSphere\x20=\x20vec3(cos(phitheta.x)\x20*\x20cos(phitheta.y),\x20\x20cos(phitheta.y),\x20sin(phitheta.x)\x20*\x20cos(phitheta.y));\x0a\x20\x20\x20\x20pointOnSphere\x20*=\x20sphereRadius;\x0a\x20\x20\x20\x20/*\x20\x20CAN\x20BE\x20OFFLOADED\x20TO\x20THE\x20CPU\x20*/\x0a\x20\x20\x20\x20/*\x20\x20CAN\x20BE\x20OFFLOADED\x20TO\x20THE\x20CPU\x20*/\x0a\x0a\x20\x20\x20\x20float\x20distanceFromDeflater\x20=\x20length(pos.xyz\x20-\x20pointOnSphere);\x0a\x20\x20\x20\x20/**\x20just\x20a\x20linear\x20interpolation\x20-\x20\x20\x20eg.\x20\x20\x20distanceFromDeflater\x20is\x20\x2012,\x20deflaterRadius\x20is\x2010,\x20\x20\x20from\x2010\x20to\x2015\x20we\x20linearly\x0a\x20\x20\x20\x20\x20*\x20\x20interpolate\x20the\x20strenght\x20of\x20the\x20deflater\x20so\x20we\x20have\x20\x20\x20\x20\x20(12\x20-\x2010)\x20/\x20(15\x20-\x2010)\x20\x20and\x20we\x20clamp\x20the\x20result\x20*/\x0a\x20\x20\x20\x20float\x20deflaterRadius\x20=\x20sphereRadius;\x0a\x20\x20\x20\x20float\x20deflaterInterp\x20=\x20deflaterRadius\x20*\x200.5;\x0a\x20\x20\x20\x20float\x20noiseDeflaterStrenght\x20=\x20clamp((distanceFromDeflater\x20-\x20deflaterRadius)\x20/\x20(deflaterInterp),\x200.0,\x201.0);\x0a\x0a\x0a\x0a\x0a\x0a\x20\x20\x20\x20\x0a\x0a\x20\x20\x20\x20/**\x20\x0a\x20\x20\x20\x20\x20*\x20\x20\x20\x20\x20\x20ATTRACTORS\x20-\x20will\x20be\x20calculated\x20against\x20non-displaced\x20vertices,\x20v0\x20&\x20v1\x0a\x20\x20\x20\x20\x20*/\x0a\x0a\x20\x20\x20\x20\x20//\x20attractVertex\x20will\x20normalize\x20the\x20attractor\x0a\x20\x20\x20\x20\x20vec4\x20attractorExample\x20=\x20vec4(sin(uTime\x20*\x200.2\x20+\x20345.0),\x20sin(uTime\x20*\x200.37\x20+\x2010.0),\x201,\x201);\x0a\x20\x20\x20\x20\x20float\x20distanceFromAttractor\x20=\x200.0;\x0a\x20\x20\x20\x20\x20vec4\x20attractedPos\x20=\x20attractVertex(attractorExample,\x20pos,\x20distanceFromAttractor);\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x20\x20\x20\x20vec4\x20toCenter\x20=\x20pos\x20*\x201.0;\x0a\x20\x20\x20\x20float\x20noise\x20=\x20cnoise(vec2(uTime\x20*\x200.03\x20+\x20pos.x\x20*\x200.1,\x20uTime\x20*\x200.03\x20+\x20pos.y\x20*\x200.1));\x0a\x20\x20\x20\x20float\x20noise2\x20=\x20cnoise(vec2(uTime\x20*\x200.3\x20+\x20pos.x\x20*\x200.5,\x20uTime\x20*\x200.3\x20+\x20pos.y\x20*\x200.3));\x0a\x20\x20\x20\x20vec4\x20whereShouldPosBe\x20=\x20attractedPos\x20+\x20(toCenter\x20*\x20noise\x20*\x200.5\x20+\x20toCenter\x20*\x20noise2\x20*\x200.15)\x20*\x20noiseDeflaterStrenght;\x0a\x20\x20\x20\x20\x0a\x0a\x20\x20\x20\x20vec4\x20wherePosIs\x20=\x20displacedPos;\x0a\x0a\x0a\x0a\x0a\x0a\x20\x20\x20\x20/**\x20VELOCITIES\x20ROUTINE\x20\x20*/\x0a\x0a\x20\x20\x20\x20tfMouseVelocity.xy\x20=\x20mouseVelocity.xy;\x0a\x0a\x20\x20\x20\x20offsetVertexMouseVelocity(wherePosIs,\x200,\x201.3);\x0a\x20\x20\x20\x20applyVelocityToVertex(wherePosIs,\x200);\x0a\x20\x20\x20\x20\x0a\x20\x20\x20\x20tfMouseVelocity.xy\x20*=\x20reboundStrenght;\x0a\x0a\x20\x20\x20\x20/**\x20VELOCITIES\x20ROUTINE\x20-\x20END\x20\x20*/\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x20\x20\x20\x20//\x20put\x20it\x20back\x20where\x20it\x20should\x20be\x0a\x20\x20\x20\x20tfPosition\x20=\x20pos;\x0a\x0a\x20\x20\x20\x20tfDisplacedPos\x20=\x20wherePosIs\x20*\x200.965\x20+\x20whereShouldPosBe\x20*\x200.035;\x0a\x0a\x20\x20\x20\x20tfMusicDisplacedPos\x20=\x20offsetVertexMusic(tfDisplacedPos,\x20pos);\x0a\x0a\x20\x20\x20\x20/*\x20DISPLACEMENT\x20ROUTINE\x20\x20--\x20\x20SHOULD\x20BE\x20APPLIED\x20ALSO\x20TO\x20LINESTF.JS\x20*/\x0a\x20\x20\x20\x20/*\x20DISPLACEMENT\x20ROUTINE\x20\x20--\x20\x20SHOULD\x20BE\x20APPLIED\x20ALSO\x20TO\x20LINESTF.JS\x20*/\x0a\x20\x20\x20\x20/*\x20DISPLACEMENT\x20ROUTINE\x20\x20--\x20\x20SHOULD\x20BE\x20APPLIED\x20ALSO\x20TO\x20LINESTF.JS\x20*/\x0a\x0a\x0a\x0a\x0a\x20\x20\x20\x20tfFX\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20=\x20fx;\x20\x20\x20\x20\x20//\x20fx.x\x20\x20\x20\x20distance\x20from\x20attractor\x0a\x20\x20\x20\x20tfFX.x\x20\x20\x20\x20\x20\x20\x20\x20\x20=\x20distanceFromAttractor;\x20//\x20points\x20closer\x20to\x20the\x20attractor\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20//\x20will\x20be\x20smaller\x20in\x20size\x0a\x0a\x20\x20\x20\x20tfFX2\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20=\x20fx2;\x20\x20\x20\x0a\x0a\x20\x20\x20\x20//\x20tfMouseVelocity\x20=\x20mouseVelocity;\x0a}','#version\x20300\x20es\x0aprecision\x20mediump\x20float;\x0a\x0avoid\x20main()\x20{\x0a\x0a}','#version\x20300\x20es\x0alayout(location\x20=\x200)\x20in\x20vec4\x20pos;\x0alayout(location\x20=\x201)\x20in\x20vec4\x20displacedPos;\x0alayout(location\x20=\x202)\x20in\x20vec4\x20musicDisplacedPos;\x0alayout(location\x20=\x203)\x20in\x20vec4\x20mouseVelocity;\x0alayout(location\x20=\x204)\x20in\x20vec4\x20fx;\x0alayout(location\x20=\x205)\x20in\x20vec4\x20fx2;\x0a\x0auniform\x20mat4\x20projection;\x0auniform\x20mat4\x20model;\x0auniform\x20mat4\x20view;\x20\x20\x0a\x0a#define\x20PI\x203.1415926535897932384626433832795\x0a#define\x20RS\x200.4142135623730950488016887242097\x0a\x0a\x0a\x0auniform\x20float\x20uTime;\x0auniform\x20float\x20uDeltaTime;\x0a\x0a\x0aout\x20vec4\x20Color;\x0aout\x20float\x20vSize;\x0a\x0a\x0a/*\x20\x20defines\x20\x20*/\x0a','\x20\x0a\x20\x20\x20\x0a\x20\x20\x20\x20//\x20if(pos.x\x20<\x200.0)\x20Color.xyz\x20=\x20+\x20shaderPart_pointsOutsideSpeedColor\x20+\x20\x20\x20\x0a\x0a\x0a\x0a\x20\x20\x20\x20//\x20if\x20this\x20is\x20a\x20hidden\x20point\x20let\x20it\x27s\x20opacity\x20grow\x20only\x20if\x20its\x20moving\x0a\x20\x20\x20\x20if(fx2.x\x20>\x200.9)\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20Color.a\x20=\x20clamp(mouseSpeed,\x200.0,\x201.0);\x0a\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20\x0a\x20\x20\x20\x20gl_PointSize\x20*=\x20length(mouseVelocity.xy)\x20*\x200.3\x20+\x201.0;\x0a\x0a\x20\x20\x20\x20//\x20DOF\x20effect\x20-\x20once\x20every\x203\x20points\x20\x20\x20\x20\x0a\x20\x20\x20\x20vSize\x20=\x20mod(pos.w,\x203.0)\x20==\x200.0\x20?\x2070.0\x20*\x20(gl_PointSize\x20/\x20canvasHeight)\x20:\x200.0;\x0a}','#version\x20300\x20es\x0aprecision\x20mediump\x20float;\x0a\x0ain\x20vec4\x20Color;\x0ain\x20float\x20vSize;\x0a\x0aout\x20vec4\x20FragColor;\x0a\x0avoid\x20main()\x20{\x0a\x20\x20\x20\x20float\x20distance\x20=\x20length(gl_PointCoord\x20-\x20vec2(0.5,\x200.5));\x0a\x20\x20\x20\x20float\x20alpha\x20\x20\x20\x20=\x201.0;\x0a\x20\x20\x20\x20if(distance\x20>\x200.4)\x20alpha\x20=\x201.0\x20-\x20(distance\x20-\x200.4)\x20/\x200.1;\x20\x0a\x20\x20\x20\x20if(distance\x20>\x200.5)\x20discard;\x09\x09\x0a\x0a\x20\x20\x20\x20//\x20DOF\x20effect\x0a\x20\x20\x20\x20if(vSize\x20>\x200.0\x20&&\x20distance\x20<\x200.4)\x20alpha\x20=\x20mix(1.0,\x20pow((distance\x20/\x200.4),\x201.5),\x20min(vSize,\x202.0));\x0a\x20\x20\x20\x20\x0a\x20\x20\x20\x20FragColor\x20=\x20vec4(Color.xyz,\x20alpha\x20*\x200.6\x20*\x20Color.a);\x0a}','#version\x20300\x20es\x0alayout(location\x20=\x200)\x20in\x20vec4\x20v0;\x0alayout(location\x20=\x201)\x20in\x20vec4\x20v1;\x0alayout(location\x20=\x202)\x20in\x20vec4\x20v0displaced;\x0alayout(location\x20=\x203)\x20in\x20vec4\x20v1displaced;\x0alayout(location\x20=\x204)\x20in\x20vec4\x20v0musicDisplaced;\x0alayout(location\x20=\x205)\x20in\x20vec4\x20v1musicDisplaced;\x0alayout(location\x20=\x206)\x20in\x20vec4\x20mouseVelocity;\x0alayout(location\x20=\x207)\x20in\x20vec4\x20fx;\x0alayout(location\x20=\x208)\x20in\x20vec4\x20color;\x0a\x0aout\x20vec4\x20tfV0;\x0aout\x20vec4\x20tfV1;\x0aout\x20vec4\x20tfV0displaced;\x0aout\x20vec4\x20tfV1displaced;\x0aout\x20vec4\x20tfV0musicDisplaced;\x0aout\x20vec4\x20tfV1musicDisplaced;\x0aout\x20vec4\x20tfMouseVelocity;\x0aout\x20vec4\x20tfFx;\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20//\x20tfFx.x\x20\x20should\x20dictate\x20wheter\x20this\x20is\x20the\x20\x27left\x27\x20or\x20\x27right\x27\x20vertex\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20//\x20tfFx.y\x20\x20is\x20the\x20angle\x20of\x20the\x20rotation\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20//\x20tfFx.z\x20\x20is\x20the\x20angular\x20accelleration\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20//\x20tfFx.w\x20\x20is\x20the\x20opacity\x20-\x20could\x20be\x20collapsed\x20in\x20tfColor.a\x0aout\x20vec4\x20tfColor;\x0a\x0a\x0a\x0auniform\x20float\x20uTime;\x0auniform\x20float\x20uDeltaTime;\x0a\x0auniform\x20vec3\x20\x20uMouseOrigin;\x0auniform\x20vec3\x20\x20uMouseVelocity;\x0a\x0auniform\x20sampler2D\x20uMusicVisualizerData;\x0a\x0a\x0a/*\x20\x20defines\x20\x20*/\x0a','\x20\x20\x20\x0a\x0a/*\x20\x20functions\x20declarations\x20\x20*/\x0a','\x0a\x0avoid\x20main()\x20{\x0a\x20\x20\x20\x20float\x20saveTheAttributes\x20=\x20color.x\x20+\x20fx.x;\x0a\x0a\x0a\x20\x20\x20\x20/*\x20DISPLACEMENT\x20ROUTINE\x20\x20--\x20\x20SHOULD\x20BE\x20APPLIED\x20ALSO\x20TO\x20POINTSTF.JS\x20*/\x0a\x20\x20\x20\x20/*\x20DISPLACEMENT\x20ROUTINE\x20\x20--\x20\x20SHOULD\x20BE\x20APPLIED\x20ALSO\x20TO\x20POINTSTF.JS\x20*/\x0a\x20\x20\x20\x20/*\x20DISPLACEMENT\x20ROUTINE\x20\x20--\x20\x20SHOULD\x20BE\x20APPLIED\x20ALSO\x20TO\x20POINTSTF.JS\x20*/\x0a\x0a\x20\x20\x20\x0a\x20\x20\x20\x20/*\x20noise\x20deflater\x20-\x20will\x20make\x20noise\x20less\x20apparent\x20if\x20the\x20point\x20is\x20close\x20to\x20the\x20deflaterPoint\x20*/\x0a\x20\x20\x20\x0a\x20\x20\x20\x20/*\x20\x20CAN\x20BE\x20OFFLOADED\x20TO\x20THE\x20CPU\x20*/\x0a\x20\x20\x20\x20/*\x20\x20CAN\x20BE\x20OFFLOADED\x20TO\x20THE\x20CPU\x20*/\x0a\x20\x20\x20\x20vec2\x20phitheta\x20=\x20vec2(sin(uTime\x20*\x200.2)\x20*\x20PI,\x20sin(uTime\x20*\x200.1)\x20*\x20PI);\x0a\x20\x20\x20\x20vec3\x20pointOnSphere\x20=\x20vec3(cos(phitheta.x)\x20*\x20cos(phitheta.y),\x20\x20cos(phitheta.y),\x20sin(phitheta.x)\x20*\x20cos(phitheta.y));\x0a\x20\x20\x20\x20pointOnSphere\x20*=\x20sphereRadius;\x0a\x20\x20\x20\x20/*\x20\x20CAN\x20BE\x20OFFLOADED\x20TO\x20THE\x20CPU\x20*/\x0a\x20\x20\x20\x20/*\x20\x20CAN\x20BE\x20OFFLOADED\x20TO\x20THE\x20CPU\x20*/\x0a\x0a\x0a\x20\x20\x20\x20/**\x20just\x20a\x20linear\x20interpolation\x20-\x20\x20\x20eg.\x20\x20\x20distanceFromDeflater\x20is\x20\x2012,\x20deflaterRadius\x20is\x2010,\x20\x20\x20from\x2010\x20to\x2015\x20we\x20linearly\x0a\x20\x20\x20\x20\x20*\x20\x20interpolate\x20the\x20strenght\x20of\x20the\x20deflater\x20so\x20we\x20have\x20\x20\x20\x20\x20(12\x20-\x2010)\x20/\x20(15\x20-\x2010)\x20\x20and\x20we\x20clamp\x20the\x20result\x20*/\x0a\x20\x20\x20\x20float\x20deflaterRadius\x20=\x20sphereRadius;\x0a\x20\x20\x20\x20float\x20deflaterInterp\x20=\x20deflaterRadius\x20*\x200.5;\x0a\x0a\x20\x20\x20\x20float\x20distanceFromDeflaterV0\x20=\x20length(v0.xyz\x20-\x20pointOnSphere);\x0a\x20\x20\x20\x20float\x20noiseDeflaterStrenghtV0\x20=\x20clamp((distanceFromDeflaterV0\x20-\x20deflaterRadius)\x20/\x20(deflaterInterp),\x200.0,\x201.0);\x0a\x20\x20\x20\x20float\x20distanceFromDeflaterV1\x20=\x20length(v1.xyz\x20-\x20pointOnSphere);\x0a\x20\x20\x20\x20float\x20noiseDeflaterStrenghtV1\x20=\x20clamp((distanceFromDeflaterV1\x20-\x20deflaterRadius)\x20/\x20(deflaterInterp),\x200.0,\x201.0);\x0a\x0a\x0a\x0a\x0a\x0a\x20\x20\x20\x20\x0a\x0a\x20\x20\x20\x20/**\x20\x0a\x20\x20\x20\x20\x20*\x20\x20\x20\x20\x20\x20ATTRACTORS\x20-\x20will\x20be\x20calculated\x20against\x20non-displaced\x20vertices,\x20v0\x20&\x20v1\x0a\x20\x20\x20\x20\x20*/\x0a\x0a\x20\x20\x20\x20\x20//\x20attractVertex\x20will\x20normalize\x20the\x20attractor\x0a\x20\x20\x20\x20\x20vec4\x20attractorExample\x20=\x20vec4(sin(uTime\x20*\x200.2\x20+\x20345.0),\x20sin(uTime\x20*\x200.37\x20+\x2010.0),\x201,\x201);\x0a\x0a\x20\x20\x20\x20\x20float\x20unusedAttractDistanceV0;\x20\x20\x20//\x20will\x20be\x20used\x20in\x20pointsTF\x20\x0a\x20\x20\x20\x20\x20vec4\x20attractedV0\x20=\x20attractVertex(attractorExample,\x20v0,\x20unusedAttractDistanceV0);\x0a\x20\x20\x20\x20\x20vec4\x20attractedV1\x20=\x20attractVertex(attractorExample,\x20v1,\x20unusedAttractDistanceV0);\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x20\x20\x20\x20/*\x20noise\x20displacement\x20*/\x0a\x20\x20\x20\x20vec4\x20toCenter\x20=\x20v0\x20*\x201.0;\x0a\x20\x20\x20\x20float\x20noise\x20=\x20cnoise(vec2(uTime\x20*\x200.03\x20+\x20v0.x\x20*\x200.1,\x20uTime\x20*\x200.03\x20+\x20v0.y\x20*\x200.1));\x0a\x20\x20\x20\x20float\x20noise2\x20=\x20cnoise(vec2(uTime\x20*\x200.3\x20+\x20v0.x\x20*\x200.5,\x20uTime\x20*\x200.3\x20+\x20v0.y\x20*\x200.3));\x0a\x20\x20\x20\x20/*\x20noise\x20displacement\x20*/\x0a\x20\x20\x20\x20vec4\x20whereShouldv0Be\x20=\x20attractedV0\x20+\x20(toCenter\x20*\x20noise\x20*\x200.5\x20+\x20toCenter\x20*\x20noise2\x20*\x200.15)\x20*\x20noiseDeflaterStrenghtV0;\x0a\x0a\x20\x20\x20\x20toCenter\x20=\x20v1\x20*\x201.0;\x0a\x20\x20\x20\x20noise\x20=\x20cnoise(vec2(uTime\x20*\x200.03\x20+\x20v1.x\x20*\x200.1,\x20uTime\x20*\x200.03\x20+\x20v1.y\x20*\x200.1));\x0a\x20\x20\x20\x20noise2\x20=\x20cnoise(vec2(uTime\x20*\x200.3\x20+\x20v1.x\x20*\x200.5,\x20uTime\x20*\x200.3\x20+\x20v1.y\x20*\x200.3));\x20\x20\x20\x20\x0a\x20\x20\x20\x20vec4\x20whereShouldv1Be\x20=\x20attractedV1\x20+\x20(toCenter\x20*\x20noise\x20*\x200.5\x20+\x20toCenter\x20*\x20noise2\x20*\x200.15)\x20*\x20noiseDeflaterStrenghtV1;\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x20\x20\x20\x20vec4\x20wherev0is\x20=\x20v0displaced;\x0a\x20\x20\x20\x20vec4\x20wherev1is\x20=\x20v1displaced;\x0a\x0a\x20\x20\x20\x20/**\x20VELOCITIES\x20ROUTINE\x20\x20*/\x0a\x0a\x20\x20\x20\x20tfMouseVelocity.xy\x20=\x20mouseVelocity.xy;\x0a\x20\x20\x20\x20tfMouseVelocity.zw\x20=\x20mouseVelocity.zw;\x0a\x0a\x20\x20\x20\x20offsetVertexMouseVelocity(wherev0is,\x200,\x201.0);\x0a\x20\x20\x20\x20offsetVertexMouseVelocity(wherev1is,\x201,\x201.0);\x0a\x20\x20\x20\x20\x0a\x20\x20\x20\x20applyVelocityToVertex(wherev0is,\x200);\x0a\x20\x20\x20\x20applyVelocityToVertex(wherev1is,\x201);\x0a\x0a\x20\x20\x20\x20//\x20decreasing\x20velocities\x0a\x20\x20\x20\x20tfMouseVelocity.xy\x20*=\x200.99;\x20//reboundStrenght;\x0a\x20\x20\x20\x20tfMouseVelocity.zw\x20*=\x200.99;\x20//reboundStrenght;\x0a\x0a\x0a\x20\x20\x20\x20/**\x20VELOCITIES\x20ROUTINE\x20-\x20END\x20\x20*/\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x20\x20\x20\x20//\x20put\x20it\x20back\x20where\x20it\x20should\x20be\x0a\x20\x20\x20\x20tfV0\x20=\x20v0;\x09\x09\x0a\x20\x20\x20\x20tfV1\x20=\x20v1;\x0a\x0a\x20\x20\x20\x20tfV0displaced\x20=\x20wherev0is\x20*\x200.965\x20+\x20whereShouldv0Be\x20*\x200.035;\x0a\x20\x20\x20\x20tfV1displaced\x20=\x20wherev1is\x20*\x200.965\x20+\x20whereShouldv1Be\x20*\x200.035;\x0a\x0a\x0a\x20\x20\x20\x20//\x20final\x20deformation\x20step\x0a\x20\x20\x20\x20tfV0musicDisplaced\x20=\x20offsetVertexMusic(tfV0displaced,\x20v0);\x0a\x20\x20\x20\x20tfV1musicDisplaced\x20=\x20offsetVertexMusic(tfV1displaced,\x20v1);\x0a\x0a\x20\x20\x20\x20\x0a\x20\x20\x20\x20\x0a\x0a\x20\x20\x20\x20/*\x20DISPLACEMENT\x20ROUTINE\x20\x20--\x20\x20SHOULD\x20BE\x20APPLIED\x20ALSO\x20TO\x20POINTSTF.JS\x20*/\x0a\x20\x20\x20\x20/*\x20DISPLACEMENT\x20ROUTINE\x20\x20--\x20\x20SHOULD\x20BE\x20APPLIED\x20ALSO\x20TO\x20POINTSTF.JS\x20*/\x0a\x20\x20\x20\x20/*\x20DISPLACEMENT\x20ROUTINE\x20\x20--\x20\x20SHOULD\x20BE\x20APPLIED\x20ALSO\x20TO\x20POINTSTF.JS\x20*/\x0a\x0a\x20\x20\x20\x20tfFx\x20=\x20fx;\x09\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x20\x20\x20\x20/**\x0a\x20\x20\x20\x20\x20*\x20lines\x20closer\x20to\x20the\x20attractor\x20will\x20be\x20more\x20reddish\x0a\x20\x20\x20\x20\x20*/\x0a\x20\x20\x20\x20float\x20colorMult\x20=\x20(length(mouseVelocity.xy)\x20*\x2010.0\x20+\x201.0);\x0a\x20\x20\x20\x20float\x20redComp\x20\x20\x20=\x200.1\x20+\x20\x0a\x20\x20\x20\x20\x0a\x20\x20\x20\x20pow(\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20//\x20\x20vvv\x20radius\x20which\x20shows\x20the\x20effect\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20clamp(1.0\x20-\x20(unusedAttractDistanceV0\x20/\x20(sphereCircleLength\x20*\x200.4)),\x200.0,\x201.0)\x0a\x20\x20\x20\x20,\x200.9)\x20*\x200.85;\x0a\x0a\x0a\x0a\x0a\x20\x20\x20\x20//\x20tfColor\x20=\x20vec4(redComp\x20*\x20colorMult\x20*\x201.5,\x200.1\x20*\x20colorMult,\x200.1\x20*\x20colorMult\x20*\x202.0,\x200);\x0a\x20\x20\x20\x20tfColor\x20=\x20','\x20\x20\x20\x20\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x0a\x20\x20\x20\x20/**\x0a\x20\x20\x20\x20\x20*\x20\x0a\x20\x20\x20\x20\x20*\x20animate\x20line\x20shatter\x20\x0a\x20\x20\x20\x20\x20*\x20\x0a\x20\x20\x20\x20\x20*/\x0a\x0a\x20\x20\x20\x20//\x20the\x20transform\x20feedback\x20will\x20be\x20responsible\x20for\x20color\x20changes,\x20opacity,\x20angle\x20of\x20rotation\x20and\x20angular\x20velocity\x0a\x0a\x20\x20\x20\x20float\x20distancev0v1\x20=\x20length(v0musicDisplaced.xyz\x20-\x20v1musicDisplaced.xyz);\x0a\x20\x20\x20\x20\x0a\x20\x20\x20\x20if(distancev0v1\x20>\x20maxDistance)\x20{\x0a\x20\x20\x20\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20tfColor\x20=\x20','#version\x20300\x20es\x0aprecision\x20mediump\x20float;\x0a\x0aout\x20vec4\x20FragColor;\x0a\x0avoid\x20main()\x20{\x0a\x20\x20\x20\x20FragColor\x20=\x20vec4(0);\x0a}','#version\x20300\x20es\x0alayout(location\x20=\x200)\x20in\x20vec4\x20v0;\x0alayout(location\x20=\x201)\x20in\x20vec4\x20v1;\x0alayout(location\x20=\x202)\x20in\x20vec4\x20v0displaced;\x0alayout(location\x20=\x203)\x20in\x20vec4\x20v1displaced;\x0alayout(location\x20=\x204)\x20in\x20vec4\x20v0musicDisplaced;\x0alayout(location\x20=\x205)\x20in\x20vec4\x20v1musicDisplaced;\x0alayout(location\x20=\x206)\x20in\x20vec4\x20mouseVelocity;\x0alayout(location\x20=\x207)\x20in\x20vec4\x20fx;\x0alayout(location\x20=\x208)\x20in\x20vec4\x20color;\x0a\x0auniform\x20mat4\x20projection;\x0auniform\x20mat4\x20model;\x0auniform\x20mat4\x20view;\x20\x20\x0a\x0aout\x20vec4\x20Color;\x0a\x0a\x0a','\x0a\x0a\x0a','footerSvg1','pageFooter','getBoundingClientRect','top','#footerSvg1','display','pageYOffset','block','gain','value','AudioContext','webkitAudioContext','open','GET','responseType','arraybuffer','onload','response','decodeAudioData','log','send','createAnalyser','fftSize','createGain','frequencyBinCount','createBufferSource','connect','TEXTURE_MAG_FILTER','TEXTURE_MIN_FILTER','updateVisualizerTextureData','R32F','RED','.siteTitle','opacity','clearInterval','querySelectorAll','div.fcentered\x20svg[id*=\x22svgRateStar\x22]','setAttribute','class','forEach','src','getAttribute','data-src','getElementsByClassName','lazyloadfooter','documentElement','className','fonts-loaded','Anders','Josefin\x20Slab','all','\x20fonts-loaded','.mhMenuIcon','.mhOpenMenuContainer','click','pointerEvents','resize','getViewMatrix','params','camera_keydown','camera_keyup','camera_mousemove','camera_mousedown','camera_mouseup','camera_zoom','camera_touchdown','camera_touchup','camera_touchmove','pos','fromValues','front','frontCross','speed','zoom_smoothness','autoCentered','autoRotate','autoRotateSpeed','look','depth_of_field_transform_count','lookAt','create','yaw','deltaRot','deltazoom','dragging','startingZoom','zoomdefined','rotationSensitivity','mousecontrols','mainCanvas','addEventListener','mousemove','bind','call','radius','pressedKeys','cross','space','shift','pitch','cos','sin','normalize','abs','dir','keyCode','clientX','lastPos','clientY','touches','which','wheelDelta','detail','use\x20strict','symbol','function','prototype','push','length','then','object','undefined','Promise','reject','race','catch','attachEvent','scroll','body','removeEventListener','onreadystatechange','interactive','complete','readyState','detachEvent','createElement','aria-hidden','appendChild','span','style','cssText','max-width:none;display:inline-block;position:absolute;height:100%;width:100%;overflow:scroll;font-size:16px;','display:inline-block;width:200%;height:200%;font-size:16px;max-width:none;','max-width:none;min-width:20px;min-height:20px;display:inline-block;overflow:hidden;position:absolute;width:auto;margin:0;padding:0;top:-999px;white-space:nowrap;font-synthesis:none;font:','offsetWidth','scrollLeft','scrollWidth','parentNode','family','normal','weight','stretch','test','navigator','exec','fonts','div','join','load','getTime','removeChild','hidden','ltr','serif','\x22,sans-serif','\x22,serif','\x22,monospace','exports','FontFaceObserver','reduce','isArray','now','charCodeAt','vert','frag','createProgram','attachShader','linkProgram','LINK_STATUS','Could\x20not\x20initialise\x20shaders','createShader','compileShader','getShaderParameter','COMPILE_STATUS','getShaderInfoLog','VERTEX_SHADER','shaderSource','velocity','postProcessVelocity','update','mousedown','origin','mouseup','.mhCentral','canvas','getElementById','width','height','webgl2','getContext','getParameter','could\x20not\x20initialize\x20WebGL','camera','cameraZ','BYTES_PER_ELEMENT','projection','view','perspective','mouseController','musicBox','Icosahedron','start','bindTexture','TEXTURE_2D','RGBA','bindRenderbuffer','colorRenderBuffer','renderbufferStorageMultisample','RENDERBUFFER','RGBA8','userAgent','substr','background','afterbegin','querySelector','.mhMusicBars','none','classList','toggle','active','bindBuffer','ARRAY_BUFFER','buffer','FLOAT','uniform1f','uTime','drawArrays','bindFramebuffer','FRAMEBUFFER','clear','COLOR_BUFFER_BIT','getAttribLocation','getUniformLocation','createBuffer','bufferData','STATIC_DRAW','BackgroundProgram','bloombuffer','nBloomVerts','enable','RASTERIZER_DISCARD','useProgram','DEPTH_TEST','enableVertexAttribArray','vertexAttribPointer','uScreenRatio','uniform3f','uMouseOrigin','uMouseVelocity','activeTexture','getVisualizerTexture','uniform1i','uMusicVisualizerData','TRANSFORM_FEEDBACK','TRANSFORM_FEEDBACK_BUFFER','POINTS','bindBufferBase','disable','identity','uDeltaTime','uniformMatrix4fv','model','BLEND','blendFunc','SRC_ALPHA','ONE_MINUS_SRC_ALPHA','nverts','ONE','displacedPos','mouseVelocity','fx2','verticesBuffer','IcosahedronProgram','musicDisplacedPos','bloomVerticesBuffer','OffscreenPointsProgram','transformFeedback','createTransformFeedback','bindTransformFeedback','transformFeedbackVaryings','tfPosition','tfDisplacedPos','tfMusicDisplacedPos','tfFX','tfFX2','uCameraZ','nVerts','IcosahedronTFProgram','TEXTURE0','beginTransformFeedback','LINES','endTransformFeedback','v0displaced','v1displaced','v0musicDisplaced','color','nLinesVerts','linesBuffer','IcosahedronLinesProgram','tfV0displaced','tfV1displaced','tfV0musicDisplaced','tfV1musicDisplaced','tfMouseVelocity','tfColor','INTERLEAVED_ATTRIBS','getProgramParameter','v1musicDisplaced','IcosahedronLinesTFProgram','READ_FRAMEBUFFER','COLORBUFFER','COLOR','blitFramebuffer','NEAREST','texture','generateMipmap','uImage','uMouseSpeed','coord','PostProcessBlitInMainProgram','FRAMEBUFFER_SIZE','createTexture','texParameteri','TEXTURE_WRAP_S','CLAMP_TO_EDGE','TEXTURE_WRAP_T','texImage2D','createFramebuffer','createRenderbuffer','framebufferRenderbuffer','framebufferTexture2D','COLOR_ATTACHMENT0','FBOsoffscreen','\x0a\x20\x20\x20\x20const\x20float\x20maxDistance\x20=\x204.0;\x0a','\x0a\x20\x20\x20\x20//\x20const\x20float\x20uScreenRatio\x20=\x20',';\x0a\x20\x20\x20\x20uniform\x20float\x20uScreenRatio;\x0a','.0;\x0a','\x0a\x20\x20\x20\x20const\x20int\x20FOV\x20=\x20'];(function(_0x2e72d6,_0x21f9ca){var _0x387cfd=function(_0x32ec9a){while(--_0x32ec9a){_0x2e72d6['push'](_0x2e72d6['shift']());}};_0x387cfd(++_0x21f9ca);}(_0x0848,0x6a));var _0x8084=function(_0x379245,_0x3f434d){_0x379245=_0x379245-0x0;var _0x2f2cb3=_0x0848[_0x379245];return _0x2f2cb3;};'use strict';function createCamera(){this[_0x8084('0x0')]=getViewMatrix;this[_0x8084('0x1')]=camera_params;this[_0x8084('0x2')]=camera_keydown;this[_0x8084('0x3')]=camera_keyup;this[_0x8084('0x4')]=camera_mousemove;this[_0x8084('0x5')]=camera_mousedown;this[_0x8084('0x6')]=camera_mouseup;this[_0x8084('0x7')]=camera_zoom;this[_0x8084('0x8')]=camera_touchdown;this[_0x8084('0x9')]=camera_touchup;this[_0x8084('0xa')]=camera_touchmove;this[_0x8084('0xb')]=vec3['fromValues'](0x0,0x0,0x0);this['up']=vec3[_0x8084('0xc')](0x0,0x1,0x0);this[_0x8084('0xd')]=vec3['fromValues'](0x0,0x0,-0x1);this[_0x8084('0xe')]=vec3[_0x8084('0xc')](0x0,0x0,0x0);this['dir']=vec3[_0x8084('0xc')](0x0,0x0,0x0);this[_0x8084('0xf')]=0x5;this[_0x8084('0x10')]=0.1;this[_0x8084('0x11')]=![];this[_0x8084('0x12')]=![];this[_0x8084('0x13')]=0x3;this['radius']=0x3;this[_0x8084('0x14')]=[0x0,0x0,0x0];this['mousecontrols']=!![];this[_0x8084('0x15')]=0x0;this[_0x8084('0x16')]=mat4[_0x8084('0x17')]();this[_0x8084('0x18')]=-3.14/0x2;this['pitch']=0x0;this[_0x8084('0x19')]=[0x0,0x0];this['lastPos']=[null,null];this[_0x8084('0x1a')]=0x0;this[_0x8084('0x1b')]=![];this[_0x8084('0x1c')]=window['zoom'];this[_0x8084('0x1d')]=![];this['smoothDeltaTimeCheck']=!![];this[_0x8084('0x1e')]=0.002;this['pressedKeys']={'w':![],'s':![],'a':![],'d':![],'space':![],'shift':![],'la':![],'ua':![],'ra':![],'da':![]};if(this[_0x8084('0x1f')]){document['getElementById'](_0x8084('0x20'))[_0x8084('0x21')](_0x8084('0x22'),this[_0x8084('0x4')][_0x8084('0x23')](this));}}function camera_params(_0x383596,_0x442c50,_0x4e0c02,_0x5d457d,_0x3555af){if(_0x383596!==undefined)this[_0x8084('0x10')]=_0x383596;if(_0x442c50!==undefined)this[_0x8084('0xf')]=_0x442c50;if(_0x4e0c02!==undefined)this[_0x8084('0x1c')]=_0x4e0c02;if(_0x5d457d!==undefined)this['smoothDeltaTimeCheck']=_0x5d457d;if(_0x3555af!==undefined)this[_0x8084('0x1e')]=_0x3555af;}function getViewMatrix(_0x5260cd,_0x20e228){if(this['smoothDeltaTimeCheck']&&_0x5260cd<=0.03333){if(_0x5260cd<0.01){}else _0x5260cd=0.016;}if(!this[_0x8084('0x1d')]){this['startingZoom']=zoom;this['zoomdefined']=!![];}if(this[_0x8084('0x11')]){return camera_getAutocenteredViewMatrix[_0x8084('0x24')](this,_0x5260cd,_0x20e228,this[_0x8084('0x25')]);}if(this[_0x8084('0x26')]['w']||this['pressedKeys']['ua']){this[_0x8084('0xb')][0x0]+=_0x5260cd*this[_0x8084('0xf')]*this[_0x8084('0xd')][0x0];this[_0x8084('0xb')][0x1]+=_0x5260cd*this[_0x8084('0xf')]*this['front'][0x1];this[_0x8084('0xb')][0x2]+=_0x5260cd*this[_0x8084('0xf')]*this['front'][0x2];}if(this['pressedKeys']['s']||this[_0x8084('0x26')]['da']){this[_0x8084('0xb')][0x0]-=_0x5260cd*this['speed']*this[_0x8084('0xd')][0x0];this['pos'][0x1]-=_0x5260cd*this['speed']*this[_0x8084('0xd')][0x1];this[_0x8084('0xb')][0x2]-=_0x5260cd*this[_0x8084('0xf')]*this[_0x8084('0xd')][0x2];}if(this[_0x8084('0x26')]['d']||this[_0x8084('0x26')]['ra']){this[_0x8084('0xe')]=vec3[_0x8084('0x27')](this[_0x8084('0xe')],this[_0x8084('0xd')],this['up']);vec3['normalize'](this[_0x8084('0xe')],this[_0x8084('0xe')]);this[_0x8084('0xb')][0x0]+=_0x5260cd*this[_0x8084('0xf')]*this[_0x8084('0xe')][0x0];this['pos'][0x1]+=_0x5260cd*this['speed']*this[_0x8084('0xe')][0x1];this[_0x8084('0xb')][0x2]+=_0x5260cd*this[_0x8084('0xf')]*this['frontCross'][0x2];}if(this[_0x8084('0x26')]['a']||this[_0x8084('0x26')]['la']){this[_0x8084('0xe')]=vec3[_0x8084('0x27')](this[_0x8084('0xe')],this[_0x8084('0xd')],this['up']);vec3['normalize'](this['frontCross'],this[_0x8084('0xe')]);this['pos'][0x0]-=_0x5260cd*this[_0x8084('0xf')]*this['frontCross'][0x0];this[_0x8084('0xb')][0x1]-=_0x5260cd*this[_0x8084('0xf')]*this[_0x8084('0xe')][0x1];this[_0x8084('0xb')][0x2]-=_0x5260cd*this[_0x8084('0xf')]*this[_0x8084('0xe')][0x2];}if(this['pressedKeys'][_0x8084('0x28')]){this[_0x8084('0xb')][0x0]+=_0x5260cd*this[_0x8084('0xf')]*this['up'][0x0];this[_0x8084('0xb')][0x1]+=_0x5260cd*this[_0x8084('0xf')]*this['up'][0x1];this['pos'][0x2]+=_0x5260cd*this['speed']*this['up'][0x2];}if(this[_0x8084('0x26')][_0x8084('0x29')]){this[_0x8084('0xb')][0x0]-=_0x5260cd*this['speed']*this['up'][0x0];this[_0x8084('0xb')][0x1]-=_0x5260cd*this[_0x8084('0xf')]*this['up'][0x1];this[_0x8084('0xb')][0x2]-=_0x5260cd*this[_0x8084('0xf')]*this['up'][0x2];}this['yaw']+=this[_0x8084('0x19')][0x0]*_0x20e228;this[_0x8084('0x2a')]-=this[_0x8084('0x19')][0x1]*_0x20e228;this[_0x8084('0x19')][0x0]-=this['deltaRot'][0x0]*_0x20e228;this[_0x8084('0x19')][0x1]-=this['deltaRot'][0x1]*_0x20e228;if(this[_0x8084('0x2a')]>3.13/0x2)this['pitch']=3.13/0x2;if(this[_0x8084('0x2a')]<-3.13/0x2)this[_0x8084('0x2a')]=-3.13/0x2;this[_0x8084('0xd')][0x0]=Math[_0x8084('0x2b')](this[_0x8084('0x18')])*Math['cos'](this[_0x8084('0x2a')]);this[_0x8084('0xd')][0x1]=Math[_0x8084('0x2c')](this[_0x8084('0x2a')]);this['front'][0x2]=Math[_0x8084('0x2c')](this[_0x8084('0x18')])*Math['cos'](this['pitch']);vec3[_0x8084('0x2d')](this['front'],this[_0x8084('0xd')]);if(Math[_0x8084('0x2e')](this[_0x8084('0x1a')])>0x0){var _0x4b0cbb=this[_0x8084('0x1a')]*this[_0x8084('0x10')];if(this['deltazoom']<0x0)this['deltazoom']=this[_0x8084('0x1a')]<-0.01?this[_0x8084('0x1a')]-_0x4b0cbb:0x0;if(this[_0x8084('0x1a')]>0x0)this[_0x8084('0x1a')]=this[_0x8084('0x1a')]>+0.01?this[_0x8084('0x1a')]-_0x4b0cbb:0x0;zoom+=_0x4b0cbb;if(zoom<44.5)zoom=44.5;if(zoom>this['startingZoom'])zoom=this[_0x8084('0x1c')];}this[_0x8084('0x2f')][0x0]=this[_0x8084('0xb')][0x0]+this[_0x8084('0xd')][0x0];this[_0x8084('0x2f')][0x1]=this[_0x8084('0xb')][0x1]+this[_0x8084('0xd')][0x1];this[_0x8084('0x2f')][0x2]=this['pos'][0x2]+this[_0x8084('0xd')][0x2];mat4[_0x8084('0x16')](this[_0x8084('0x16')],this[_0x8084('0xb')],this[_0x8084('0x2f')],this['up']);return this[_0x8084('0x16')];}function camera_keydown(_0x25a6d0){switch(_0x25a6d0[_0x8084('0x30')]){case 0x57:this['pressedKeys']['w']=!![];break;case 0x41:this[_0x8084('0x26')]['a']=!![];break;case 0x53:this[_0x8084('0x26')]['s']=!![];break;case 0x44:this[_0x8084('0x26')]['d']=!![];break;case 0x20:this[_0x8084('0x26')][_0x8084('0x28')]=!![];break;case 0x10:this[_0x8084('0x26')][_0x8084('0x29')]=!![];break;case 0x25:this[_0x8084('0x26')]['la']=!![];break;case 0x26:this[_0x8084('0x26')]['ua']=!![];break;case 0x27:this[_0x8084('0x26')]['ra']=!![];break;case 0x28:this[_0x8084('0x26')]['da']=!![];break;}}function camera_keyup(_0x12a8bc){switch(_0x12a8bc[_0x8084('0x30')]){case 0x57:this[_0x8084('0x26')]['w']=![];break;case 0x41:this[_0x8084('0x26')]['a']=![];break;case 0x53:this[_0x8084('0x26')]['s']=![];break;case 0x44:this[_0x8084('0x26')]['d']=![];break;case 0x20:this['pressedKeys'][_0x8084('0x28')]=![];break;case 0x10:this[_0x8084('0x26')]['shift']=![];break;case 0x25:this[_0x8084('0x26')]['la']=![];break;case 0x26:this[_0x8084('0x26')]['ua']=![];break;case 0x27:this['pressedKeys']['ra']=![];break;case 0x28:this[_0x8084('0x26')]['da']=![];break;}}function camera_mousemove(_0xa84e37){if(!this[_0x8084('0x1b')])return;this[_0x8084('0x19')][0x0]+=(_0xa84e37[_0x8084('0x31')]-this[_0x8084('0x32')][0x0])*this['rotationSensitivity'];this['deltaRot'][0x1]+=(_0xa84e37[_0x8084('0x33')]-this[_0x8084('0x32')][0x1])*this['rotationSensitivity'];this[_0x8084('0x32')][0x0]=_0xa84e37[_0x8084('0x31')];this['lastPos'][0x1]=_0xa84e37[_0x8084('0x33')];}function camera_touchmove(_0x41fde4){if(!this[_0x8084('0x1b')])return;this[_0x8084('0x19')][0x0]+=(_0x41fde4[_0x8084('0x34')][0x0][_0x8084('0x31')]-this[_0x8084('0x32')][0x0])*this[_0x8084('0x1e')];this['deltaRot'][0x1]+=(_0x41fde4[_0x8084('0x34')][0x0][_0x8084('0x33')]-this['lastPos'][0x1])*this[_0x8084('0x1e')];this[_0x8084('0x32')][0x0]=_0x41fde4[_0x8084('0x34')][0x0][_0x8084('0x31')];this[_0x8084('0x32')][0x1]=_0x41fde4[_0x8084('0x34')][0x0][_0x8084('0x33')];}function camera_mousedown(_0x3e0349){if(_0x3e0349[_0x8084('0x35')]!=0x1)return;this[_0x8084('0x32')][0x0]=_0x3e0349[_0x8084('0x31')];this[_0x8084('0x32')][0x1]=_0x3e0349[_0x8084('0x33')];this[_0x8084('0x1b')]=!![];}function camera_mouseup(_0xba219e){this[_0x8084('0x1b')]=![];}function camera_touchdown(_0x3bd78a){this[_0x8084('0x32')][0x0]=_0x3bd78a[_0x8084('0x34')][0x0][_0x8084('0x31')];this[_0x8084('0x32')][0x1]=_0x3bd78a['touches'][0x0]['clientY'];this[_0x8084('0x1b')]=!![];}function camera_touchup(_0x249566){this[_0x8084('0x1b')]=![];}function camera_zoom(_0x29fe83){var _0x38ebca=_0x29fe83[_0x8084('0x36')]?_0x29fe83[_0x8084('0x36')]:-_0x29fe83[_0x8084('0x37')];if(_0x38ebca>0x0)this[_0x8084('0x1a')]+=-0.15;else this[_0x8084('0x1a')]+=+0.15;}function camera_getAutocenteredViewMatrix(_0x5aee51,_0x522fc7,_0x114801){this[_0x8084('0x18')]+=this['deltaRot'][0x0]*_0x522fc7;this[_0x8084('0x2a')]-=this[_0x8084('0x19')][0x1]*_0x522fc7;if(this['autoRotate']){this[_0x8084('0x18')]+=this[_0x8084('0x13')]/0xb4*Math['PI']*_0x5aee51;}this['deltaRot'][0x0]-=this[_0x8084('0x19')][0x0]*_0x522fc7;this[_0x8084('0x19')][0x1]-=this[_0x8084('0x19')][0x1]*_0x522fc7;if(this[_0x8084('0x2a')]>3.13/0x2)this[_0x8084('0x2a')]=3.13/0x2;if(this['pitch']<-3.13/0x2)this[_0x8084('0x2a')]=-3.13/0x2;if(Math[_0x8084('0x2e')](this['deltazoom'])>0x0){var _0x5426c4=this[_0x8084('0x1a')]*this[_0x8084('0x10')];if(this[_0x8084('0x1a')]<0x0)this[_0x8084('0x1a')]=this['deltazoom']<-0.01?this[_0x8084('0x1a')]-_0x5426c4:0x0;if(this['deltazoom']>0x0)this[_0x8084('0x1a')]=this[_0x8084('0x1a')]>+0.01?this['deltazoom']-_0x5426c4:0x0;zoom+=_0x5426c4;if(zoom<44.5)zoom=44.5;if(zoom>this[_0x8084('0x1c')])zoom=this['startingZoom'];}var _0x24f93e=Math['cos'](this[_0x8084('0x18')])*Math[_0x8084('0x2b')](this[_0x8084('0x2a')])*_0x114801;var _0x1ff332=Math[_0x8084('0x2c')](this[_0x8084('0x18')])*Math[_0x8084('0x2b')](this['pitch'])*_0x114801;var _0xf2b59d=Math[_0x8084('0x2c')](this[_0x8084('0x2a')])*_0x114801;this[_0x8084('0xb')][0x0]=_0x24f93e+this[_0x8084('0x14')][0x0];this[_0x8084('0xb')][0x1]=_0xf2b59d+this[_0x8084('0x14')][0x1];this[_0x8084('0xb')][0x2]=-_0x1ff332+this[_0x8084('0x14')][0x2];mat4[_0x8084('0x16')](this[_0x8084('0x16')],this[_0x8084('0xb')],this[_0x8084('0x14')],this['up']);if(this[_0x8084('0x15')]!=0x0){var _0x40d1ea=6.28*this[_0x8084('0x15')]/0xa;var _0xced895=this[_0x8084('0x18')]+Math['cos'](_0x40d1ea)/0x96;var _0x5b4ddc=this[_0x8084('0x2a')]+Math[_0x8084('0x2c')](_0x40d1ea)/0x96;var _0x24f93e=Math[_0x8084('0x2b')](_0xced895)*Math[_0x8084('0x2b')](_0x5b4ddc)*_0x114801;var _0x1ff332=Math[_0x8084('0x2c')](_0xced895)*Math[_0x8084('0x2b')](_0x5b4ddc)*_0x114801;var _0xf2b59d=Math[_0x8084('0x2c')](_0x5b4ddc)*_0x114801;this['pos'][0x0]=_0x24f93e+this[_0x8084('0x14')][0x0];this[_0x8084('0xb')][0x1]=_0xf2b59d+this[_0x8084('0x14')][0x1];this['pos'][0x2]=-_0x1ff332+this[_0x8084('0x14')][0x2];mat4[_0x8084('0x16')](this['lookAt'],this[_0x8084('0xb')],this[_0x8084('0x14')],this['up']);}return this[_0x8084('0x16')];}_0x8084('0x38');var _typeof=typeof Symbol==='function'&&typeof Symbol['iterator']===_0x8084('0x39')?function(_0x36595d){return typeof _0x36595d;}:function(_0x416f2b){return _0x416f2b&&typeof Symbol===_0x8084('0x3a')&&_0x416f2b['constructor']===Symbol&&_0x416f2b!==Symbol[_0x8084('0x3b')]?_0x8084('0x39'):typeof _0x416f2b;};(function(){'use strict';var _0x1bec42,_0x49d105=[];function _0x4f50e2(_0x363184){_0x49d105[_0x8084('0x3c')](_0x363184);0x1==_0x49d105[_0x8084('0x3d')]&&_0x1bec42();}function _0x29b5de(){for(;_0x49d105[_0x8084('0x3d')];){_0x49d105[0x0](),_0x49d105[_0x8084('0x29')]();}}_0x1bec42=function _0x1bec42(){setTimeout(_0x29b5de);};function _0x2f64e3(_0x483533){this['a']=_0x304b20;this['b']=void 0x0;this['f']=[];var _0x2b8dd1=this;try{_0x483533(function(_0x3eae45){_0x4300ea(_0x2b8dd1,_0x3eae45);},function(_0x4fd3b2){_0xcad474(_0x2b8dd1,_0x4fd3b2);});}catch(_0x1eaa20){_0xcad474(_0x2b8dd1,_0x1eaa20);}}var _0x304b20=0x2;function _0x35c4ce(_0x36a340){return new _0x2f64e3(function(_0x5e1038,_0xbf094b){_0xbf094b(_0x36a340);});}function _0x184a02(_0x533b80){return new _0x2f64e3(function(_0x49b569){_0x49b569(_0x533b80);});}function _0x4300ea(_0x427571,_0xcecf56){if(_0x427571['a']==_0x304b20){if(_0xcecf56==_0x427571)throw new TypeError();var _0x18049a=!0x1;try{var _0x1c28e6=_0xcecf56&&_0xcecf56[_0x8084('0x3e')];if(null!=_0xcecf56&&_0x8084('0x3f')==(typeof _0xcecf56==='undefined'?_0x8084('0x40'):_typeof(_0xcecf56))&&'function'==typeof _0x1c28e6){_0x1c28e6[_0x8084('0x24')](_0xcecf56,function(_0x4ba382){_0x18049a||_0x4300ea(_0x427571,_0x4ba382);_0x18049a=!0x0;},function(_0x549a30){_0x18049a||_0xcad474(_0x427571,_0x549a30);_0x18049a=!0x0;});return;}}catch(_0x373102){_0x18049a||_0xcad474(_0x427571,_0x373102);return;}_0x427571['a']=0x0;_0x427571['b']=_0xcecf56;_0x2b5644(_0x427571);}}function _0xcad474(_0x4b8876,_0x534291){if(_0x4b8876['a']==_0x304b20){if(_0x534291==_0x4b8876)throw new TypeError();_0x4b8876['a']=0x1;_0x4b8876['b']=_0x534291;_0x2b5644(_0x4b8876);}}function _0x2b5644(_0x1d3c4b){_0x4f50e2(function(){if(_0x1d3c4b['a']!=_0x304b20)for(;_0x1d3c4b['f'][_0x8084('0x3d')];){var _0x296c76=_0x1d3c4b['f'][_0x8084('0x29')](),_0x475b82=_0x296c76[0x0],_0x41435b=_0x296c76[0x1],_0x203a85=_0x296c76[0x2],_0x296c76=_0x296c76[0x3];try{0x0==_0x1d3c4b['a']?_0x8084('0x3a')==typeof _0x475b82?_0x203a85(_0x475b82[_0x8084('0x24')](void 0x0,_0x1d3c4b['b'])):_0x203a85(_0x1d3c4b['b']):0x1==_0x1d3c4b['a']&&(_0x8084('0x3a')==typeof _0x41435b?_0x203a85(_0x41435b[_0x8084('0x24')](void 0x0,_0x1d3c4b['b'])):_0x296c76(_0x1d3c4b['b']));}catch(_0x1630d4){_0x296c76(_0x1630d4);}}});}_0x2f64e3['prototype']['g']=function(_0x2e31fe){return this['c'](void 0x0,_0x2e31fe);};_0x2f64e3['prototype']['c']=function(_0x4242ab,_0xb508ce){var _0x4ee7a1=this;return new _0x2f64e3(function(_0x56ba02,_0x1a66f2){_0x4ee7a1['f']['push']([_0x4242ab,_0xb508ce,_0x56ba02,_0x1a66f2]);_0x2b5644(_0x4ee7a1);});};function _0x503854(_0x4a6b2e){return new _0x2f64e3(function(_0x4787d5,_0x2221ed){function _0x4a47c2(_0xfb7e70){return function(_0x195c11){_0x5c15eb[_0xfb7e70]=_0x195c11;_0x229222+=0x1;_0x229222==_0x4a6b2e['length']&&_0x4787d5(_0x5c15eb);};}var _0x229222=0x0,_0x5c15eb=[];0x0==_0x4a6b2e[_0x8084('0x3d')]&&_0x4787d5(_0x5c15eb);for(var _0x3d3737=0x0;_0x3d3737<_0x4a6b2e[_0x8084('0x3d')];_0x3d3737+=0x1){_0x184a02(_0x4a6b2e[_0x3d3737])['c'](_0x4a47c2(_0x3d3737),_0x2221ed);}});}function _0x2ae9f2(_0x281094){return new _0x2f64e3(function(_0x2377e7,_0x49359b){for(var _0x11e467=0x0;_0x11e467<_0x281094[_0x8084('0x3d')];_0x11e467+=0x1){_0x184a02(_0x281094[_0x11e467])['c'](_0x2377e7,_0x49359b);}});};window[_0x8084('0x41')]||(window[_0x8084('0x41')]=_0x2f64e3,window['Promise']['resolve']=_0x184a02,window['Promise'][_0x8084('0x42')]=_0x35c4ce,window[_0x8084('0x41')][_0x8084('0x43')]=_0x2ae9f2,window['Promise']['all']=_0x503854,window[_0x8084('0x41')][_0x8084('0x3b')]['then']=_0x2f64e3[_0x8084('0x3b')]['c'],window[_0x8084('0x41')]['prototype'][_0x8084('0x44')]=_0x2f64e3[_0x8084('0x3b')]['g']);}());(function(){function _0x57744d(_0x5a9e5f,_0x401aa2){document['addEventListener']?_0x5a9e5f['addEventListener']('scroll',_0x401aa2,!0x1):_0x5a9e5f[_0x8084('0x45')](_0x8084('0x46'),_0x401aa2);}function _0x2cd6f1(_0x52ddc5){document[_0x8084('0x47')]?_0x52ddc5():document[_0x8084('0x21')]?document[_0x8084('0x21')]('DOMContentLoaded',function c(){document[_0x8084('0x48')]('DOMContentLoaded',c);_0x52ddc5();}):document[_0x8084('0x45')](_0x8084('0x49'),function k(){if(_0x8084('0x4a')==document['readyState']||_0x8084('0x4b')==document[_0x8084('0x4c')])document[_0x8084('0x4d')](_0x8084('0x49'),k),_0x52ddc5();});};function _0x14b8ae(_0x5dd628){this['a']=document[_0x8084('0x4e')]('div');this['a']['setAttribute'](_0x8084('0x4f'),'true');this['a'][_0x8084('0x50')](document['createTextNode'](_0x5dd628));this['b']=document[_0x8084('0x4e')](_0x8084('0x51'));this['c']=document['createElement']('span');this['h']=document[_0x8084('0x4e')](_0x8084('0x51'));this['f']=document['createElement']('span');this['g']=-0x1;this['b']['style']['cssText']='max-width:none;display:inline-block;position:absolute;height:100%;width:100%;overflow:scroll;font-size:16px;';this['c'][_0x8084('0x52')][_0x8084('0x53')]=_0x8084('0x54');this['f'][_0x8084('0x52')]['cssText']=_0x8084('0x54');this['h'][_0x8084('0x52')][_0x8084('0x53')]=_0x8084('0x55');this['b'][_0x8084('0x50')](this['h']);this['c'][_0x8084('0x50')](this['f']);this['a'][_0x8084('0x50')](this['b']);this['a'][_0x8084('0x50')](this['c']);}function _0x47e4db(_0x235724,_0x2d778a){_0x235724['a']['style']['cssText']=_0x8084('0x56')+_0x2d778a+';';}function _0x1fc52d(_0x5e1d53){var _0x5923e0=_0x5e1d53['a'][_0x8084('0x57')],_0x1dd0f8=_0x5923e0+0x64;_0x5e1d53['f']['style']['width']=_0x1dd0f8+'px';_0x5e1d53['c']['scrollLeft']=_0x1dd0f8;_0x5e1d53['b'][_0x8084('0x58')]=_0x5e1d53['b'][_0x8084('0x59')]+0x64;return _0x5e1d53['g']!==_0x5923e0?(_0x5e1d53['g']=_0x5923e0,!0x0):!0x1;}function _0x5b96d3(_0xadeab7,_0x2c3fb3){function _0x59dd3d(){var _0xadeab7=_0x21cef8;_0x1fc52d(_0xadeab7)&&_0xadeab7['a'][_0x8084('0x5a')]&&_0x2c3fb3(_0xadeab7['g']);}var _0x21cef8=_0xadeab7;_0x57744d(_0xadeab7['b'],_0x59dd3d);_0x57744d(_0xadeab7['c'],_0x59dd3d);_0x1fc52d(_0xadeab7);};function _0x589679(_0x2a5b23,_0x22bc60){var _0x455203=_0x22bc60||{};this[_0x8084('0x5b')]=_0x2a5b23;this[_0x8084('0x52')]=_0x455203[_0x8084('0x52')]||_0x8084('0x5c');this[_0x8084('0x5d')]=_0x455203['weight']||'normal';this[_0x8084('0x5e')]=_0x455203[_0x8084('0x5e')]||_0x8084('0x5c');}var _0x5a4c77=null,_0x14e430=null,_0x1cba66=null,_0x48db7e=null;function _0x125d86(){if(null===_0x14e430)if(_0x29f555()&&/Apple/[_0x8084('0x5f')](window[_0x8084('0x60')]['vendor'])){var _0xf576d3=/AppleWebKit\/([0-9]+)(?:\.([0-9]+))(?:\.([0-9]+))/[_0x8084('0x61')](window[_0x8084('0x60')]['userAgent']);_0x14e430=!!_0xf576d3&&0x25b>parseInt(_0xf576d3[0x1],0xa);}else _0x14e430=!0x1;return _0x14e430;}function _0x29f555(){null===_0x48db7e&&(_0x48db7e=!!document[_0x8084('0x62')]);return _0x48db7e;}function _0x3ff58d(){if(null===_0x1cba66){var _0x166bbb=document[_0x8084('0x4e')](_0x8084('0x63'));try{_0x166bbb[_0x8084('0x52')]['font']='condensed\x20100px\x20sans-serif';}catch(_0x2b9cc2){}_0x1cba66=''!==_0x166bbb[_0x8084('0x52')]['font'];}return _0x1cba66;}function _0xcdb086(_0x2642a8,_0x3cbd1a){return[_0x2642a8[_0x8084('0x52')],_0x2642a8[_0x8084('0x5d')],_0x3ff58d()?_0x2642a8[_0x8084('0x5e')]:'','100px',_0x3cbd1a][_0x8084('0x64')]('\x20');}_0x589679[_0x8084('0x3b')][_0x8084('0x65')]=function(_0x59aa6c,_0xf6637d){var _0x2140b0=this,_0x26311d=_0x59aa6c||'BESbswy',_0x14ef26=0x0,_0x36c175=_0xf6637d||0xbb8,_0x396551=new Date()[_0x8084('0x66')]();return new Promise(function(_0x3ac87a,_0x384760){if(_0x29f555()&&!_0x125d86()){var _0x371983=new Promise(function(_0x25ae64,_0x5dbf03){function _0x5b7fb8(){new Date()[_0x8084('0x66')]()-_0x396551>=_0x36c175?_0x5dbf03():document['fonts'][_0x8084('0x65')](_0xcdb086(_0x2140b0,'\x22'+_0x2140b0[_0x8084('0x5b')]+'\x22'),_0x26311d)[_0x8084('0x3e')](function(_0x81c729){0x1<=_0x81c729[_0x8084('0x3d')]?_0x25ae64():setTimeout(_0x5b7fb8,0x19);},function(){_0x5dbf03();});}_0x5b7fb8();}),_0x117931=new Promise(function(_0x332ca9,_0x31d1ba){_0x14ef26=setTimeout(_0x31d1ba,_0x36c175);});Promise[_0x8084('0x43')]([_0x117931,_0x371983])[_0x8084('0x3e')](function(){clearTimeout(_0x14ef26);_0x3ac87a(_0x2140b0);},function(){_0x384760(_0x2140b0);});}else _0x2cd6f1(function(){function _0x21a388(){var _0x384760;if(_0x384760=-0x1!=_0x2279f6&&-0x1!=_0x2cc7c0||-0x1!=_0x2279f6&&-0x1!=_0x40b719||-0x1!=_0x2cc7c0&&-0x1!=_0x40b719)(_0x384760=_0x2279f6!=_0x2cc7c0&&_0x2279f6!=_0x40b719&&_0x2cc7c0!=_0x40b719)||(null===_0x5a4c77&&(_0x384760=/AppleWebKit\/([0-9]+)(?:\.([0-9]+))/[_0x8084('0x61')](window[_0x8084('0x60')]['userAgent']),_0x5a4c77=!!_0x384760&&(0x218>parseInt(_0x384760[0x1],0xa)||0x218===parseInt(_0x384760[0x1],0xa)&&0xb>=parseInt(_0x384760[0x2],0xa))),_0x384760=_0x5a4c77&&(_0x2279f6==_0x3d56c3&&_0x2cc7c0==_0x3d56c3&&_0x40b719==_0x3d56c3||_0x2279f6==_0x13c064&&_0x2cc7c0==_0x13c064&&_0x40b719==_0x13c064||_0x2279f6==_0x3e5f8b&&_0x2cc7c0==_0x3e5f8b&&_0x40b719==_0x3e5f8b)),_0x384760=!_0x384760;_0x384760&&(_0x2b6751[_0x8084('0x5a')]&&_0x2b6751[_0x8084('0x5a')]['removeChild'](_0x2b6751),clearTimeout(_0x14ef26),_0x3ac87a(_0x2140b0));}function _0x4ce1f4(){if(new Date()[_0x8084('0x66')]()-_0x396551>=_0x36c175)_0x2b6751[_0x8084('0x5a')]&&_0x2b6751[_0x8084('0x5a')][_0x8084('0x67')](_0x2b6751),_0x384760(_0x2140b0);else{var _0x3ac87a=document[_0x8084('0x68')];if(!0x0===_0x3ac87a||void 0x0===_0x3ac87a)_0x2279f6=_0x1b0761['a'][_0x8084('0x57')],_0x2cc7c0=_0x7065b4['a'][_0x8084('0x57')],_0x40b719=_0x2d3363['a'][_0x8084('0x57')],_0x21a388();_0x14ef26=setTimeout(_0x4ce1f4,0x32);}}var _0x1b0761=new _0x14b8ae(_0x26311d),_0x7065b4=new _0x14b8ae(_0x26311d),_0x2d3363=new _0x14b8ae(_0x26311d),_0x2279f6=-0x1,_0x2cc7c0=-0x1,_0x40b719=-0x1,_0x3d56c3=-0x1,_0x13c064=-0x1,_0x3e5f8b=-0x1,_0x2b6751=document['createElement']('div');_0x2b6751[_0x8084('0x2f')]=_0x8084('0x69');_0x47e4db(_0x1b0761,_0xcdb086(_0x2140b0,'sans-serif'));_0x47e4db(_0x7065b4,_0xcdb086(_0x2140b0,_0x8084('0x6a')));_0x47e4db(_0x2d3363,_0xcdb086(_0x2140b0,'monospace'));_0x2b6751[_0x8084('0x50')](_0x1b0761['a']);_0x2b6751[_0x8084('0x50')](_0x7065b4['a']);_0x2b6751['appendChild'](_0x2d3363['a']);document[_0x8084('0x47')][_0x8084('0x50')](_0x2b6751);_0x3d56c3=_0x1b0761['a'][_0x8084('0x57')];_0x13c064=_0x7065b4['a']['offsetWidth'];_0x3e5f8b=_0x2d3363['a'][_0x8084('0x57')];_0x4ce1f4();_0x5b96d3(_0x1b0761,function(_0x2b3fa6){_0x2279f6=_0x2b3fa6;_0x21a388();});_0x47e4db(_0x1b0761,_0xcdb086(_0x2140b0,'\x22'+_0x2140b0[_0x8084('0x5b')]+_0x8084('0x6b')));_0x5b96d3(_0x7065b4,function(_0x306a8f){_0x2cc7c0=_0x306a8f;_0x21a388();});_0x47e4db(_0x7065b4,_0xcdb086(_0x2140b0,'\x22'+_0x2140b0[_0x8084('0x5b')]+_0x8084('0x6c')));_0x5b96d3(_0x2d3363,function(_0x399371){_0x40b719=_0x399371;_0x21a388();});_0x47e4db(_0x2d3363,_0xcdb086(_0x2140b0,'\x22'+_0x2140b0['family']+_0x8084('0x6d')));});});};'object'===(typeof module===_0x8084('0x40')?_0x8084('0x40'):_typeof(module))?module[_0x8084('0x6e')]=_0x589679:(window[_0x8084('0x6f')]=_0x589679,window['FontFaceObserver'][_0x8084('0x3b')]['load']=_0x589679[_0x8084('0x3b')]['load']);}());_0x8084('0x38');function flatten(_0x2a03ba){return _0x2a03ba[_0x8084('0x70')](function(_0x354106,_0x4639f4){return _0x354106['concat'](Array[_0x8084('0x71')](_0x4639f4)?flatten(_0x4639f4):_0x4639f4);},[]);}var rndrndseed=Date[_0x8084('0x72')]()*0.1;function rnd(){rndrndseed+=0xf7bf;return Math[_0x8084('0x2c')](rndrndseed*345345.325)*0.5+0.5;}var strhash=function strhash(_0x47b915){var _0x2c2c45=0x0,_0x342189,_0x466e81;if(_0x47b915[_0x8084('0x3d')]===0x0)return _0x2c2c45;for(_0x342189=0x0;_0x342189<_0x47b915[_0x8084('0x3d')];_0x342189++){_0x466e81=_0x47b915[_0x8084('0x73')](_0x342189);_0x2c2c45=(_0x2c2c45<<0x5)-_0x2c2c45+_0x466e81;_0x2c2c45|=0x0;}return _0x2c2c45;};'use\x20strict';function getShader(_0x153198,_0x1c949a){var _0x295c9b=shader(_0x153198,_0x8084('0x74'));var _0x23841e=shader(_0x1c949a,_0x8084('0x75'));var _0x2e4b6b=gl[_0x8084('0x76')]();gl[_0x8084('0x77')](_0x2e4b6b,_0x295c9b);gl[_0x8084('0x77')](_0x2e4b6b,_0x23841e);gl[_0x8084('0x78')](_0x2e4b6b);if(!gl['getProgramParameter'](_0x2e4b6b,gl[_0x8084('0x79')])){alert(_0x8084('0x7a'));return null;}return _0x2e4b6b;}function shader(_0x24652a,_0x47f065){var _0x6e2854;if(_0x47f065=='frag'){_0x6e2854=gl[_0x8084('0x7b')](gl['FRAGMENT_SHADER']);}else if(_0x47f065==_0x8084('0x74')){_0x6e2854=gl['createShader'](gl['VERTEX_SHADER']);}else{return null;}gl['shaderSource'](_0x6e2854,_0x24652a);gl[_0x8084('0x7c')](_0x6e2854);if(!gl[_0x8084('0x7d')](_0x6e2854,gl[_0x8084('0x7e')])){alert(gl[_0x8084('0x7f')](_0x6e2854)+'\x20\x20'+_0x47f065);return null;}return _0x6e2854;}function getTFShader(_0x52d414,_0x28222d){var _0x25e5c7=null;if(_0x28222d=='vert')_0x25e5c7=gl[_0x8084('0x7b')](gl[_0x8084('0x80')]);else _0x25e5c7=gl[_0x8084('0x7b')](gl['FRAGMENT_SHADER']);gl[_0x8084('0x81')](_0x25e5c7,_0x52d414);gl[_0x8084('0x7c')](_0x25e5c7);if(!gl[_0x8084('0x7d')](_0x25e5c7,gl[_0x8084('0x7e')])){alert(gl[_0x8084('0x7f')](_0x25e5c7)+'\x20\x20'+_0x28222d);return null;}return _0x25e5c7;}_0x8084('0x38');function MouseController(){this['origin']=[0x0,0x0,0x0];this[_0x8084('0x82')]=[0x0,0x0,0x0];this['postProcessVelocityVec']=[0x0,0x0];this[_0x8084('0x83')]=0x0;this['ww']=undefined;this['wh']=undefined;var _0x3df0f0=0x0;var _0x2a9e29=!![];var _0x57cbf4=innerWidth/ innerHeight;var _0x3bc11b=0x320;this[_0x8084('0x84')]=function(_0x157d5e){this[_0x8084('0x82')][0x0]*=0.975;this[_0x8084('0x82')][0x1]*=0.975;this[_0x8084('0x82')][0x2]*=0.975;this[_0x8084('0x83')]*=0.907;};var _0x3d8ab1=![];window['addEventListener'](_0x8084('0x85'),function(_0x93baf5){_0x3d8ab1=!![];var _0x452812=_0x93baf5['clientX']/ innerWidth;var _0x17640f=(innerHeight-_0x93baf5[_0x8084('0x33')])/ innerHeight;this[_0x8084('0x86')]=[_0x452812*0x2-0x1,_0x17640f*0x2-0x1,0x0];_0x5a83b4=_0x93baf5[_0x8084('0x31')];_0x5d169c=_0x93baf5[_0x8084('0x33')];}[_0x8084('0x23')](this));var _0x5a83b4,_0x5d169c;window['addEventListener']('mousemove',function(_0x2eba35){if(_0x5a83b4===undefined)_0x5a83b4=_0x2eba35[_0x8084('0x31')];if(_0x5d169c===undefined)_0x5d169c=_0x2eba35['clientY'];var _0x536709=_0x2eba35[_0x8084('0x31')]-_0x5a83b4;var _0x95be17=_0x2eba35['clientY']-_0x5d169c;var _0x56b281=_0x2eba35[_0x8084('0x31')]/ innerWidth;var _0x19cb42=(innerHeight-_0x2eba35['clientY'])/ innerHeight;this[_0x8084('0x86')]=[_0x56b281*0x2-0x1,_0x19cb42*0x2-0x1,0x0];this[_0x8084('0x82')]=[_0x536709/ innerHeight*_0x3bc11b,-_0x95be17/ innerHeight*_0x3bc11b,0x0];this[_0x8084('0x83')]+=vec3['length'](this[_0x8084('0x82')])*0.103;_0x5a83b4=_0x2eba35[_0x8084('0x31')];_0x5d169c=_0x2eba35[_0x8084('0x33')];}[_0x8084('0x23')](this));window[_0x8084('0x21')](_0x8084('0x87'),function(_0x2294ad){_0x3d8ab1=![];}['bind'](this));}'use\x20strict';window[_0x8084('0x21')]('load',mainCanvasInit);var gl;function mainCanvasInit(){if(blockCanvasOnMobiles())return;if(!document['querySelector'](_0x8084('0x88')))return;window[_0x8084('0x89')]=document[_0x8084('0x8a')](_0x8084('0x20'));canvas[_0x8084('0x8b')]=innerWidth;canvas[_0x8084('0x8c')]=innerHeight;var _0x34ebf4=[_0x8084('0x8d')];for(var _0x431eda in _0x34ebf4){try{gl=canvas[_0x8084('0x8e')](_0x34ebf4[_0x431eda],{});if(gl&&typeof gl[_0x8084('0x8f')]==_0x8084('0x3a')){break;}}catch(_0x53ba74){}}if(gl===null)alert(_0x8084('0x90'));window[_0x8084('0x91')]=new createCamera();window[_0x8084('0x92')]=0x2d;camera[_0x8084('0xb')]=[0x0,0x0,cameraZ];window['step']=Float32Array[_0x8084('0x93')];window['zoom']=0x2d;window[_0x8084('0x94')]=mat4[_0x8084('0x17')]();window['model']=mat4['create']();window[_0x8084('0x95')]=mat4[_0x8084('0x17')]();window['screenRatio']=innerWidth/ innerHeight;mat4[_0x8084('0x96')](projection,0x2d*Math['PI']/0xb4,screenRatio,0.1,0x3e8);window[_0x8084('0x97')]=new MouseController();window[_0x8084('0x98')]=new MusicBox('assets/music/test.mp3');window['radius']=0xa;window[_0x8084('0x99')]=generate_icosahedron_wlines();create_offscreen_multisampleFBOs();create_postprocess_blit_in_main_FBO_program();create_background_program();create_offscreen_points_program();create_icosahedron_program();create_icosahedronTF_program();create_icosahedron_lines_program();create_icosahedronTF_lines_program();setTimeout(function(){musicBox[_0x8084('0x9a')]();removeInitialCurtain();requestAnimationFrame(draw);},0x3e8);}var then=0x0;function draw(_0x433aee){requestAnimationFrame(draw);_0x433aee*=0.001;var _0x574d1f=_0x433aee-then;then=_0x433aee;mouseController[_0x8084('0x84')](_0x574d1f);musicBox['updateVisualizerTextureData'](_0x574d1f);footerSVGHider();draw_static_background(_0x433aee,_0x574d1f);draw_icosahedron(_0x433aee,_0x574d1f);draw_icosahedron_lines(_0x433aee,_0x574d1f);draw_luminous_points(_0x433aee,_0x574d1f);postprocess_blit_in_main_FBO(_0x433aee,_0x574d1f);}function canvasResize(){if(!canvas)return;canvas['width']=innerWidth;canvas['height']=innerHeight;gl['viewport'](0x0,0x0,innerWidth,innerHeight);screenRatio=innerWidth/ innerHeight;mat4[_0x8084('0x96')](projection,0x2d*Math['PI']/0xb4,screenRatio,0.1,0x3e8);gl[_0x8084('0x9b')](gl[_0x8084('0x9c')],FBOsoffscreen['texture']);gl['texImage2D'](gl[_0x8084('0x9c')],0x0,gl[_0x8084('0x9d')],innerWidth,innerHeight,0x0,gl[_0x8084('0x9d')],gl['UNSIGNED_BYTE'],null);gl[_0x8084('0x9b')](gl['TEXTURE_2D'],null);gl[_0x8084('0x9e')](gl['RENDERBUFFER'],FBOsoffscreen[_0x8084('0x9f')]);gl[_0x8084('0xa0')](gl[_0x8084('0xa1')],0x4,gl[_0x8084('0xa2')],innerWidth,innerHeight);if(screenRatio<1.2&&innerWidth<0x352){window[_0x8084('0x92')]=0x41;camera['pos']=[0x0,0x0,cameraZ];}else{window[_0x8084('0x92')]=0x2d;camera[_0x8084('0xb')]=[0x0,0x0,cameraZ];}}function blockCanvasOnMobiles(){var _0x2d4880=![];if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i['test'](navigator[_0x8084('0xa3')])||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i[_0x8084('0x5f')](navigator[_0x8084('0xa3')][_0x8084('0xa4')](0x0,0x4)))_0x2d4880=!![];if(_0x2d4880){var _0x368f24=document[_0x8084('0x4e')](_0x8084('0x63'));_0x368f24[_0x8084('0x52')][_0x8084('0xa5')]='red';document[_0x8084('0x47')]['insertAdjacentElement'](_0x8084('0xa6'),_0x368f24);document[_0x8084('0xa7')](_0x8084('0xa8'))[_0x8084('0x52')]['display']=_0x8084('0xa9');}return _0x2d4880;}function removeInitialCurtain(){var _0x5c182d=document[_0x8084('0xa7')]('.mhCurtain');var _0x18cb65=document['querySelector']('.mhCentralSquare');var _0x1de4bd=document[_0x8084('0xa7')]('.siteTitle');_0x5c182d[_0x8084('0xaa')][_0x8084('0xab')](_0x8084('0xac'));setTimeout(function(){_0x5c182d['style']['display']='none';},0x7d0);}'use\x20strict';function draw_background(_0x38b45b,_0x2305ec){gl['useProgram'](BackgroundProgram);gl[_0x8084('0xad')](gl[_0x8084('0xae')],BackgroundProgram[_0x8084('0xaf')]);gl['enableVertexAttribArray'](BackgroundProgram['a1']);gl['vertexAttribPointer'](BackgroundProgram['a1'],0x4,gl[_0x8084('0xb0')],![],0x0,0x0);gl[_0x8084('0xb1')](BackgroundProgram[_0x8084('0xb2')],_0x38b45b);gl[_0x8084('0xb3')](gl['TRIANGLES'],0x0,0x6);}function draw_static_background(_0x1b04ae,_0x2d8854){gl[_0x8084('0xb4')](gl[_0x8084('0xb5')],FBOsoffscreen[FRAMEBUFFER[_0x8084('0xa1')]]);gl['clearColor'](0.115,0.115,0.115,0x1);gl[_0x8084('0xb6')](gl[_0x8084('0xb7')]|gl['DEPTH_BUFFER_BIT']);}function create_background_program(){var _0x1251f6=getShader(backgroundv,backgroundf,![]);_0x1251f6['a1']=gl[_0x8084('0xb8')](_0x1251f6,_0x8084('0xb'));_0x1251f6['uTime']=gl[_0x8084('0xb9')](_0x1251f6,'uTime');var _0x578c63=[-0x1,-0x1,0x0,0x1,+0x1,-0x1,0x0,0x1,-0x1,+0x1,0x0,0x1,-0x1,+0x1,0x0,0x1,+0x1,-0x1,0x0,0x1,+0x1,+0x1,0x0,0x1];_0x1251f6[_0x8084('0xaf')]=gl[_0x8084('0xba')]();gl[_0x8084('0xad')](gl[_0x8084('0xae')],_0x1251f6[_0x8084('0xaf')]);gl[_0x8084('0xbb')](gl[_0x8084('0xae')],new Float32Array(_0x578c63),gl[_0x8084('0xbc')]);window[_0x8084('0xbd')]=_0x1251f6;}'use\x20strict';function compute_icosahedronTF(_0x594077,_0x234fd6,_0x2951b5){var _0x505727;var _0x2707eb;var _0x2e5433;var _0x349fdd;if(_0x2951b5===0x0){_0x349fdd=IcosahedronTFProgram[_0x8084('0xaf')];IcosahedronTFProgram[_0x8084('0xaf')]=IcosahedronProgram['buffer'];IcosahedronProgram['buffer']=_0x349fdd;_0x505727=IcosahedronTFProgram['buffer'];_0x2707eb=IcosahedronProgram['buffer'];_0x2e5433=IcosahedronProgram['nverts'];}if(_0x2951b5===0x1){_0x349fdd=IcosahedronTFProgram['bloombuffer'];IcosahedronTFProgram[_0x8084('0xbe')]=OffscreenPointsProgram[_0x8084('0xbe')];OffscreenPointsProgram['bloombuffer']=_0x349fdd;_0x505727=IcosahedronTFProgram[_0x8084('0xbe')];_0x2707eb=OffscreenPointsProgram[_0x8084('0xbe')];_0x2e5433=OffscreenPointsProgram[_0x8084('0xbf')];}gl[_0x8084('0xc0')](gl[_0x8084('0xc1')]);gl[_0x8084('0xc2')](IcosahedronTFProgram);gl[_0x8084('0xc0')](gl[_0x8084('0xc3')]);gl[_0x8084('0xad')](gl['ARRAY_BUFFER'],_0x505727);gl[_0x8084('0xc4')](IcosahedronTFProgram['a1']);gl['enableVertexAttribArray'](IcosahedronTFProgram['a2']);gl[_0x8084('0xc4')](IcosahedronTFProgram['a3']);gl[_0x8084('0xc4')](IcosahedronTFProgram['a4']);gl[_0x8084('0xc4')](IcosahedronTFProgram['a5']);gl[_0x8084('0xc4')](IcosahedronTFProgram['a6']);gl[_0x8084('0xc5')](IcosahedronTFProgram['a1'],0x4,gl[_0x8084('0xb0')],![],step*0x18,0x0);gl[_0x8084('0xc5')](IcosahedronTFProgram['a2'],0x4,gl[_0x8084('0xb0')],![],step*0x18,step*0x4);gl['vertexAttribPointer'](IcosahedronTFProgram['a3'],0x4,gl['FLOAT'],![],step*0x18,step*0x8);gl[_0x8084('0xc5')](IcosahedronTFProgram['a4'],0x4,gl['FLOAT'],![],step*0x18,step*0xc);gl['vertexAttribPointer'](IcosahedronTFProgram['a5'],0x4,gl[_0x8084('0xb0')],![],step*0x18,step*0x10);gl[_0x8084('0xc5')](IcosahedronTFProgram['a6'],0x4,gl[_0x8084('0xb0')],![],step*0x18,step*0x14);gl[_0x8084('0xb1')](IcosahedronTFProgram['uTime'],_0x594077);gl['uniform1f'](IcosahedronTFProgram['uCameraZ'],cameraZ);gl['uniform1f'](IcosahedronTFProgram['uDeltaTime'],_0x234fd6);gl['uniform1f'](IcosahedronTFProgram[_0x8084('0xc6')],screenRatio);gl[_0x8084('0xc7')](IcosahedronTFProgram[_0x8084('0xc8')],mouseController['origin'][0x0],mouseController[_0x8084('0x86')][0x1],mouseController[_0x8084('0x86')][0x2]);gl[_0x8084('0xc7')](IcosahedronTFProgram[_0x8084('0xc9')],mouseController['velocity'][0x0],mouseController[_0x8084('0x82')][0x1],mouseController['velocity'][0x2]);gl[_0x8084('0xca')](gl['TEXTURE0']);gl[_0x8084('0x9b')](gl['TEXTURE_2D'],musicBox[_0x8084('0xcb')]());gl[_0x8084('0xcc')](IcosahedronTFProgram[_0x8084('0xcd')],0x0);gl['bindTransformFeedback'](gl[_0x8084('0xce')],IcosahedronTFProgram['transformFeedback']);gl['bindBufferBase'](gl[_0x8084('0xcf')],0x0,_0x2707eb);gl['beginTransformFeedback'](gl[_0x8084('0xd0')]);gl[_0x8084('0xb3')](gl['POINTS'],0x0,_0x2e5433);gl['endTransformFeedback']();gl[_0x8084('0xd1')](gl[_0x8084('0xcf')],0x0,null);gl[_0x8084('0xd2')](gl[_0x8084('0xc1')]);}function draw_icosahedron(_0x11e833,_0x224b5b){compute_icosahedronTF(_0x11e833,_0x224b5b,0x0);gl[_0x8084('0xc2')](IcosahedronProgram);gl[_0x8084('0xad')](gl[_0x8084('0xae')],IcosahedronProgram[_0x8084('0xaf')]);gl[_0x8084('0xc4')](IcosahedronProgram['a1']);gl['enableVertexAttribArray'](IcosahedronProgram['a2']);gl[_0x8084('0xc4')](IcosahedronProgram['a3']);gl[_0x8084('0xc4')](IcosahedronProgram['a4']);gl[_0x8084('0xc4')](IcosahedronProgram['a5']);gl['enableVertexAttribArray'](IcosahedronProgram['a6']);gl[_0x8084('0xc5')](IcosahedronProgram['a1'],0x4,gl[_0x8084('0xb0')],![],step*0x18,0x0);gl['vertexAttribPointer'](IcosahedronProgram['a2'],0x4,gl[_0x8084('0xb0')],![],step*0x18,step*0x4);gl[_0x8084('0xc5')](IcosahedronProgram['a3'],0x4,gl[_0x8084('0xb0')],![],step*0x18,step*0x8);gl[_0x8084('0xc5')](IcosahedronProgram['a4'],0x4,gl[_0x8084('0xb0')],![],step*0x18,step*0xc);gl[_0x8084('0xc5')](IcosahedronProgram['a5'],0x4,gl['FLOAT'],![],step*0x18,step*0x10);gl[_0x8084('0xc5')](IcosahedronProgram['a6'],0x4,gl[_0x8084('0xb0')],![],step*0x18,step*0x14);mat4[_0x8084('0xd3')](model);gl[_0x8084('0xb1')](IcosahedronProgram[_0x8084('0xb2')],_0x11e833);gl[_0x8084('0xb1')](IcosahedronProgram[_0x8084('0xd4')],_0x224b5b);gl[_0x8084('0xd5')](IcosahedronProgram[_0x8084('0x94')],![],projection);gl['uniformMatrix4fv'](IcosahedronProgram[_0x8084('0xd6')],![],model);gl[_0x8084('0xd5')](IcosahedronProgram['view'],![],camera[_0x8084('0x0')](_0x224b5b,0.3));gl[_0x8084('0xc0')](gl[_0x8084('0xd7')]);gl[_0x8084('0xd8')](gl[_0x8084('0xd9')],gl[_0x8084('0xda')]);gl[_0x8084('0xd2')](gl[_0x8084('0xc3')]);gl[_0x8084('0xb3')](gl[_0x8084('0xd0')],0x0,IcosahedronProgram[_0x8084('0xdb')]);}function draw_luminous_points(_0x37caa3,_0x4452c5){compute_icosahedronTF(_0x37caa3,_0x4452c5,0x1);gl['useProgram'](OffscreenPointsProgram);gl[_0x8084('0xad')](gl[_0x8084('0xae')],OffscreenPointsProgram[_0x8084('0xbe')]);gl['enableVertexAttribArray'](OffscreenPointsProgram['a1']);gl[_0x8084('0xc4')](OffscreenPointsProgram['a2']);gl[_0x8084('0xc4')](OffscreenPointsProgram['a3']);gl['enableVertexAttribArray'](OffscreenPointsProgram['a4']);gl[_0x8084('0xc4')](OffscreenPointsProgram['a5']);gl[_0x8084('0xc4')](OffscreenPointsProgram['a6']);gl['vertexAttribPointer'](OffscreenPointsProgram['a1'],0x4,gl[_0x8084('0xb0')],![],step*0x18,0x0);gl['vertexAttribPointer'](OffscreenPointsProgram['a2'],0x4,gl[_0x8084('0xb0')],![],step*0x18,step*0x4);gl[_0x8084('0xc5')](OffscreenPointsProgram['a3'],0x4,gl[_0x8084('0xb0')],![],step*0x18,step*0x8);gl[_0x8084('0xc5')](OffscreenPointsProgram['a4'],0x4,gl[_0x8084('0xb0')],![],step*0x18,step*0xc);gl[_0x8084('0xc5')](OffscreenPointsProgram['a5'],0x4,gl[_0x8084('0xb0')],![],step*0x18,step*0x10);gl[_0x8084('0xc5')](OffscreenPointsProgram['a6'],0x4,gl[_0x8084('0xb0')],![],step*0x18,step*0x14);mat4[_0x8084('0xd3')](model);gl[_0x8084('0xb1')](OffscreenPointsProgram[_0x8084('0xb2')],_0x37caa3);gl[_0x8084('0xb1')](OffscreenPointsProgram[_0x8084('0xd4')],_0x4452c5);gl[_0x8084('0xd5')](OffscreenPointsProgram[_0x8084('0x94')],![],projection);gl[_0x8084('0xd5')](OffscreenPointsProgram['model'],![],model);gl['uniformMatrix4fv'](OffscreenPointsProgram[_0x8084('0x95')],![],camera[_0x8084('0x0')](_0x4452c5,0.3));gl[_0x8084('0xc0')](gl[_0x8084('0xd7')]);gl[_0x8084('0xd8')](gl['ONE'],gl[_0x8084('0xdc')]);gl[_0x8084('0xd2')](gl['DEPTH_TEST']);gl[_0x8084('0xb3')](gl['POINTS'],0x0,OffscreenPointsProgram[_0x8084('0xbf')]);}function create_icosahedron_program(){var _0x3db128=getShader(icov,icof,![]);_0x3db128['a1']=gl[_0x8084('0xb8')](_0x3db128,_0x8084('0xb'));_0x3db128['a2']=gl[_0x8084('0xb8')](_0x3db128,_0x8084('0xdd'));_0x3db128['a3']=gl[_0x8084('0xb8')](_0x3db128,'musicDisplacedPos');_0x3db128['a4']=gl[_0x8084('0xb8')](_0x3db128,_0x8084('0xde'));_0x3db128['a5']=gl[_0x8084('0xb8')](_0x3db128,'fx');_0x3db128['a6']=gl[_0x8084('0xb8')](_0x3db128,_0x8084('0xdf'));_0x3db128[_0x8084('0xb2')]=gl[_0x8084('0xb9')](_0x3db128,'uTime');_0x3db128['uDeltaTime']=gl[_0x8084('0xb9')](_0x3db128,_0x8084('0xd4'));_0x3db128[_0x8084('0x94')]=gl['getUniformLocation'](_0x3db128,'projection');_0x3db128['model']=gl[_0x8084('0xb9')](_0x3db128,_0x8084('0xd6'));_0x3db128[_0x8084('0x95')]=gl[_0x8084('0xb9')](_0x3db128,_0x8084('0x95'));_0x3db128[_0x8084('0xdb')]=Icosahedron['nVerts'];_0x3db128[_0x8084('0xaf')]=gl[_0x8084('0xba')]();gl[_0x8084('0xad')](gl['ARRAY_BUFFER'],_0x3db128['buffer']);gl[_0x8084('0xbb')](gl[_0x8084('0xae')],new Float32Array(Icosahedron[_0x8084('0xe0')]),gl[_0x8084('0xbc')]);window[_0x8084('0xe1')]=_0x3db128;}function create_offscreen_points_program(){var _0x209131=getShader(offpointv,offpointf,![]);_0x209131['a1']=gl[_0x8084('0xb8')](_0x209131,_0x8084('0xb'));_0x209131['a2']=gl['getAttribLocation'](_0x209131,_0x8084('0xdd'));_0x209131['a3']=gl['getAttribLocation'](_0x209131,_0x8084('0xe2'));_0x209131['a4']=gl['getAttribLocation'](_0x209131,_0x8084('0xde'));_0x209131['a5']=gl[_0x8084('0xb8')](_0x209131,'fx');_0x209131['a6']=gl[_0x8084('0xb8')](_0x209131,_0x8084('0xdf'));_0x209131['uTime']=gl[_0x8084('0xb9')](_0x209131,_0x8084('0xb2'));_0x209131[_0x8084('0xd4')]=gl[_0x8084('0xb9')](_0x209131,'uDeltaTime');_0x209131[_0x8084('0x94')]=gl[_0x8084('0xb9')](_0x209131,_0x8084('0x94'));_0x209131[_0x8084('0xd6')]=gl[_0x8084('0xb9')](_0x209131,'model');_0x209131[_0x8084('0x95')]=gl['getUniformLocation'](_0x209131,'view');_0x209131[_0x8084('0xbe')]=gl['createBuffer']();_0x209131[_0x8084('0xbf')]=Icosahedron[_0x8084('0xbf')];gl[_0x8084('0xad')](gl[_0x8084('0xae')],_0x209131[_0x8084('0xbe')]);gl[_0x8084('0xbb')](gl[_0x8084('0xae')],new Float32Array(Icosahedron[_0x8084('0xe3')]),gl['STATIC_DRAW']);window[_0x8084('0xe4')]=_0x209131;}function create_icosahedronTF_program(){var _0x1d93dd=gl['createProgram']();gl[_0x8084('0x77')](_0x1d93dd,getTFShader(icoTFv,_0x8084('0x74')));gl[_0x8084('0x77')](_0x1d93dd,getTFShader(icoTFf,'frag'));_0x1d93dd[_0x8084('0xe5')]=gl[_0x8084('0xe6')]();gl[_0x8084('0xe7')](gl[_0x8084('0xce')],_0x1d93dd[_0x8084('0xe5')]);gl[_0x8084('0xe8')](_0x1d93dd,[_0x8084('0xe9'),_0x8084('0xea'),_0x8084('0xeb'),'tfMouseVelocity',_0x8084('0xec'),_0x8084('0xed')],gl['INTERLEAVED_ATTRIBS']);gl[_0x8084('0x78')](_0x1d93dd);if(!gl['getProgramParameter'](_0x1d93dd,gl[_0x8084('0x79')])){alert(_0x8084('0x7a'));return null;}_0x1d93dd['a1']=gl[_0x8084('0xb8')](_0x1d93dd,'pos');_0x1d93dd['a2']=gl['getAttribLocation'](_0x1d93dd,'displacedPos');_0x1d93dd['a3']=gl[_0x8084('0xb8')](_0x1d93dd,_0x8084('0xe2'));_0x1d93dd['a4']=gl[_0x8084('0xb8')](_0x1d93dd,_0x8084('0xde'));_0x1d93dd['a5']=gl[_0x8084('0xb8')](_0x1d93dd,'fx');_0x1d93dd['a6']=gl['getAttribLocation'](_0x1d93dd,_0x8084('0xdf'));_0x1d93dd['uTime']=gl[_0x8084('0xb9')](_0x1d93dd,_0x8084('0xb2'));_0x1d93dd[_0x8084('0xee')]=gl[_0x8084('0xb9')](_0x1d93dd,_0x8084('0xee'));_0x1d93dd[_0x8084('0xd4')]=gl[_0x8084('0xb9')](_0x1d93dd,_0x8084('0xd4'));_0x1d93dd['uScreenRatio']=gl[_0x8084('0xb9')](_0x1d93dd,_0x8084('0xc6'));_0x1d93dd[_0x8084('0xc8')]=gl[_0x8084('0xb9')](_0x1d93dd,'uMouseOrigin');_0x1d93dd[_0x8084('0xc9')]=gl[_0x8084('0xb9')](_0x1d93dd,'uMouseVelocity');_0x1d93dd['uMusicVisualizerData']=gl[_0x8084('0xb9')](_0x1d93dd,_0x8084('0xcd'));_0x1d93dd[_0x8084('0xdb')]=Icosahedron[_0x8084('0xef')];_0x1d93dd[_0x8084('0xaf')]=gl[_0x8084('0xba')]();gl[_0x8084('0xad')](gl['ARRAY_BUFFER'],_0x1d93dd[_0x8084('0xaf')]);gl[_0x8084('0xbb')](gl['ARRAY_BUFFER'],new Float32Array(Icosahedron[_0x8084('0xe0')]),gl[_0x8084('0xbc')]);_0x1d93dd['bloombuffer']=gl[_0x8084('0xba')]();_0x1d93dd['nBloomVerts']=Icosahedron[_0x8084('0xbf')];gl[_0x8084('0xad')](gl[_0x8084('0xae')],_0x1d93dd[_0x8084('0xbe')]);gl[_0x8084('0xbb')](gl['ARRAY_BUFFER'],new Float32Array(Icosahedron[_0x8084('0xe3')]),gl[_0x8084('0xbc')]);window[_0x8084('0xf0')]=_0x1d93dd;}'use\x20strict';function compute_icosahedronTF_lines(_0x3e9a15,_0x332c8f){var _0x422300=IcosahedronLinesTFProgram['buffer'];IcosahedronLinesTFProgram[_0x8084('0xaf')]=IcosahedronLinesProgram[_0x8084('0xaf')];IcosahedronLinesProgram[_0x8084('0xaf')]=_0x422300;gl[_0x8084('0xc0')](gl[_0x8084('0xc1')]);gl[_0x8084('0xc2')](IcosahedronLinesTFProgram);gl[_0x8084('0xc0')](gl[_0x8084('0xc3')]);gl['bindBuffer'](gl['ARRAY_BUFFER'],IcosahedronLinesTFProgram[_0x8084('0xaf')]);gl[_0x8084('0xc4')](IcosahedronLinesTFProgram['a1']);gl[_0x8084('0xc4')](IcosahedronLinesTFProgram['a2']);gl[_0x8084('0xc4')](IcosahedronLinesTFProgram['a3']);gl[_0x8084('0xc4')](IcosahedronLinesTFProgram['a4']);gl['enableVertexAttribArray'](IcosahedronLinesTFProgram['a5']);gl[_0x8084('0xc4')](IcosahedronLinesTFProgram['a6']);gl[_0x8084('0xc4')](IcosahedronLinesTFProgram['a7']);gl[_0x8084('0xc4')](IcosahedronLinesTFProgram['a8']);gl[_0x8084('0xc4')](IcosahedronLinesTFProgram['a9']);gl['vertexAttribPointer'](IcosahedronLinesTFProgram['a1'],0x4,gl[_0x8084('0xb0')],![],step*0x24,0x0);gl[_0x8084('0xc5')](IcosahedronLinesTFProgram['a2'],0x4,gl[_0x8084('0xb0')],![],step*0x24,step*0x4);gl[_0x8084('0xc5')](IcosahedronLinesTFProgram['a3'],0x4,gl[_0x8084('0xb0')],![],step*0x24,step*0x8);gl[_0x8084('0xc5')](IcosahedronLinesTFProgram['a4'],0x4,gl[_0x8084('0xb0')],![],step*0x24,step*0xc);gl[_0x8084('0xc5')](IcosahedronLinesTFProgram['a5'],0x4,gl[_0x8084('0xb0')],![],step*0x24,step*0x10);gl[_0x8084('0xc5')](IcosahedronLinesTFProgram['a6'],0x4,gl[_0x8084('0xb0')],![],step*0x24,step*0x14);gl[_0x8084('0xc5')](IcosahedronLinesTFProgram['a7'],0x4,gl[_0x8084('0xb0')],![],step*0x24,step*0x18);gl[_0x8084('0xc5')](IcosahedronLinesTFProgram['a8'],0x4,gl[_0x8084('0xb0')],![],step*0x24,step*0x1c);gl[_0x8084('0xc5')](IcosahedronLinesTFProgram['a9'],0x4,gl[_0x8084('0xb0')],![],step*0x24,step*0x20);gl[_0x8084('0xb1')](IcosahedronLinesTFProgram[_0x8084('0xb2')],_0x3e9a15);gl['uniform1f'](IcosahedronLinesTFProgram[_0x8084('0xd4')],_0x332c8f);gl[_0x8084('0xb1')](IcosahedronLinesTFProgram['uCameraZ'],cameraZ);gl[_0x8084('0xb1')](IcosahedronLinesTFProgram['uScreenRatio'],screenRatio);gl[_0x8084('0xc7')](IcosahedronLinesTFProgram[_0x8084('0xc8')],mouseController[_0x8084('0x86')][0x0],mouseController[_0x8084('0x86')][0x1],mouseController[_0x8084('0x86')][0x2]);gl[_0x8084('0xc7')](IcosahedronLinesTFProgram[_0x8084('0xc9')],mouseController[_0x8084('0x82')][0x0],mouseController[_0x8084('0x82')][0x1],mouseController[_0x8084('0x82')][0x2]);gl['activeTexture'](gl[_0x8084('0xf1')]);gl['bindTexture'](gl[_0x8084('0x9c')],musicBox[_0x8084('0xcb')]());gl['uniform1i'](IcosahedronLinesTFProgram[_0x8084('0xcd')],0x0);gl['bindTransformFeedback'](gl[_0x8084('0xce')],IcosahedronLinesTFProgram[_0x8084('0xe5')]);gl[_0x8084('0xd1')](gl[_0x8084('0xcf')],0x0,IcosahedronLinesProgram[_0x8084('0xaf')]);gl[_0x8084('0xf2')](gl['LINES']);gl[_0x8084('0xb3')](gl[_0x8084('0xf3')],0x0,IcosahedronLinesTFProgram[_0x8084('0xdb')]);gl[_0x8084('0xf4')]();gl[_0x8084('0xd1')](gl[_0x8084('0xcf')],0x0,null);gl['disable'](gl[_0x8084('0xc1')]);}function draw_icosahedron_lines(_0x12dfae,_0x509303){compute_icosahedronTF_lines(_0x12dfae,_0x509303);gl[_0x8084('0xc2')](IcosahedronLinesProgram);gl[_0x8084('0xad')](gl[_0x8084('0xae')],IcosahedronLinesProgram[_0x8084('0xaf')]);gl['enableVertexAttribArray'](IcosahedronLinesProgram['a1']);gl[_0x8084('0xc4')](IcosahedronLinesProgram['a2']);gl[_0x8084('0xc4')](IcosahedronLinesProgram['a3']);gl[_0x8084('0xc4')](IcosahedronLinesProgram['a4']);gl['enableVertexAttribArray'](IcosahedronLinesProgram['a5']);gl[_0x8084('0xc4')](IcosahedronLinesProgram['a6']);gl[_0x8084('0xc4')](IcosahedronLinesProgram['a7']);gl[_0x8084('0xc4')](IcosahedronLinesProgram['a8']);gl[_0x8084('0xc4')](IcosahedronLinesProgram['a9']);gl[_0x8084('0xc5')](IcosahedronLinesProgram['a1'],0x4,gl['FLOAT'],![],step*0x24,0x0);gl[_0x8084('0xc5')](IcosahedronLinesProgram['a2'],0x4,gl[_0x8084('0xb0')],![],step*0x24,step*0x4);gl['vertexAttribPointer'](IcosahedronLinesProgram['a3'],0x4,gl[_0x8084('0xb0')],![],step*0x24,step*0x8);gl['vertexAttribPointer'](IcosahedronLinesProgram['a4'],0x4,gl[_0x8084('0xb0')],![],step*0x24,step*0xc);gl[_0x8084('0xc5')](IcosahedronLinesProgram['a5'],0x4,gl[_0x8084('0xb0')],![],step*0x24,step*0x10);gl['vertexAttribPointer'](IcosahedronLinesProgram['a6'],0x4,gl[_0x8084('0xb0')],![],step*0x24,step*0x14);gl[_0x8084('0xc5')](IcosahedronLinesProgram['a7'],0x4,gl[_0x8084('0xb0')],![],step*0x24,step*0x18);gl[_0x8084('0xc5')](IcosahedronLinesProgram['a8'],0x4,gl[_0x8084('0xb0')],![],step*0x24,step*0x1c);gl[_0x8084('0xc5')](IcosahedronLinesProgram['a9'],0x4,gl[_0x8084('0xb0')],![],step*0x24,step*0x20);mat4[_0x8084('0xd3')](model);gl[_0x8084('0xd5')](IcosahedronLinesProgram[_0x8084('0x94')],![],projection);gl['uniformMatrix4fv'](IcosahedronLinesProgram[_0x8084('0xd6')],![],model);gl[_0x8084('0xd5')](IcosahedronLinesProgram['view'],![],camera[_0x8084('0x0')](_0x509303,0.3));gl[_0x8084('0xc0')](gl[_0x8084('0xd7')]);gl[_0x8084('0xd8')](gl[_0x8084('0xd9')],gl[_0x8084('0xda')]);gl['disable'](gl['DEPTH_TEST']);gl[_0x8084('0xb3')](gl['LINES'],0x0,IcosahedronLinesProgram[_0x8084('0xdb')]);}function create_icosahedron_lines_program(){var _0x4d905c=getShader(icolinesv,icolinesf,![]);_0x4d905c['a1']=gl[_0x8084('0xb8')](_0x4d905c,'v0');_0x4d905c['a2']=gl[_0x8084('0xb8')](_0x4d905c,'v1');_0x4d905c['a3']=gl[_0x8084('0xb8')](_0x4d905c,_0x8084('0xf5'));_0x4d905c['a4']=gl[_0x8084('0xb8')](_0x4d905c,_0x8084('0xf6'));_0x4d905c['a5']=gl['getAttribLocation'](_0x4d905c,_0x8084('0xf7'));_0x4d905c['a6']=gl[_0x8084('0xb8')](_0x4d905c,'v1musicDisplaced');_0x4d905c['a7']=gl[_0x8084('0xb8')](_0x4d905c,_0x8084('0xde'));_0x4d905c['a8']=gl['getAttribLocation'](_0x4d905c,'fx');_0x4d905c['a9']=gl[_0x8084('0xb8')](_0x4d905c,_0x8084('0xf8'));_0x4d905c[_0x8084('0x94')]=gl[_0x8084('0xb9')](_0x4d905c,_0x8084('0x94'));_0x4d905c[_0x8084('0xd6')]=gl[_0x8084('0xb9')](_0x4d905c,_0x8084('0xd6'));_0x4d905c[_0x8084('0x95')]=gl[_0x8084('0xb9')](_0x4d905c,_0x8084('0x95'));_0x4d905c[_0x8084('0xdb')]=Icosahedron[_0x8084('0xf9')];_0x4d905c['buffer']=gl[_0x8084('0xba')]();gl[_0x8084('0xad')](gl[_0x8084('0xae')],_0x4d905c[_0x8084('0xaf')]);gl['bufferData'](gl[_0x8084('0xae')],new Float32Array(Icosahedron[_0x8084('0xfa')]),gl['STATIC_DRAW']);window[_0x8084('0xfb')]=_0x4d905c;}function create_icosahedronTF_lines_program(){var _0x3271c5=gl[_0x8084('0x76')]();gl['attachShader'](_0x3271c5,getTFShader(icolinesTFv,_0x8084('0x74')));gl[_0x8084('0x77')](_0x3271c5,getTFShader(icolinesTFf,'frag'));_0x3271c5['transformFeedback']=gl['createTransformFeedback']();gl['bindTransformFeedback'](gl[_0x8084('0xce')],_0x3271c5['transformFeedback']);gl[_0x8084('0xe8')](_0x3271c5,['tfV0','tfV1',_0x8084('0xfc'),_0x8084('0xfd'),_0x8084('0xfe'),_0x8084('0xff'),_0x8084('0x100'),'tfFx',_0x8084('0x101')],gl[_0x8084('0x102')]);gl['linkProgram'](_0x3271c5);if(!gl[_0x8084('0x103')](_0x3271c5,gl[_0x8084('0x79')])){alert(_0x8084('0x7a'));return null;}_0x3271c5['a1']=gl[_0x8084('0xb8')](_0x3271c5,'v0');_0x3271c5['a2']=gl[_0x8084('0xb8')](_0x3271c5,'v1');_0x3271c5['a3']=gl['getAttribLocation'](_0x3271c5,_0x8084('0xf5'));_0x3271c5['a4']=gl[_0x8084('0xb8')](_0x3271c5,_0x8084('0xf6'));_0x3271c5['a5']=gl[_0x8084('0xb8')](_0x3271c5,_0x8084('0xf7'));_0x3271c5['a6']=gl[_0x8084('0xb8')](_0x3271c5,_0x8084('0x104'));_0x3271c5['a7']=gl[_0x8084('0xb8')](_0x3271c5,_0x8084('0xde'));_0x3271c5['a8']=gl[_0x8084('0xb8')](_0x3271c5,'fx');_0x3271c5['a9']=gl[_0x8084('0xb8')](_0x3271c5,_0x8084('0xf8'));_0x3271c5[_0x8084('0xb2')]=gl[_0x8084('0xb9')](_0x3271c5,'uTime');_0x3271c5[_0x8084('0xd4')]=gl[_0x8084('0xb9')](_0x3271c5,_0x8084('0xd4'));_0x3271c5['uCameraZ']=gl[_0x8084('0xb9')](_0x3271c5,_0x8084('0xee'));_0x3271c5[_0x8084('0xc6')]=gl[_0x8084('0xb9')](_0x3271c5,'uScreenRatio');_0x3271c5[_0x8084('0xc8')]=gl['getUniformLocation'](_0x3271c5,_0x8084('0xc8'));_0x3271c5[_0x8084('0xc9')]=gl[_0x8084('0xb9')](_0x3271c5,_0x8084('0xc9'));_0x3271c5[_0x8084('0xcd')]=gl[_0x8084('0xb9')](_0x3271c5,_0x8084('0xcd'));_0x3271c5['nverts']=Icosahedron[_0x8084('0xf9')];_0x3271c5['buffer']=gl['createBuffer']();gl['bindBuffer'](gl[_0x8084('0xae')],_0x3271c5[_0x8084('0xaf')]);gl['bufferData'](gl[_0x8084('0xae')],new Float32Array(Icosahedron[_0x8084('0xfa')]),gl[_0x8084('0xbc')]);window[_0x8084('0x105')]=_0x3271c5;}_0x8084('0x38');function postprocess_blit_in_main_FBO(_0x44497e,_0xfc2b33){gl[_0x8084('0xb4')](gl[_0x8084('0xb5')],null);gl[_0x8084('0xc2')](PostProcessBlitInMainProgram);gl['enableVertexAttribArray'](PostProcessBlitInMainProgram['a1']);gl[_0x8084('0xc4')](PostProcessBlitInMainProgram['a2']);gl[_0x8084('0xc4')](PostProcessBlitInMainProgram['a3']);gl['bindBuffer'](gl[_0x8084('0xae')],PostProcessBlitInMainProgram['buffer']);gl['vertexAttribPointer'](PostProcessBlitInMainProgram['a1'],0x2,gl[_0x8084('0xb0')],![],step*0x5,0x0);gl[_0x8084('0xc5')](PostProcessBlitInMainProgram['a2'],0x2,gl['FLOAT'],![],step*0x5,step*0x2);gl[_0x8084('0xc5')](PostProcessBlitInMainProgram['a3'],0x1,gl[_0x8084('0xb0')],![],step*0x5,step*0x4);gl[_0x8084('0xb4')](gl[_0x8084('0x106')],FBOsoffscreen[FRAMEBUFFER[_0x8084('0xa1')]]);gl[_0x8084('0xb4')](gl['DRAW_FRAMEBUFFER'],FBOsoffscreen[FRAMEBUFFER[_0x8084('0x107')]]);gl['clearBufferfv'](gl[_0x8084('0x108')],0x0,[0x0,0x0,0x0,0x1]);gl[_0x8084('0x109')](0x0,0x0,innerWidth,innerHeight,0x0,0x0,innerWidth,innerHeight,gl['COLOR_BUFFER_BIT'],gl[_0x8084('0x10a')]);gl[_0x8084('0xb4')](gl[_0x8084('0xb5')],null);gl['activeTexture'](gl[_0x8084('0xf1')]);gl[_0x8084('0x9b')](gl['TEXTURE_2D'],FBOsoffscreen[_0x8084('0x10b')]);gl[_0x8084('0x10c')](gl[_0x8084('0x9c')]);gl['uniform1i'](PostProcessBlitInMainProgram[_0x8084('0x10d')],0x0);var _0x329f78=mouseController[_0x8084('0x83')]*0.07;if(_0x329f78<0.3)_0x329f78=0x0;if(_0x329f78>0.3)_0x329f78=_0x329f78-0.3;if(_0x329f78>0x3)_0x329f78=0x3;gl['uniform1f'](PostProcessBlitInMainProgram[_0x8084('0xb2')],_0x44497e);gl[_0x8084('0xb1')](PostProcessBlitInMainProgram[_0x8084('0x10e')],_0x329f78);gl[_0x8084('0xd2')](gl[_0x8084('0xd7')]);gl[_0x8084('0xb3')](gl['TRIANGLES'],0x0,0x6);}function create_postprocess_blit_in_main_FBO_program(){var _0x3a95e3=getShader(postProcBlitv,postProcBlitf,![]);_0x3a95e3['a1']=gl['getAttribLocation'](_0x3a95e3,_0x8084('0xb'));_0x3a95e3['a2']=gl['getAttribLocation'](_0x3a95e3,_0x8084('0x10f'));_0x3a95e3['a3']=gl[_0x8084('0xb8')](_0x3a95e3,'id');_0x3a95e3['uTime']=gl[_0x8084('0xb9')](_0x3a95e3,_0x8084('0xb2'));_0x3a95e3[_0x8084('0x10d')]=gl[_0x8084('0xb9')](_0x3a95e3,_0x8084('0x10d'));_0x3a95e3[_0x8084('0x10e')]=gl[_0x8084('0xb9')](_0x3a95e3,_0x8084('0x10e'));var _0x17f32d=[-0x1,-0x1,0x0,0x0,0x0,-0x1,+0x1,0x0,0x1,0x0,+0x1,-0x1,0x1,0x0,0x0,+0x1,-0x1,0x1,0x0,0x0,-0x1,+0x1,0x0,0x1,0x0,+0x1,+0x1,0x1,0x1,0x0];_0x3a95e3['buffer']=gl[_0x8084('0xba')]();gl['bindBuffer'](gl['ARRAY_BUFFER'],_0x3a95e3[_0x8084('0xaf')]);gl[_0x8084('0xbb')](gl[_0x8084('0xae')],new Float32Array(_0x17f32d),gl[_0x8084('0xbc')]);window[_0x8084('0x110')]=_0x3a95e3;}function create_offscreen_multisampleFBOs(){window[_0x8084('0x111')]={'x':innerWidth,'y':innerHeight};var _0x2d3c18=gl[_0x8084('0x112')]();gl[_0x8084('0x9b')](gl[_0x8084('0x9c')],_0x2d3c18);gl[_0x8084('0x113')](gl[_0x8084('0x9c')],gl['TEXTURE_MAG_FILTER'],gl['NEAREST']);gl['texParameteri'](gl['TEXTURE_2D'],gl['TEXTURE_MIN_FILTER'],gl['NEAREST']);gl[_0x8084('0x113')](gl[_0x8084('0x9c')],gl[_0x8084('0x114')],gl[_0x8084('0x115')]);gl[_0x8084('0x113')](gl[_0x8084('0x9c')],gl[_0x8084('0x116')],gl[_0x8084('0x115')]);gl[_0x8084('0x117')](gl['TEXTURE_2D'],0x0,gl[_0x8084('0x9d')],FRAMEBUFFER_SIZE['x'],FRAMEBUFFER_SIZE['y'],0x0,gl['RGBA'],gl['UNSIGNED_BYTE'],null);gl[_0x8084('0x9b')](gl['TEXTURE_2D'],null);window[_0x8084('0xb5')]={'RENDERBUFFER':0x0,'COLORBUFFER':0x1};var _0x378dbc=[gl[_0x8084('0x118')](),gl['createFramebuffer']()];var _0x5b1e5b=gl[_0x8084('0x119')]();gl[_0x8084('0x9e')](gl[_0x8084('0xa1')],_0x5b1e5b);gl[_0x8084('0xa0')](gl['RENDERBUFFER'],0x4,gl[_0x8084('0xa2')],FRAMEBUFFER_SIZE['x'],FRAMEBUFFER_SIZE['y']);gl[_0x8084('0xb4')](gl['FRAMEBUFFER'],_0x378dbc[FRAMEBUFFER['RENDERBUFFER']]);gl[_0x8084('0x11a')](gl[_0x8084('0xb5')],gl['COLOR_ATTACHMENT0'],gl[_0x8084('0xa1')],_0x5b1e5b);gl['bindFramebuffer'](gl[_0x8084('0xb5')],null);gl['bindFramebuffer'](gl[_0x8084('0xb5')],_0x378dbc[FRAMEBUFFER['COLORBUFFER']]);gl[_0x8084('0x11b')](gl[_0x8084('0xb5')],gl[_0x8084('0x11c')],gl[_0x8084('0x9c')],_0x2d3c18,0x0);gl[_0x8084('0xb4')](gl[_0x8084('0xb5')],null);window[_0x8084('0x11d')]=_0x378dbc;FBOsoffscreen[_0x8084('0x10b')]=_0x2d3c18;FBOsoffscreen[_0x8084('0x9f')]=_0x5b1e5b;}'use\x20strict';var shaderPart_maxDistance=_0x8084('0x11e');var shaderPart_colors='\x0a\x20\x20\x20\x20#define\x20RED;\x0a';var shaderPart_screenRatio=_0x8084('0x11f')+innerWidth/ innerHeight+_0x8084('0x120');var shaderPart_canvasHeight='\x0a\x20\x20\x20\x20const\x20float\x20canvasHeight\x20=\x20'+innerHeight+_0x8084('0x121');var shaderPart_FOV=_0x8084('0x122')+0x2d*Math['PI']/0xb4+';\x0a';var shaderPart_tan225=_0x8084('0x123');var shaderPart_cameraZ=_0x8084('0x124');var shaderPart_sphereRadius=_0x8084('0x125');var shaderPart_mouseConstants=_0x8084('0x126');var shaderPart_colors_TFlineAttractor=_0x8084('0x127');var shaderPart_colors_TFlineShatter='\x20\x20\x20\x20vec4(0.983629832789459,\x200.3219759252018275,\x200.3940256881549994,\x200);';var shaderPart_colors_offpointsCol1=_0x8084('0x128');var shaderPart_colors_offpointsCol2=_0x8084('0x129');var shaderPart_pointsMouseSpeedColor='\x20\x20\x20\x20Color.xyz\x20=\x20mix(vec3(0.7726033988519405,\x200.7861298760738663,\x200.49679731181152237),\x20vec3(0.4486490118661614,\x200.449526516430272487,\x200.448020577528358366),\x20max(1.0\x20-\x20mouseSpeed\x20*\x202.0,\x200.0));';function getColors(){var _0x11ddb2=_0x8084('0x12a')+shaderPart_colors_TFlineAttractor+_0x8084('0x12b')+shaderPart_colors_TFlineShatter+_0x8084('0x12c')+shaderPart_colors_offpointsCol1+'\x27;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20var\x20shaderPart_colors_offpointsCol2\x20=\x20\x27'+shaderPart_colors_offpointsCol2+_0x8084('0x12d')+shaderPart_pointsMouseSpeedColor+_0x8084('0x12e');something=window['open'](_0x8084('0x12f')+encodeURIComponent(JSON[_0x8084('0x130')]({'str':_0x11ddb2})),_0x8084('0x131'));something[_0x8084('0x132')]();}_0x8084('0x38');var shaderPart_general='\x0a#define\x20PI\x203.1415926535897932384626433832795\x0a#define\x20RS\x200.4142135623730950488016887242097\x0a';var shaderPart_simpleRand=_0x8084('0x133');var shaderPart_perlinNoise='\x0afloat\x20rand(vec2\x20c){\x0a\x09return\x20fract(sin(dot(c.xy\x20,vec2(12.9898,78.233)))\x20*\x2043758.5453);\x0a}\x0a\x0afloat\x20noise(vec2\x20p,\x20float\x20freq\x20){\x0a\x09float\x20unit\x20=\x20'+0x1+_0x8084('0x134');var shaderPart_classicPerlinNoise=_0x8084('0x135');var shaderPart_hash3=_0x8084('0x136');var shaderPart_atan2=_0x8084('0x137');var shaderPart_rotMatrix=_0x8084('0x138');var shaderPart_sphericalDistance='\x0afloat\x20sphericalDistance(vec3\x20p0,\x20vec3\x20p1)\x0a{\x0a\x09//\x202*PI\x20\x20*r\x20\x20\x20for\x20a\x20circle\x20\x20\x20\x20\x0a\x09//\x20angle\x20*r\x20\x20\x20for\x20an\x20arc\x0a\x0a\x09float\x20angle\x20=\x20acos(dot(p0,\x20p1));\x0a\x09return\x20angle\x20*\x20sphereRadius;\x0a}';var shaderPart_attractVertex=_0x8084('0x139');var shaderPart_offsetVertexMouse='\x0avoid\x20offsetVertexMouseVelocity(vec4\x20vertex,\x20int\x20whichVertex,\x20float\x20powerMult)\x20{\x0a\x20\x20\x20\x20float\x20z\x20=\x20abs(vertex.z\x20-\x20uCameraZ);\x0a\x20\x20\x20\x20float\x20hwh\x20=\x20z\x20*\x20tan225;\x0a\x20\x20\x20\x20float\x20hww\x20=\x20z\x20*\x20tan225\x20*\x20uScreenRatio;\x0a\x0a\x20\x20\x20\x20vec4\x20worldSpaceMouseOrigin\x20=\x20vec4(0.0);\x0a\x0a\x20\x20\x20\x20//\x20uMouseOrigin\x20is\x20in\x20NDC\x20\x20\x20-1...1\x0a\x20\x20\x20\x20worldSpaceMouseOrigin.x\x20=\x20hww\x20*\x20uMouseOrigin.x;\x0a\x20\x20\x20\x20worldSpaceMouseOrigin.y\x20=\x20hwh\x20*\x20uMouseOrigin.y;\x0a\x20\x20\x20\x20worldSpaceMouseOrigin.z\x20=\x20-z;\x0a\x0a\x20\x20\x20\x20vec3\x20fakevertex\x20=\x20vertex.xyz;\x0a\x20\x20\x20\x20fakevertex.z\x20-=\x20uCameraZ;\x0a\x0a\x20\x20\x20\x20float\x20distance\x20=\x20length(fakevertex\x20-\x20worldSpaceMouseOrigin.xyz);\x0a\x0a\x0a\x20\x20\x20\x20/**\x0a\x20\x20\x20\x20\x20*\x20\x0a\x20\x20\x20\x20\x20*\x20\x20Points\x20have\x20a\x20stronger\x20powerStrenght\x20------------------\x20v\x0a\x20\x20\x20\x20\x20*\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20v\x0a\x20\x20\x20\x20\x20*/\x0a\x20\x20\x20\x20float\x20power\x20=\x20powerStrenght\x20/\x20(pow(distance,\x203.0)\x20+\x201.0)\x20*\x20powerMult;\x0a\x20\x20\x20\x20\x0a\x0a\x20\x20\x20\x20//\x20mouse\x20velocities\x20are\x20different\x20for\x20both\x20vertices\x0a\x20\x20\x20\x20//\x20v0\x20will\x20have\x20a\x20different\x20mouseVelocity\x20than\x20v1,\x20and\x20we\x27ll\x20store\x20both\x20of\x20them\x20in\x20\x20\x20xy\x20&\x20zw\x20of\x20mouseVelocity\x0a\x20\x20\x20\x20if(whichVertex\x20==\x200)\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20tfMouseVelocity.xy\x20+=\x20uMouseVelocity.xy\x20*\x20power;\x0a\x20\x20\x20\x20}\x20else\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20tfMouseVelocity.zw\x20+=\x20uMouseVelocity.xy\x20*\x20power;\x0a\x20\x20\x20\x20}\x0a}';var shaderPart_offsetVertexMusic=_0x8084('0x13a');var shaderPart_applyVelocityToVertex=_0x8084('0x13b');_0x8084('0x38');var postProcBlitv='#version\x20300\x20es\x0alayout(location\x20=\x200)\x20in\x20vec2\x20\x20pos;\x0alayout(location\x20=\x201)\x20in\x20vec2\x20\x20coord;\x0alayout(location\x20=\x202)\x20in\x20float\x20id;\x0a\x0aout\x20vec2\x20\x20Coord;\x0aout\x20float\x20ID;\x0a\x0avoid\x20main()\x20{\x09\x09\x0a\x20\x20\x20\x20gl_Position\x20=\x20vec4(pos.xy,\x200.0,\x201.0);\x09\x09\x0a\x20\x20\x20\x20Coord\x20=\x20coord;\x09\x09\x0a\x20\x20\x20\x20ID\x20\x20\x20\x20=\x20id;\x0a}';var postProcBlitf=_0x8084('0x13c')+shaderPart_general+_0x8084('0x13d')+shaderPart_atan2+_0x8084('0x13e');_0x8084('0x38');var offpointv=_0x8084('0x13f')+shaderPart_colors+_0x8084('0x140')+shaderPart_sphereRadius+'\x20\x20\x20\x0a'+shaderPart_canvasHeight+_0x8084('0x141')+shaderPart_colors_offpointsCol1+_0x8084('0x142')+shaderPart_colors_offpointsCol2+'\x20\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20Color.xyz\x20=\x20mix(col1,\x20col2,\x20clamp((pos.x\x20+\x2015.0\x20/\x2030.0),\x200.0,\x201.0));\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20Color.a\x20=\x20clamp(distanceFromOriginalPos\x20*\x20mouseSpeed\x20*\x201.5,\x200.0,\x201.0);\x0a\x20\x20\x20\x20\x20\x20\x20\x20gl_PointSize\x20*=\x20(1.5\x20+\x20abs(sin(pos.w)\x20*\x202.0));\x0a\x20\x20\x20\x20}\x0a}';var offpointf=_0x8084('0x143');_0x8084('0x38');var backgroundv=_0x8084('0x144');var backgroundf='#version\x20300\x20es\x0aprecision\x20mediump\x20float;\x0a\x0auniform\x20float\x20uTime;\x0a\x0aout\x20vec4\x20FragColor;\x0a\x0a'+shaderPart_simpleRand+'\x0a'+shaderPart_general+'\x0a\x0a\x0avoid\x20main()\x20{\x0a\x20\x20\x20\x20float\x20random\x20=\x20rand(gl_FragCoord.xy);\x0a\x20\x20\x20\x20float\x20gray\x20=\x20random\x20*\x200.055\x20+\x200.08;\x20\x20\x20\x20\x20//\x20+\x20sin(uTime\x20*\x203.0\x20+\x20random\x20*\x20575474.0)\x20*\x200.015;\x0a\x09\x0a\x20\x20\x20\x20//\x20if(random\x20>\x200.998)\x20{\x0a\x20\x20\x20\x20//\x20float\x20t\x20=\x20mod((random\x20*\x20random\x20*\x207759.0\x20+\x20uTime),\x20500.0);\x0a\x20\x20\x20\x20//\x20if(\x20t\x20<\x201.0\x20)\x20{\x0a\x20\x20\x20\x20//\x20\x20\x20\x20\x20gray\x20+=\x20sin(t\x20*\x20PI\x20*\x202.0)\x20*\x200.5;\x0a\x20\x20\x20\x20//\x20}\x0a\x20\x20\x20\x20//\x20}\x0a\x0a\x0a\x20\x20\x20\x20FragColor\x20=\x20vec4(gray,gray,gray,1);\x0a}';_0x8084('0x38');var icoTFv=_0x8084('0x145')+shaderPart_maxDistance+'\x0a'+shaderPart_screenRatio+'\x0a'+shaderPart_tan225+'\x0a'+shaderPart_cameraZ+'\x0a'+shaderPart_mouseConstants+'\x0a'+shaderPart_sphereRadius+_0x8084('0x146')+shaderPart_general+_0x8084('0x147')+shaderPart_classicPerlinNoise+'\x0a'+shaderPart_atan2+'\x0a'+shaderPart_rotMatrix+'\x0a'+shaderPart_sphericalDistance+'\x0a'+shaderPart_attractVertex+'\x0a'+shaderPart_offsetVertexMouse+'\x0a'+shaderPart_offsetVertexMusic+'\x0a'+shaderPart_applyVelocityToVertex+_0x8084('0x148');var icoTFf=_0x8084('0x149');'use\x20strict';var icov=_0x8084('0x14a')+shaderPart_colors+_0x8084('0x140')+shaderPart_sphereRadius+_0x8084('0x146')+shaderPart_canvasHeight+'\x20\x20\x20\x0a\x0avoid\x20main()\x20{\x09\x09\x0a\x0a\x20\x20\x20\x20float\x20saveTheAttributes\x20=\x20pos.x\x20+\x20fx.x\x20+\x20fx2.x\x20+\x20mouseVelocity.x\x20+\x20displacedPos.x;\x0a\x0a\x0a\x20\x20\x20\x20vec4\x20transformedPos\x20=\x20musicDisplacedPos;\x0a\x0a\x20\x20\x20\x20\x0a\x20\x20\x20\x20gl_Position\x20=\x20projection\x20*\x20view\x20*\x20model\x20*\x20vec4(transformedPos.xyz,\x20\x20\x201.0);\x0a\x20\x20\x20\x20\x0a\x20\x20\x20\x20float\x20world_point_size\x20=\x200.15;\x0a\x20\x20\x20\x20float\x20distance_from_view\x20=\x20-(view\x20*\x20model\x20*\x20vec4(transformedPos.xyz,\x201.0)).z;\x0a\x20\x20\x20\x20float\x20r\x20=\x20RS;\x20//tan(22.5\x20*\x20(PI\x20/\x20180.0));\x0a\x20\x20\x20\x20float\x20whsize\x20=\x20distance_from_view\x20*\x20r\x20*\x202.0;\x0a\x20\x20\x20\x20float\x20size\x20\x20\x20=\x20(world_point_size\x20/\x20whsize)\x20*\x20canvasHeight;\x0a\x0a\x20\x20\x20\x20//\x20points\x20closer\x20to\x20the\x20attractor\x20will\x20be\x20smaller\x20in\x20size,\x20the\x20distance\x20was\x20measured\x20(inside\x20pointsTF)\x20as\x20the\x20\x0a\x20\x20\x20\x20//\x20Arc\x20length\x20between\x20the\x20two\x20points\x0a\x20\x20\x20\x20float\x20attractorArcDistance\x20=\x20fx.x;\x0a\x20\x20\x20\x20float\x20attrSizeMult\x20\x20\x20\x20\x20\x20\x20\x20\x20=\x20min(fx.x\x20/\x20(sphereCircleLength\x20*\x200.15)\x20+\x200.1,\x201.0);\x0a\x0a\x0a\x0a\x20\x20\x20\x20float\x20sizeSinWave\x20=\x20((sin(uTime\x20*\x203.0\x20+\x20pos.w\x20*\x200.05)\x20*\x200.5\x20+\x200.5)\x20*\x201.5\x20+\x200.6);\x0a\x0a\x0a\x20\x20\x20\x20gl_PointSize\x20=\x20size\x20*\x20attrSizeMult\x20*\x20sizeSinWave;\x0a\x0a\x20\x20\x20\x20Color\x20=\x20vec4(1,1,1,1);\x0a\x0a\x0a\x20\x20\x20\x20float\x20mouseSpeed\x20=\x20length(mouseVelocity.xy);\x0a\x0a\x20\x20\x20\x0a\x20\x20\x20\x20Color.xyz\x20=\x20'+shaderPart_pointsMouseSpeedColor+_0x8084('0x14b');var icof=_0x8084('0x14c');_0x8084('0x38');var icolinesTFv=_0x8084('0x14d')+shaderPart_colors+'\x0a\x0a/*\x20\x20constants\x20declarations\x20\x20*/\x0a'+shaderPart_general+'\x0a'+shaderPart_maxDistance+'\x0a'+shaderPart_screenRatio+'\x0a'+shaderPart_tan225+'\x0a'+shaderPart_cameraZ+'\x0a'+shaderPart_mouseConstants+'\x20\x20\x20\x0a'+shaderPart_sphereRadius+_0x8084('0x14e')+shaderPart_classicPerlinNoise+'\x0a'+shaderPart_atan2+'\x0a'+shaderPart_rotMatrix+'\x0a'+shaderPart_sphericalDistance+'\x0a'+shaderPart_attractVertex+'\x0a'+shaderPart_offsetVertexMouse+'\x0a'+shaderPart_offsetVertexMusic+'\x0a'+shaderPart_applyVelocityToVertex+_0x8084('0x14f')+shaderPart_colors_TFlineAttractor+_0x8084('0x150')+shaderPart_colors_TFlineShatter+'\x20\x20\x20\x20\x0a\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20float\x20angularVelocity\x20=\x20tfFx.z;\x0a\x20\x20\x20\x20\x20\x20\x20\x20float\x20angleRotation\x20\x20\x20=\x20tfFx.y;\x0a\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20if(angularVelocity\x20==\x200.0)\x20{\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20angularVelocity\x20=\x200.06;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20tfFx.y\x20=\x200.0;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20tfFx.w\x20=\x201.0;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20tfFx.z\x20\x20=\x20angularVelocity\x20*\x200.995;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20tfFx.y\x20\x20=\x20angleRotation\x20+\x20tfFx.z;\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20tfFx.w\x20\x20=\x20tfFx.w\x20*\x200.99;\x0a\x0a\x20\x20\x20\x20\x20\x20\x20\x20return;\x0a\x20\x20\x20\x20}\x20\x0a\x0a\x0a\x20\x20\x20\x20//\x20put\x20lines\x20back\x20togheter\x20if\x20we\x20got\x20there,\x20since\x20they\x27re\x20close\x20togheter\x20\x20\x20\x20\x0a\x20\x20\x20\x20\x0a\x20\x20\x20\x20tfFx.z\x20\x20=\x200.0;\x20\x20\x20\x20\x20//\x20reset\x20angular\x20velocity\x20\x0a\x20\x20\x20\x20tfFx.y\x20\x20*=\x200.93;\x20\x20\x20//\x20slowly\x20rerotate\x20the\x20lines\x20back\x20into\x20place\x0a\x20\x20\x20\x20tfFx.w\x20\x20=\x20min(tfFx.w\x20+\x20uDeltaTime,\x201.0);\x0a}';var icolinesTFf=_0x8084('0x151');_0x8084('0x38');var icolinesv=_0x8084('0x152')+shaderPart_maxDistance+_0x8084('0x153')+shaderPart_general+'\x0a'+shaderPart_hash3+'\x0a'+shaderPart_rotMatrix+'\x0a\x0a\x0a\x0avec4\x20rotateVertex(float\x20distancev0v1,\x20float\x20maxDistance)\x20{\x0a\x20\x20\x20\x20float\x20isTheRightVertex\x20=\x20fx.x;\x0a\x0a\x20\x20\x20\x20vec4\x20v0subv1\x20=\x20v0musicDisplaced\x20-\x20v1musicDisplaced;\x0a\x20\x20\x20\x20vec4\x20v0midv1\x20=\x20(v0musicDisplaced\x20+\x20v1musicDisplaced)\x20/\x202.0;\x0a\x0a\x0a\x20\x20\x20\x20float\x20angularRotation\x20=\x20fx.y;\x0a\x0a\x20\x20\x20\x20\x20\x0a\x20\x20\x20\x20vec4\x20centered\x20=\x20(v0subv1)\x20*\x200.5;\x0a\x20\x20\x20\x20centered\x20=\x20rotationMatrix(normalize(hash3(v0.xy\x20+\x20v1.xy\x20*\x200.376\x20+\x20angularRotation\x20*\x200.000000001)),\x20angularRotation)\x20*\x20centered;\x0a\x20\x20\x20\x20centered\x20*=\x201.0\x20/\x20(distancev0v1\x20/\x20maxDistance);\x0a\x20\x20\x20\x20centered\x20+=\x20v0midv1;\x0a\x0a\x20\x20\x20\x20return\x20centered;\x0a}\x0a\x0a\x0avoid\x20main()\x20{\x09\x0a\x20\x20\x20\x20vec4\x20finalPos\x20=\x20v0musicDisplaced;\x09\x0a\x0a\x0a\x0a\x20\x20\x20\x20float\x20globalLineAlpha\x20=\x200.15\x20+\x20length(mouseVelocity.xy)\x20*\x200.001;\x0a\x0a\x0a\x0a\x20\x20\x20\x20Color.xyz\x20=\x20color.xyz;\x0a\x20\x20\x20\x20Color.a\x20\x20\x20=\x20fx.w\x20*\x200.5\x20*\x20globalLineAlpha;\x0a\x0a\x20\x20\x20\x20float\x20saveTheAttributes\x20=\x20mouseVelocity.x\x20+\x20v0displaced.x\x20+\x20v1displaced.x;\x0a\x0a\x0a\x20\x20\x20\x20float\x20distancev0v1\x20=\x20length(v0musicDisplaced.xyz\x20-\x20v1musicDisplaced.xyz);\x0a\x0a\x20\x20\x20\x20//\x20animate\x20line\x20shatter\x0a\x20\x20\x20\x20if(distancev0v1\x20>\x20maxDistance)\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20finalPos\x20=\x20rotateVertex(distancev0v1,\x20maxDistance);\x0a\x20\x20\x20\x20\x20\x20\x20\x20Color.a\x20\x20\x20=\x20fx.w\x20*\x200.65\x20*\x20globalLineAlpha;\x0a\x20\x20\x20\x20}\x20else\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20finalPos\x20=\x20rotateVertex(distancev0v1,\x20distancev0v1);\x20\x20\x20\x20\x20\x20\x20\x20\x0a\x20\x20\x20\x20}\x0a\x0a\x20\x20\x20\x20gl_Position\x20=\x20projection\x20*\x20view\x20*\x20model\x20*\x20vec4(finalPos.xyz,\x201.0);\x0a}';var icolinesf='#version\x20300\x20es\x0aprecision\x20mediump\x20float;\x0a\x0ain\x20vec4\x20Color;\x0a\x0aout\x20vec4\x20FragColor;\x0a\x0avoid\x20main()\x20{\x0a\x09FragColor\x20=\x20Color;\x0a}';_0x8084('0x38');function generate_icosahedron_wlines(){var _0x38dae9=1.61803399;var _0xf17e1f=[[-0x1,_0x38dae9,0x0],[0x1,_0x38dae9,0x0],[-0x1,-_0x38dae9,0x0],[0x1,-_0x38dae9,0x0],[0x0,-0x1,_0x38dae9],[0x0,0x1,_0x38dae9],[0x0,-0x1,-_0x38dae9],[0x0,0x1,-_0x38dae9],[_0x38dae9,0x0,-0x1],[_0x38dae9,0x0,0x1],[-_0x38dae9,0x0,-0x1],[-_0x38dae9,0x0,0x1]];var _0x475136={};for(var _0x4ee2b8=0x0;_0x4ee2b8<_0xf17e1f[_0x8084('0x3d')];_0x4ee2b8++){var _0x3775be=strhash('x'+_0xf17e1f[_0x4ee2b8][0x0]+'y'+_0xf17e1f[_0x4ee2b8][0x1]+'z'+_0xf17e1f[_0x4ee2b8][0x2]);_0x475136[_0x3775be]=_0x4ee2b8;}var _0x1611f8=[[0x0,0xb,0x5],[0x0,0x5,0x1],[0x0,0x1,0x7],[0x0,0x7,0xa],[0x0,0xa,0xb],[0x1,0x5,0x9],[0x5,0xb,0x4],[0xb,0xa,0x2],[0xa,0x7,0x6],[0x7,0x1,0x8],[0x3,0x9,0x4],[0x3,0x4,0x2],[0x3,0x2,0x6],[0x3,0x6,0x8],[0x3,0x8,0x9],[0x4,0x9,0x5],[0x2,0x4,0xb],[0x6,0x2,0xa],[0x8,0x6,0x7],[0x9,0x8,0x1]];var _0x5c6f6d=[];var _0x13f2c5=[];var _0x45d5f2=0x4;for(var _0x4ee2b8=0x0;_0x4ee2b8<_0x45d5f2;_0x4ee2b8++){for(var _0x1915ba=0x0;_0x1915ba<_0x1611f8[_0x8084('0x3d')];_0x1915ba++){var _0x303f0b=_0xf17e1f[_0x1611f8[_0x1915ba][0x0]];var _0x858cf6=_0xf17e1f[_0x1611f8[_0x1915ba][0x1]];var _0x26a9e7=_0xf17e1f[_0x1611f8[_0x1915ba][0x2]];var _0xbe2765=[(_0x303f0b[0x0]+_0x858cf6[0x0])*0.5,(_0x303f0b[0x1]+_0x858cf6[0x1])*0.5,(_0x303f0b[0x2]+_0x858cf6[0x2])*0.5];var _0x50f132=[(_0x303f0b[0x0]+_0x26a9e7[0x0])*0.5,(_0x303f0b[0x1]+_0x26a9e7[0x1])*0.5,(_0x303f0b[0x2]+_0x26a9e7[0x2])*0.5];var _0x1c6bb5=[(_0x858cf6[0x0]+_0x26a9e7[0x0])*0.5,(_0x858cf6[0x1]+_0x26a9e7[0x1])*0.5,(_0x858cf6[0x2]+_0x26a9e7[0x2])*0.5];var _0x178464=strhash('x'+_0xbe2765[0x0]+'y'+_0xbe2765[0x1]+'z'+_0xbe2765[0x2]);if(_0x475136[_0x178464]===undefined){_0xf17e1f[_0x8084('0x3c')](_0xbe2765);_0x475136[_0x178464]=_0xf17e1f[_0x8084('0x3d')]-0x1;}var _0x19e0fb=strhash('x'+_0x50f132[0x0]+'y'+_0x50f132[0x1]+'z'+_0x50f132[0x2]);if(_0x475136[_0x19e0fb]===undefined){_0xf17e1f[_0x8084('0x3c')](_0x50f132);_0x475136[_0x19e0fb]=_0xf17e1f[_0x8084('0x3d')]-0x1;}var _0x26b6fe=strhash('x'+_0x1c6bb5[0x0]+'y'+_0x1c6bb5[0x1]+'z'+_0x1c6bb5[0x2]);if(_0x475136[_0x26b6fe]===undefined){_0xf17e1f['push'](_0x1c6bb5);_0x475136[_0x26b6fe]=_0xf17e1f[_0x8084('0x3d')]-0x1;}var _0x5dbfa5=_0x475136[_0x178464];var _0x23fa98=_0x475136[_0x19e0fb];var _0x65a31e=_0x475136[_0x26b6fe];_0x13f2c5[_0x8084('0x3c')]([_0x1611f8[_0x1915ba][0x0],_0x5dbfa5,_0x23fa98]);_0x13f2c5['push']([_0x5dbfa5,_0x1611f8[_0x1915ba][0x1],_0x65a31e]);_0x13f2c5[_0x8084('0x3c')]([_0x23fa98,_0x65a31e,_0x1611f8[_0x1915ba][0x2]]);_0x13f2c5[_0x8084('0x3c')]([_0x5dbfa5,_0x23fa98,_0x65a31e]);}_0x1611f8=_0x13f2c5;_0x13f2c5=[];}pushVerticesOnSphereBoundaries(_0xf17e1f);var _0x3e13da=function _0x3e13da(_0x199c6d,_0x486d1d){var _0x3bb925=''+strhash('x'+(_0x199c6d[0x0]+_0x486d1d[0x0])+'y'+(_0x199c6d[0x1]+_0x486d1d[0x1])+'z'+(_0x199c6d[0x2]+_0x486d1d[0x2]));if(_0x4ddcde[_0x3bb925]===undefined){_0x31a321[_0x8084('0x3c')](_0x199c6d[0x0],_0x199c6d[0x1],_0x199c6d[0x2],0x0,_0x486d1d[0x0],_0x486d1d[0x1],_0x486d1d[0x2],0x0,_0x199c6d[0x0],_0x199c6d[0x1],_0x199c6d[0x2],0x0,_0x486d1d[0x0],_0x486d1d[0x1],_0x486d1d[0x2],0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0,_0x486d1d[0x0],_0x486d1d[0x1],_0x486d1d[0x2],0x0,_0x199c6d[0x0],_0x199c6d[0x1],_0x199c6d[0x2],0x0,_0x486d1d[0x0],_0x486d1d[0x1],_0x486d1d[0x2],0x0,_0x199c6d[0x0],_0x199c6d[0x1],_0x199c6d[0x2],0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0,0x1,0x0,0x0,0x0);_0x4ddcde[_0x3bb925]=0x1;}};var _0x31a321=[];var _0x4ddcde={};for(var _0x4ee2b8=0x0;_0x4ee2b8<_0x1611f8['length'];_0x4ee2b8++){var _0x303f0b=_0xf17e1f[_0x1611f8[_0x4ee2b8][0x0]];var _0x858cf6=_0xf17e1f[_0x1611f8[_0x4ee2b8][0x1]];var _0x26a9e7=_0xf17e1f[_0x1611f8[_0x4ee2b8][0x2]];_0x3e13da(_0x303f0b,_0x858cf6);_0x3e13da(_0x858cf6,_0x26a9e7);_0x3e13da(_0x26a9e7,_0x303f0b);}var _0x4d7024=_0x31a321[_0x8084('0x3d')]/0x24;var _0x45d186=[];var _0x5074a1=[];for(var _0x4ee2b8=0x0;_0x4ee2b8<_0xf17e1f[_0x8084('0x3d')];_0x4ee2b8++){_0x45d186[_0x8084('0x3c')](_0xf17e1f[_0x4ee2b8][0x0],_0xf17e1f[_0x4ee2b8][0x1],_0xf17e1f[_0x4ee2b8][0x2],_0x4ee2b8,_0xf17e1f[_0x4ee2b8][0x0],_0xf17e1f[_0x4ee2b8][0x1],_0xf17e1f[_0x4ee2b8][0x2],_0x4ee2b8,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0);if(_0x4ee2b8==_0xf17e1f[_0x8084('0x3d')]-0x1)continue;for(var _0x1915ba=0x0;_0x1915ba<0x23;_0x1915ba++){var _0x55835d=_0x1915ba/0x5+0x1/0x5;var _0x55836c=0x1-_0x55835d;var _0x4446ea=_0xf17e1f[_0x4ee2b8][0x0]*_0x55835d+_0xf17e1f[_0x4ee2b8+0x1][0x0]*_0x55836c;var _0x3187b8=_0xf17e1f[_0x4ee2b8][0x1]*_0x55835d+_0xf17e1f[_0x4ee2b8+0x1][0x1]*_0x55836c;var _0x4c5505=_0xf17e1f[_0x4ee2b8][0x2]*_0x55835d+_0xf17e1f[_0x4ee2b8+0x1][0x2]*_0x55836c;_0x45d186[_0x8084('0x3c')](_0x4446ea,_0x3187b8,_0x4c5505,_0x4ee2b8,_0x4446ea,_0x3187b8,_0x4c5505,_0x4ee2b8,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0);if(_0x1915ba<0xd){_0x5074a1[_0x8084('0x3c')](_0x4446ea,_0x3187b8,_0x4c5505,_0x4ee2b8,_0x4446ea,_0x3187b8,_0x4c5505,_0x4ee2b8,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0);}}}return{'vertices':_0xf17e1f,'bloomVerticesBuffer':_0x5074a1,'verticesBuffer':_0x45d186,'linesBuffer':_0x31a321,'nVerts':_0x45d186[_0x8084('0x3d')]/0x18,'nBloomVerts':_0x5074a1[_0x8084('0x3d')]/0x18,'nLinesVerts':_0x4d7024};}function pushVerticesOnSphereBoundaries(_0x4386d1){for(var _0x17adc5=0x0,_0x146e34=_0x4386d1[_0x8084('0x3d')];_0x17adc5<_0x146e34;_0x17adc5++){var _0x2067f1=vec3[_0x8084('0xc')](_0x4386d1[_0x17adc5][0x0],_0x4386d1[_0x17adc5][0x1],_0x4386d1[_0x17adc5][0x2]);var _0x112e43=vec3['len'](_0x2067f1);var _0x1ebdad=radius/_0x112e43;_0x4386d1[_0x17adc5][0x0]*=_0x1ebdad;_0x4386d1[_0x17adc5][0x1]*=_0x1ebdad;_0x4386d1[_0x17adc5][0x2]*=_0x1ebdad;}}_0x8084('0x38');function footerResize(){var _0x423e11=document['getElementById'](_0x8084('0x154'));var _0x16c878=document['getElementsByClassName'](_0x8084('0x155'))[0x0];var _0x4c5743=document['getElementsByClassName']('fewe')[0x0];var _0x14140c=1.47;var _0x1512e8=innerWidth;var _0x4e3387=innerWidth/_0x14140c;var _0x4d6d85=0.82;var _0x299d9b=innerWidth/ innerHeight;if(_0x299d9b<=1.2){_0x1512e8*=1.5;_0x4e3387*=1.5;_0x4d6d85=0.76;}var _0x216d3f=_0x16c878[_0x8084('0x156')]()[_0x8084('0x157')];var _0x4a80c9=_0x4c5743[_0x8084('0x156')]()['bottom'];_0x423e11[_0x8084('0x52')][_0x8084('0x157')]=_0x4a80c9-_0x216d3f-_0x4e3387*_0x4d6d85+'px';}function footerSVGHider(){if(footerSVGHider['prototype'][_0x8084('0x68')]===![]&&window['pageYOffset']===0x0){document['querySelector'](_0x8084('0x158'))[_0x8084('0x52')][_0x8084('0x159')]=_0x8084('0xa9');footerSVGHider[_0x8084('0x3b')][_0x8084('0x68')]=!![];}if(footerSVGHider[_0x8084('0x3b')][_0x8084('0x68')]===!![]&&window[_0x8084('0x15a')]!==0x0){document[_0x8084('0xa7')]('#footerSvg1')[_0x8084('0x52')][_0x8084('0x159')]=_0x8084('0x15b');footerSVGHider[_0x8084('0x3b')][_0x8084('0x68')]=![];}}footerSVGHider[_0x8084('0x3b')]['hidden']=![];_0x8084('0x38');function MusicBox(_0x3f6de5){var _0x16ec65=document[_0x8084('0xa7')](_0x8084('0xa8'));_0x16ec65[_0x8084('0x21')]('click',function(_0x13a2a2){if(!_0xc5a051)return;_0x16ec65['classList'][_0x8084('0xab')](_0x8084('0xac'));if(_0xba9cad[_0x8084('0x15c')]['value']===0x0)_0xba9cad[_0x8084('0x15c')][_0x8084('0x15d')]=0.45;else _0xba9cad['gain'][_0x8084('0x15d')]=0x0;});var _0x378ccf=new(window[(_0x8084('0x15e'))]||window[(_0x8084('0x15f'))])();var _0x3d6d10=new XMLHttpRequest();_0x3d6d10[_0x8084('0x160')](_0x8084('0x161'),_0x3f6de5,!![]);_0x3d6d10[_0x8084('0x162')]=_0x8084('0x163');_0x3d6d10[_0x8084('0x164')]=function(){var _0x3ebc3c=_0x3d6d10[_0x8084('0x165')];_0x378ccf[_0x8084('0x166')](_0x3ebc3c,_0x2c7510,function(_0xd350c8){console[_0x8084('0x167')]('Error\x20with\x20decoding\x20audio\x20data'+_0xd350c8['err']);});};_0x3d6d10[_0x8084('0x168')]();var _0x18ca3b;var _0xba9cad;var _0x385b98;var _0xc5a051=![];var _0x49133b;function _0x2c7510(_0x345267){_0x18ca3b=_0x378ccf[_0x8084('0x169')]();_0x18ca3b[_0x8084('0x16a')]=0x200;_0x18ca3b['smoothingTimeConstant']=0.8;_0xba9cad=_0x378ccf[_0x8084('0x16b')]();_0xba9cad[_0x8084('0x15c')][_0x8084('0x15d')]=0.45;var _0x369241=_0x18ca3b[_0x8084('0x16c')];_0x385b98=new Float32Array(_0x369241);for(var _0x16e018=0x0;_0x16e018<_0x369241;_0x16e018++){_0x385b98[_0x16e018]=-0x8c;}_0xfa0b4c();_0x49133b=_0x378ccf[_0x8084('0x16d')]();_0x49133b[_0x8084('0xaf')]=_0x345267;_0x49133b['loop']=!![];_0x49133b[_0x8084('0x16e')](_0xba9cad);_0xba9cad[_0x8084('0x16e')](_0x18ca3b);_0x18ca3b[_0x8084('0x16e')](_0x378ccf['destination']);_0xc5a051=!![];}var _0x2048f3;function _0xfa0b4c(){_0x2048f3=gl[_0x8084('0x112')]();gl[_0x8084('0x9b')](gl[_0x8084('0x9c')],_0x2048f3);gl['texImage2D'](gl[_0x8084('0x9c')],0x0,gl['R32F'],_0x385b98[_0x8084('0x3d')],0x1,0x0,gl['RED'],gl[_0x8084('0xb0')],_0x385b98);gl[_0x8084('0x113')](gl[_0x8084('0x9c')],gl[_0x8084('0x16f')],gl['NEAREST']);gl['texParameteri'](gl[_0x8084('0x9c')],gl[_0x8084('0x170')],gl[_0x8084('0x10a')]);gl['texParameteri'](gl[_0x8084('0x9c')],gl[_0x8084('0x114')],gl['CLAMP_TO_EDGE']);gl[_0x8084('0x113')](gl[_0x8084('0x9c')],gl[_0x8084('0x116')],gl['CLAMP_TO_EDGE']);gl[_0x8084('0x9b')](gl[_0x8084('0x9c')],null);}this[_0x8084('0x171')]=function(_0x2235ed){if(!_0xc5a051)return;_0x18ca3b['getFloatFrequencyData'](_0x385b98);gl[_0x8084('0x9b')](gl[_0x8084('0x9c')],_0x2048f3);gl[_0x8084('0x117')](gl[_0x8084('0x9c')],0x0,gl[_0x8084('0x172')],_0x385b98[_0x8084('0x3d')],0x1,0x0,gl[_0x8084('0x173')],gl[_0x8084('0xb0')],_0x385b98);gl[_0x8084('0x9b')](gl[_0x8084('0x9c')],null);};this[_0x8084('0xcb')]=function(){return _0x2048f3;};this[_0x8084('0x9a')]=function(){var _0x448fd1=document['querySelector']('.mhCentralSquare');var _0xab91f3=document[_0x8084('0xa7')](_0x8084('0x174'));var _0x3c5d0d=setInterval(function(){if(_0xc5a051){_0x49133b['start']();_0x448fd1[_0x8084('0x52')][_0x8084('0x175')]='1';_0xab91f3[_0x8084('0x52')][_0x8084('0x175')]='1';window[_0x8084('0x176')](_0x3c5d0d);}},0xbb8);};}_0x8084('0x38');function initRateStars(){var _0x33281c=document[_0x8084('0x177')](_0x8084('0x178'));var _0x3aca63=function _0x3aca63(_0x1a3241){var _0x5427c7=parseInt(_0x1a3241['currentTarget']['id'][_0x8084('0xa4')](_0x1a3241['currentTarget']['id'][_0x8084('0x3d')]-0x1,0x1));for(var _0x11a245=0x0;_0x11a245<_0x5427c7;_0x11a245++){_0x33281c[_0x11a245][_0x8084('0x179')](_0x8084('0x17a'),_0x8084('0xac'));}};var _0x46ed67=function _0x46ed67(_0xe390d2){for(var _0x45a65e=0x0;_0x45a65e<0x5;_0x45a65e++){_0x33281c[_0x45a65e]['setAttribute'](_0x8084('0x17a'),'');}};for(var _0x116ddd=0x0;_0x116ddd<_0x33281c[_0x8084('0x3d')];_0x116ddd++){_0x33281c[_0x116ddd][_0x8084('0x21')]('mouseenter',_0x3aca63);_0x33281c[_0x116ddd]['addEventListener']('mouseleave',_0x46ed67);}}_0x8084('0x38');function lazyloadImages(){[][_0x8084('0x17b')]['call'](document['getElementsByClassName']('lazyload'),function(_0x3787dd,_0x1c8cda){_0x3787dd[_0x8084('0x179')](_0x8084('0x17c'),_0x3787dd[_0x8084('0x17d')](_0x8084('0x17e')));});[][_0x8084('0x17b')][_0x8084('0x24')](document[_0x8084('0x17f')](_0x8084('0x180')),function(_0x4ac1ba,_0x6efa69){if(screen[_0x8084('0x8b')]<0x708)_0x4ac1ba[_0x8084('0x179')](_0x8084('0x17c'),_0x4ac1ba[_0x8084('0x17d')](_0x8084('0x17e')));else _0x4ac1ba[_0x8084('0x179')](_0x8084('0x17c'),_0x4ac1ba[_0x8084('0x17d')]('data-src-hd'));});}_0x8084('0x38');function initTypography(){if(document[_0x8084('0x181')][_0x8084('0x182')]['indexOf'](_0x8084('0x183'))>-0x1){return;}var _0xdffc35=new FontFaceObserver(_0x8084('0x184'));var _0x40c31b=new FontFaceObserver(_0x8084('0x185'));var _0x2d9d61=new FontFaceObserver('Sorts\x20Mill');Promise[_0x8084('0x186')]([_0xdffc35[_0x8084('0x65')](),_0x40c31b['load'](),_0x2d9d61[_0x8084('0x65')]()])[_0x8084('0x3e')](function(){document['documentElement'][_0x8084('0x182')]+=_0x8084('0x187');});}_0x8084('0x38');function initMenu(){var _0x1764f1=document['querySelector'](_0x8084('0x188'));var _0x1b8d3c=document['querySelector'](_0x8084('0x189'));var _0x4abfb2=![];_0x1764f1[_0x8084('0x21')](_0x8084('0x18a'),function(){_0x1764f1[_0x8084('0xaa')]['toggle'](_0x8084('0xac'));_0x1b8d3c[_0x8084('0xaa')][_0x8084('0xab')]('active');if(!_0x4abfb2){_0x1b8d3c[_0x8084('0x52')]['pointerEvents']=_0x8084('0x186');}else{_0x1b8d3c['style'][_0x8084('0x18b')]=_0x8084('0xa9');}_0x4abfb2=!_0x4abfb2;});}'use\x20strict';window[_0x8084('0x21')](_0x8084('0x65'),init);window[_0x8084('0x21')](_0x8084('0x18c'),onResize);function init(){initTypography();initRateStars();initMenu();lazyloadImages();onResize();}function onResize(){canvasResize();footerResize();}
+"use strict";
+
+//expects gl-matrix-min to be defined before the current script
+//^ potresti creare la tua lookAt function così elimini questa dipendenza
+//expects a variable called zoom (perspective focal length) to be connected with the projection/orthogonal matrix
+//you can't change the camera variable name (unless you'd like to find and replace)
+
+
+//se lo zoom è alto aumentiamo lo smoothness? stile minecraft!
+
+
+/*
+
+		HOW TO USE:
+
+		var camera = new createCamera();
+
+		INSIDE DRAW:
+
+		var view = camera.getViewMatrix(deltatime, 0.3);
+
+*/
+
+//namespacia tutte le variabili
+//tutti i metodi devono essere interni a camera
+
+
+//you should really namespace all those functions
+
+
+function createCamera() {
+	/*	functions	*/
+	this.getViewMatrix = getViewMatrix;
+	this.params = camera_params;
+	this.camera_keydown = camera_keydown;
+	this.camera_keyup = camera_keyup;
+	this.camera_mousemove = camera_mousemove;
+	this.camera_mousedown = camera_mousedown;
+	this.camera_mouseup = camera_mouseup;
+	this.camera_zoom = camera_zoom;
+
+	this.camera_touchdown = camera_touchdown;
+	this.camera_touchup = camera_touchup;
+	this.camera_touchmove = camera_touchmove;
+
+	this.pos = vec3.fromValues(0, 0, 0);
+	this.up = vec3.fromValues(0, 1, 0);
+	this.front = vec3.fromValues(0, 0, -1);
+	this.frontCross = vec3.fromValues(0, 0, 0);
+	this.dir = vec3.fromValues(0, 0, 0);
+
+	/*	optional args	*/
+	this.speed = 5.0;
+	this.zoom_smoothness = 0.1;
+
+	//to use the autocentered view specify
+	//autocentered as true
+	//where to look with 			this.look
+	//and a radius distance with 	this.radius
+	this.autoCentered = false;
+	this.autoRotate = false;
+	this.autoRotateSpeed = 3.0; //degree/sec
+	this.radius = 3.0;
+	this.look = [0, 0, 0];
+	this.mousecontrols = true;
+	this.depth_of_field_transform_count = 0;
+
+	this.lookAt = mat4.create();
+	this.yaw = -3.14 / 2; //-90 e sai perchè
+	this.pitch = 0;
+	this.deltaRot = [0.0, 0.0];
+	this.lastPos = [null, null];
+	this.deltazoom = 0;
+
+	this.dragging = false;
+	this.startingZoom = window.zoom;
+	this.zoomdefined = false;
+	//tries to make camera movement smoother by checking for frameskips
+	this.smoothDeltaTimeCheck = true;
+	this.rotationSensitivity = 0.002;
+
+	this.pressedKeys = { w: false,
+		s: false,
+		a: false,
+		d: false,
+		space: false,
+		shift: false,
+		la: false,
+		ua: false,
+		ra: false,
+		da: false };
+
+	if (this.mousecontrols) {
+		// window.addEventListener("keydown", this.camera_keydown.bind(this));
+		// window.addEventListener("keyup", this.camera_keyup.bind(this));
+		document.getElementById('mainCanvas').addEventListener("mousemove", this.camera_mousemove.bind(this));
+		// document.getElementById('mainCanvas').addEventListener("mousedown", this.camera_mousedown.bind(this));
+		// window.addEventListener("mouseup", this.camera_mouseup.bind(this));
+
+
+		// document.getElementById('mainCanvas').addEventListener("touchstart", this.camera_touchdown.bind(this));
+		// document.getElementById('mainCanvas').addEventListener("touchmove", this.camera_touchmove.bind(this));
+		// window.addEventListener("touchend", this.camera_touchup.bind(this));
+		//window.addEventListener('mousewheel', this.camera_zoom.bind(this));
+		// For Firefox
+		// window.addEventListener('DOMMouseScroll', this.camera_zoom.bind(this));
+	}
+}
+
+function camera_params(zoom_smoothness, speed, _zoom, smoothDeltatime, rotationSensitivity) {
+	if (zoom_smoothness !== undefined) this.zoom_smoothness = zoom_smoothness;
+
+	if (speed !== undefined) this.speed = speed;
+
+	if (_zoom !== undefined) this.startingZoom = _zoom;
+
+	if (smoothDeltatime !== undefined) this.smoothDeltaTimeCheck = smoothDeltatime;
+
+	if (rotationSensitivity !== undefined) this.rotationSensitivity = rotationSensitivity;
+}
+
+function getViewMatrix(deltatime, smoothness) {
+	//smooths agains frameskipping
+	if (this.smoothDeltaTimeCheck && deltatime <= 0.03333) {
+		if (deltatime < 0.010) {} else deltatime = 0.016;
+	}
+
+	if (!this.zoomdefined) {
+		this.startingZoom = zoom;
+		this.zoomdefined = true;
+	}
+
+	if (this.autoCentered) {
+		return camera_getAutocenteredViewMatrix.call(this, deltatime, smoothness, this.radius);
+	}
+
+	if (this.pressedKeys.w || this.pressedKeys.ua) {
+		this.pos[0] += deltatime * this.speed * this.front[0];
+		this.pos[1] += deltatime * this.speed * this.front[1];
+		this.pos[2] += deltatime * this.speed * this.front[2];
+	}
+	if (this.pressedKeys.s || this.pressedKeys.da) {
+		this.pos[0] -= deltatime * this.speed * this.front[0];
+		this.pos[1] -= deltatime * this.speed * this.front[1];
+		this.pos[2] -= deltatime * this.speed * this.front[2];
+	}
+	if (this.pressedKeys.d || this.pressedKeys.ra) {
+		this.frontCross = vec3.cross(this.frontCross, this.front, this.up);
+		vec3.normalize(this.frontCross, this.frontCross);
+		this.pos[0] += deltatime * this.speed * this.frontCross[0];
+		this.pos[1] += deltatime * this.speed * this.frontCross[1];
+		this.pos[2] += deltatime * this.speed * this.frontCross[2];
+	}
+	if (this.pressedKeys.a || this.pressedKeys.la) {
+		this.frontCross = vec3.cross(this.frontCross, this.front, this.up);
+		vec3.normalize(this.frontCross, this.frontCross);
+		this.pos[0] -= deltatime * this.speed * this.frontCross[0];
+		this.pos[1] -= deltatime * this.speed * this.frontCross[1];
+		this.pos[2] -= deltatime * this.speed * this.frontCross[2];
+	}
+	if (this.pressedKeys.space) {
+		this.pos[0] += deltatime * this.speed * this.up[0];
+		this.pos[1] += deltatime * this.speed * this.up[1];
+		this.pos[2] += deltatime * this.speed * this.up[2];
+	}
+	if (this.pressedKeys.shift) {
+		this.pos[0] -= deltatime * this.speed * this.up[0];
+		this.pos[1] -= deltatime * this.speed * this.up[1];
+		this.pos[2] -= deltatime * this.speed * this.up[2];
+	}
+
+	this.yaw += this.deltaRot[0] * smoothness;
+	this.pitch -= this.deltaRot[1] * smoothness;
+
+	this.deltaRot[0] -= this.deltaRot[0] * smoothness;
+	this.deltaRot[1] -= this.deltaRot[1] * smoothness;
+
+	if (this.pitch > 3.13 / 2) this.pitch = 3.13 / 2;
+	if (this.pitch < -3.13 / 2) this.pitch = -3.13 / 2;
+
+	this.front[0] = Math.cos(this.yaw) * Math.cos(this.pitch);
+	this.front[1] = Math.sin(this.pitch);
+	this.front[2] = Math.sin(this.yaw) * Math.cos(this.pitch);
+	vec3.normalize(this.front, this.front);
+
+	if (Math.abs(this.deltazoom) > 0) {
+		var increment = this.deltazoom * this.zoom_smoothness;
+		if (this.deltazoom < 0) this.deltazoom = this.deltazoom < -0.01 ? this.deltazoom - increment : 0;
+
+		if (this.deltazoom > 0) this.deltazoom = this.deltazoom > +0.01 ? this.deltazoom - increment : 0;
+
+		zoom += increment;
+		if (zoom < 44.5) zoom = 44.5;
+		if (zoom > this.startingZoom) zoom = this.startingZoom;
+	}
+
+	this.dir[0] = this.pos[0] + this.front[0];
+	this.dir[1] = this.pos[1] + this.front[1];
+	this.dir[2] = this.pos[2] + this.front[2];
+	mat4.lookAt(this.lookAt, this.pos, this.dir, this.up);
+	return this.lookAt;
+}
+
+function camera_keydown(e) {
+	switch (e.keyCode) {
+		case 87:
+			this.pressedKeys.w = true;
+			break;
+		case 65:
+			this.pressedKeys.a = true;
+			break;
+		case 83:
+			this.pressedKeys.s = true;
+			break;
+		case 68:
+			this.pressedKeys.d = true;
+			break;
+		case 32:
+			this.pressedKeys.space = true;
+			break;
+		case 16:
+			this.pressedKeys.shift = true;
+			break;
+		case 37:
+			this.pressedKeys.la = true;
+			break;
+		case 38:
+			this.pressedKeys.ua = true;
+			break;
+		case 39:
+			this.pressedKeys.ra = true;
+			break;
+		case 40:
+			this.pressedKeys.da = true;
+			break;
+	}
+}
+
+function camera_keyup(e) {
+	switch (e.keyCode) {
+		case 87:
+			this.pressedKeys.w = false;
+			break;
+		case 65:
+			this.pressedKeys.a = false;
+			break;
+		case 83:
+			this.pressedKeys.s = false;
+			break;
+		case 68:
+			this.pressedKeys.d = false;
+			break;
+		case 32:
+			this.pressedKeys.space = false;
+			break;
+		case 16:
+			this.pressedKeys.shift = false;
+			break;
+		case 37:
+			this.pressedKeys.la = false;
+			break;
+		case 38:
+			this.pressedKeys.ua = false;
+			break;
+		case 39:
+			this.pressedKeys.ra = false;
+			break;
+		case 40:
+			this.pressedKeys.da = false;
+			break;
+	}
+}
+
+function camera_mousemove(e) {
+	if (!this.dragging) return;
+
+	//sta telecamera va fatta col click, non è un fps
+	this.deltaRot[0] += (e.clientX - this.lastPos[0]) * this.rotationSensitivity;
+	this.deltaRot[1] += (e.clientY - this.lastPos[1]) * this.rotationSensitivity;
+
+	this.lastPos[0] = e.clientX;
+	this.lastPos[1] = e.clientY;
+}
+
+function camera_touchmove(e) {
+	if (!this.dragging) return;
+
+	//sta telecamera va fatta col click, non è un fps
+	this.deltaRot[0] += (e.touches[0].clientX - this.lastPos[0]) * this.rotationSensitivity;
+	this.deltaRot[1] += (e.touches[0].clientY - this.lastPos[1]) * this.rotationSensitivity;
+
+	this.lastPos[0] = e.touches[0].clientX;
+	this.lastPos[1] = e.touches[0].clientY;
+}
+
+function camera_mousedown(e) {
+	if (e.which != 1) return;
+	this.lastPos[0] = e.clientX;
+	this.lastPos[1] = e.clientY;
+	this.dragging = true;
+}
+
+function camera_mouseup(e) {
+	this.dragging = false;
+}
+
+function camera_touchdown(e) {
+	this.lastPos[0] = e.touches[0].clientX;
+	this.lastPos[1] = e.touches[0].clientY;
+	this.dragging = true;
+}
+
+function camera_touchup(e) {
+	this.dragging = false;
+}
+
+function camera_zoom(e) {
+	var delta = e.wheelDelta ? e.wheelDelta : -e.detail;
+
+	if (delta > 0) this.deltazoom += -0.15;else this.deltazoom += +0.15;
+}
+
+function camera_getAutocenteredViewMatrix(deltatime, smoothness, radius) {
+	this.yaw += this.deltaRot[0] * smoothness;
+	this.pitch -= this.deltaRot[1] * smoothness;
+
+	if (this.autoRotate) {
+		this.yaw += this.autoRotateSpeed / 180 * Math.PI * deltatime;
+	}
+
+	this.deltaRot[0] -= this.deltaRot[0] * smoothness;
+	this.deltaRot[1] -= this.deltaRot[1] * smoothness;
+
+	if (this.pitch > 3.13 / 2) this.pitch = 3.13 / 2;
+	if (this.pitch < -3.13 / 2) this.pitch = -3.13 / 2;
+
+	if (Math.abs(this.deltazoom) > 0) {
+		var increment = this.deltazoom * this.zoom_smoothness;
+		if (this.deltazoom < 0) this.deltazoom = this.deltazoom < -0.01 ? this.deltazoom - increment : 0;
+
+		if (this.deltazoom > 0) this.deltazoom = this.deltazoom > +0.01 ? this.deltazoom - increment : 0;
+
+		zoom += increment;
+		if (zoom < 44.5) zoom = 44.5;
+		if (zoom > this.startingZoom) zoom = this.startingZoom;
+	}
+
+	var xpos = Math.cos(this.yaw) * Math.cos(this.pitch) * radius;
+	var zpos = Math.sin(this.yaw) * Math.cos(this.pitch) * radius;
+	var ypos = Math.sin(this.pitch) * radius;
+
+	this.pos[0] = xpos + this.look[0];
+	this.pos[1] = ypos + this.look[1];
+	this.pos[2] = -zpos + this.look[2];
+
+	mat4.lookAt(this.lookAt, this.pos, this.look, this.up);
+
+	if (this.depth_of_field_transform_count != 0) {
+
+		var degree = 6.28 * this.depth_of_field_transform_count / 10;
+
+		var yaw = this.yaw + Math.cos(degree) / 150;
+		var pitch = this.pitch + Math.sin(degree) / 150;
+
+		/*var yaw = this.yaw// + 
+  		  this.depth_of_field_transform_count / 1500 - 
+  		  5 / 1500;
+   	var pitch = this.pitch +
+  			this.depth_of_field_transform_count / 1600 - 
+  		    5 / 1600;*/
+
+		var xpos = Math.cos(yaw) * Math.cos(pitch) * radius;
+		var zpos = Math.sin(yaw) * Math.cos(pitch) * radius;
+		var ypos = Math.sin(pitch) * radius;
+
+		this.pos[0] = xpos + this.look[0];
+		this.pos[1] = ypos + this.look[1];
+		this.pos[2] = -zpos + this.look[2];
+
+		mat4.lookAt(this.lookAt, this.pos, this.look, this.up);
+	}
+
+	return this.lookAt;
+}
+
+//v1.00     -   basic functions
+//v1.02		-	autocentered Camera
+//v1.03		-	basic autoRotate
+//v1.04 	- 	getAutoCenteredViewMatrix has depth of field capabilities
+//v1.05		-	works on cellphones
+"use strict";
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+/* Font Face Observer v2.0.13 - � Bram Stein. License: BSD-3-Clause */(function () {
+  'use strict';
+  var f,
+      g = [];function l(a) {
+    g.push(a);1 == g.length && f();
+  }function m() {
+    for (; g.length;) {
+      g[0](), g.shift();
+    }
+  }f = function f() {
+    setTimeout(m);
+  };function n(a) {
+    this.a = p;this.b = void 0;this.f = [];var b = this;try {
+      a(function (a) {
+        q(b, a);
+      }, function (a) {
+        r(b, a);
+      });
+    } catch (c) {
+      r(b, c);
+    }
+  }var p = 2;function t(a) {
+    return new n(function (b, c) {
+      c(a);
+    });
+  }function u(a) {
+    return new n(function (b) {
+      b(a);
+    });
+  }function q(a, b) {
+    if (a.a == p) {
+      if (b == a) throw new TypeError();var c = !1;try {
+        var d = b && b.then;if (null != b && "object" == (typeof b === "undefined" ? "undefined" : _typeof(b)) && "function" == typeof d) {
+          d.call(b, function (b) {
+            c || q(a, b);c = !0;
+          }, function (b) {
+            c || r(a, b);c = !0;
+          });return;
+        }
+      } catch (e) {
+        c || r(a, e);return;
+      }a.a = 0;a.b = b;v(a);
+    }
+  }
+  function r(a, b) {
+    if (a.a == p) {
+      if (b == a) throw new TypeError();a.a = 1;a.b = b;v(a);
+    }
+  }function v(a) {
+    l(function () {
+      if (a.a != p) for (; a.f.length;) {
+        var b = a.f.shift(),
+            c = b[0],
+            d = b[1],
+            e = b[2],
+            b = b[3];try {
+          0 == a.a ? "function" == typeof c ? e(c.call(void 0, a.b)) : e(a.b) : 1 == a.a && ("function" == typeof d ? e(d.call(void 0, a.b)) : b(a.b));
+        } catch (h) {
+          b(h);
+        }
+      }
+    });
+  }n.prototype.g = function (a) {
+    return this.c(void 0, a);
+  };n.prototype.c = function (a, b) {
+    var c = this;return new n(function (d, e) {
+      c.f.push([a, b, d, e]);v(c);
+    });
+  };
+  function w(a) {
+    return new n(function (b, c) {
+      function d(c) {
+        return function (d) {
+          h[c] = d;e += 1;e == a.length && b(h);
+        };
+      }var e = 0,
+          h = [];0 == a.length && b(h);for (var k = 0; k < a.length; k += 1) {
+        u(a[k]).c(d(k), c);
+      }
+    });
+  }function x(a) {
+    return new n(function (b, c) {
+      for (var d = 0; d < a.length; d += 1) {
+        u(a[d]).c(b, c);
+      }
+    });
+  };window.Promise || (window.Promise = n, window.Promise.resolve = u, window.Promise.reject = t, window.Promise.race = x, window.Promise.all = w, window.Promise.prototype.then = n.prototype.c, window.Promise.prototype["catch"] = n.prototype.g);
+})();
+
+(function () {
+  function l(a, b) {
+    document.addEventListener ? a.addEventListener("scroll", b, !1) : a.attachEvent("scroll", b);
+  }function m(a) {
+    document.body ? a() : document.addEventListener ? document.addEventListener("DOMContentLoaded", function c() {
+      document.removeEventListener("DOMContentLoaded", c);a();
+    }) : document.attachEvent("onreadystatechange", function k() {
+      if ("interactive" == document.readyState || "complete" == document.readyState) document.detachEvent("onreadystatechange", k), a();
+    });
+  };function r(a) {
+    this.a = document.createElement("div");this.a.setAttribute("aria-hidden", "true");this.a.appendChild(document.createTextNode(a));this.b = document.createElement("span");this.c = document.createElement("span");this.h = document.createElement("span");this.f = document.createElement("span");this.g = -1;this.b.style.cssText = "max-width:none;display:inline-block;position:absolute;height:100%;width:100%;overflow:scroll;font-size:16px;";this.c.style.cssText = "max-width:none;display:inline-block;position:absolute;height:100%;width:100%;overflow:scroll;font-size:16px;";
+    this.f.style.cssText = "max-width:none;display:inline-block;position:absolute;height:100%;width:100%;overflow:scroll;font-size:16px;";this.h.style.cssText = "display:inline-block;width:200%;height:200%;font-size:16px;max-width:none;";this.b.appendChild(this.h);this.c.appendChild(this.f);this.a.appendChild(this.b);this.a.appendChild(this.c);
+  }
+  function t(a, b) {
+    a.a.style.cssText = "max-width:none;min-width:20px;min-height:20px;display:inline-block;overflow:hidden;position:absolute;width:auto;margin:0;padding:0;top:-999px;white-space:nowrap;font-synthesis:none;font:" + b + ";";
+  }function y(a) {
+    var b = a.a.offsetWidth,
+        c = b + 100;a.f.style.width = c + "px";a.c.scrollLeft = c;a.b.scrollLeft = a.b.scrollWidth + 100;return a.g !== b ? (a.g = b, !0) : !1;
+  }function z(a, b) {
+    function c() {
+      var a = k;y(a) && a.a.parentNode && b(a.g);
+    }var k = a;l(a.b, c);l(a.c, c);y(a);
+  };function A(a, b) {
+    var c = b || {};this.family = a;this.style = c.style || "normal";this.weight = c.weight || "normal";this.stretch = c.stretch || "normal";
+  }var B = null,
+      C = null,
+      E = null,
+      F = null;function G() {
+    if (null === C) if (J() && /Apple/.test(window.navigator.vendor)) {
+      var a = /AppleWebKit\/([0-9]+)(?:\.([0-9]+))(?:\.([0-9]+))/.exec(window.navigator.userAgent);C = !!a && 603 > parseInt(a[1], 10);
+    } else C = !1;return C;
+  }function J() {
+    null === F && (F = !!document.fonts);return F;
+  }
+  function K() {
+    if (null === E) {
+      var a = document.createElement("div");try {
+        a.style.font = "condensed 100px sans-serif";
+      } catch (b) {}E = "" !== a.style.font;
+    }return E;
+  }function L(a, b) {
+    return [a.style, a.weight, K() ? a.stretch : "", "100px", b].join(" ");
+  }
+  A.prototype.load = function (a, b) {
+    var c = this,
+        k = a || "BESbswy",
+        q = 0,
+        D = b || 3E3,
+        H = new Date().getTime();return new Promise(function (a, b) {
+      if (J() && !G()) {
+        var M = new Promise(function (a, b) {
+          function e() {
+            new Date().getTime() - H >= D ? b() : document.fonts.load(L(c, '"' + c.family + '"'), k).then(function (c) {
+              1 <= c.length ? a() : setTimeout(e, 25);
+            }, function () {
+              b();
+            });
+          }e();
+        }),
+            N = new Promise(function (a, c) {
+          q = setTimeout(c, D);
+        });Promise.race([N, M]).then(function () {
+          clearTimeout(q);a(c);
+        }, function () {
+          b(c);
+        });
+      } else m(function () {
+        function u() {
+          var b;if (b = -1 != f && -1 != g || -1 != f && -1 != h || -1 != g && -1 != h) (b = f != g && f != h && g != h) || (null === B && (b = /AppleWebKit\/([0-9]+)(?:\.([0-9]+))/.exec(window.navigator.userAgent), B = !!b && (536 > parseInt(b[1], 10) || 536 === parseInt(b[1], 10) && 11 >= parseInt(b[2], 10))), b = B && (f == v && g == v && h == v || f == w && g == w && h == w || f == x && g == x && h == x)), b = !b;b && (d.parentNode && d.parentNode.removeChild(d), clearTimeout(q), a(c));
+        }function I() {
+          if (new Date().getTime() - H >= D) d.parentNode && d.parentNode.removeChild(d), b(c);else {
+            var a = document.hidden;if (!0 === a || void 0 === a) f = e.a.offsetWidth, g = n.a.offsetWidth, h = p.a.offsetWidth, u();q = setTimeout(I, 50);
+          }
+        }var e = new r(k),
+            n = new r(k),
+            p = new r(k),
+            f = -1,
+            g = -1,
+            h = -1,
+            v = -1,
+            w = -1,
+            x = -1,
+            d = document.createElement("div");d.dir = "ltr";t(e, L(c, "sans-serif"));t(n, L(c, "serif"));t(p, L(c, "monospace"));d.appendChild(e.a);d.appendChild(n.a);d.appendChild(p.a);document.body.appendChild(d);v = e.a.offsetWidth;w = n.a.offsetWidth;x = p.a.offsetWidth;I();z(e, function (a) {
+          f = a;u();
+        });t(e, L(c, '"' + c.family + '",sans-serif'));z(n, function (a) {
+          g = a;u();
+        });t(n, L(c, '"' + c.family + '",serif'));
+        z(p, function (a) {
+          h = a;u();
+        });t(p, L(c, '"' + c.family + '",monospace'));
+      });
+    });
+  };"object" === (typeof module === "undefined" ? "undefined" : _typeof(module)) ? module.exports = A : (window.FontFaceObserver = A, window.FontFaceObserver.prototype.load = A.prototype.load);
+})();
+"use strict";
+
+function flatten(arr) {
+  return arr.reduce(function (flat, toFlatten) {
+    return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+  }, []);
+}
+
+// function strhash( str ) {
+//     if (str.length % 32 > 0) str += Array(33 - str.length % 32).join("z");
+//     var hash = '', bytes = [], i = j = k = a = 0, dict = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','1','2','3','4','5','6','7','8','9'];
+//     for (i = 0; i < str.length; i++ ) {
+//         ch = str.charCodeAt(i);
+//         bytes[j++] = (ch < 127) ? ch & 0xFF : 127;
+//     }
+//     var chunk_len = Math.ceil(bytes.length / 32);   
+//     for (i=0; i<bytes.length; i++) {
+//         j += bytes[i];
+//         k++;
+//         if ((k == chunk_len) || (i == bytes.length-1)) {
+//             a = Math.floor( j / k );
+//             if (a < 32)
+//                 hash += '0';
+//             else if (a > 126)
+//                 hash += 'z';
+//             else
+//                 hash += dict[  Math.floor( (a-32) / 2.76) ];
+//             j = k = 0;
+//         }
+//     }
+//     return hash;
+// }
+
+
+var rndrndseed = Date.now() * 0.1;
+function rnd() {
+  rndrndseed += 63423;
+  return Math.sin(rndrndseed * 345345.325) * 0.5 + 0.5; //Math.random();
+}
+
+var strhash = function strhash(str) {
+  var hash = 0,
+      i,
+      chr;
+  if (str.length === 0) return hash;
+  for (i = 0; i < str.length; i++) {
+    chr = str.charCodeAt(i);
+    hash = (hash << 5) - hash + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+};
+'use strict';
+
+//In order for the script to work, you need to declare the gl variable globally
+function getShader(vshad_str, fshad_str) {
+    var vs = shader(vshad_str, 'vert');
+    var fs = shader(fshad_str, 'frag');
+
+    var Program = gl.createProgram();
+
+    gl.attachShader(Program, vs);
+    gl.attachShader(Program, fs);
+    gl.linkProgram(Program);
+
+    if (!gl.getProgramParameter(Program, gl.LINK_STATUS)) {
+        alert("Could not initialise shaders");
+        return null;
+    }
+
+    return Program;
+}
+
+function shader(str, type) {
+
+    var shader;
+    if (type == "frag") {
+        shader = gl.createShader(gl.FRAGMENT_SHADER);
+    } else if (type == "vert") {
+        shader = gl.createShader(gl.VERTEX_SHADER);
+    } else {
+        return null;
+    }
+
+    gl.shaderSource(shader, str);
+    gl.compileShader(shader);
+
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        alert(gl.getShaderInfoLog(shader) + "  " + type);
+        return null;
+    }
+
+    return shader;
+}
+
+function getTFShader(shader_str, type) {
+
+    var shader = null;
+    if (type == 'vert') shader = gl.createShader(gl.VERTEX_SHADER);else shader = gl.createShader(gl.FRAGMENT_SHADER);
+
+    gl.shaderSource(shader, shader_str);
+    gl.compileShader(shader);
+
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        alert(gl.getShaderInfoLog(shader) + "  " + type);
+        return null;
+    }
+
+    return shader;
+}
+'use strict';
+
+function MouseController() {
+        this.origin = [0, 0, 0];
+        this.velocity = [0, 0, 0];
+        this.postProcessVelocityVec = [0, 0];
+        this.postProcessVelocity = 0;
+        this.ww = undefined;
+        this.wh = undefined;
+        var toggleTitleVisibilityTimer = 0;
+        var titleVisible = true;
+
+        var screenRatio = innerWidth / innerHeight;
+        var speedMultiplier = 800;
+
+        this.update = function (deltatime) {
+                this.velocity[0] *= 0.975; //(1.0 - (0.1 - deltatime));
+                this.velocity[1] *= 0.975; //(1.0 - (0.1 - deltatime));
+                this.velocity[2] *= 0.975; //(1.0 - (0.1 - deltatime));
+
+                // this.postProcessVelocityVec[0] *= 0.9915;
+                // this.postProcessVelocityVec[1] *= 0.9915;
+
+                this.postProcessVelocity *= 0.907;
+
+                /* if there's some velocity while the mouse is close to the sphere, hide the title */
+                // if(Math.abs(this.velocity[0]) < 0.1 && Math.abs(this.velocity[1]) < 0.1 && Math.abs(this.velocity[2]) < 0.1) {
+                //     // document.querySelector(".mhCentralSquare").style.background = "rgba(20, 20, 20, 0.2)";            
+                //     document.querySelector(".mhCentralSquare").style.opacity = "1";            
+                //     document.querySelector(".siteTitle").style.opacity = "1";            
+                // } else if(Math.abs(this.origin[0]) < 0.3 && Math.abs(this.origin[1]) < 0.3) {
+                //     // document.querySelector(".mhCentralSquare").style.background = "none";
+                //     document.querySelector(".mhCentralSquare").style.opacity = "0";                        
+                //     document.querySelector(".siteTitle").style.opacity = "0";               
+                // }
+
+                // toggleTitleVisibilityTimer += deltatime;
+                // if((Math.abs(this.velocity[0]) > 0.1 || Math.abs(this.velocity[1]) > 0.1 || Math.abs(this.velocity[2]) > 0.1) &&
+                //    Math.abs(this.origin[0]) < 0.3 && Math.abs(this.origin[1]) < 0.3) {
+                //     /* if already hidden */
+                //     if (!titleVisible) return;
+
+                //     document.querySelector(".mhCentralSquare").style.opacity = "0";            
+                //     document.querySelector(".siteTitle").style.opacity = "0";      
+                //     toggleTitleVisibilityTimer = 0;    
+                //     titleVisible = false;    
+                // } else {
+                //     if (toggleTitleVisibilityTimer < 1.5) return;
+                //     toggleTitleVisibilityTimer = 0;
+                //     document.querySelector(".mhCentralSquare").style.opacity = "1";                        
+                //     document.querySelector(".siteTitle").style.opacity = "1"; 
+                //     titleVisible = true;
+                // }
+        };
+
+        var mousedown = false;
+        window.addEventListener('mousedown', function (e) {
+                mousedown = true;
+
+                // IS IN NORMALIZED DEVICE COORDINATES --  -1...1
+                var x = e.clientX / innerWidth;
+                var y = (innerHeight - e.clientY) / innerHeight;
+
+                this.origin = [x * 2 - 1, y * 2 - 1, 0];
+
+                lastx = e.clientX;
+                lasty = e.clientY;
+        }.bind(this));
+
+        var lastx, lasty;
+        window.addEventListener('mousemove', function (e) {
+                // if(!mousedown) return;
+                if (lastx === undefined) lastx = e.clientX;
+                if (lasty === undefined) lasty = e.clientY;
+
+                var deltax = e.clientX - lastx;
+                var deltay = e.clientY - lasty;
+
+                var x = e.clientX / innerWidth;
+                var y = (innerHeight - e.clientY) / innerHeight;
+
+                this.origin = [x * 2 - 1, y * 2 - 1, 0];
+                // both needs to be divided by innerHeight, this is not a screenRatio scenario
+                this.velocity = [deltax / innerHeight * speedMultiplier, -deltay / innerHeight * speedMultiplier, 0];
+
+                this.postProcessVelocity += vec3.length(this.velocity) * 0.103;
+
+                lastx = e.clientX;
+                lasty = e.clientY;
+        }.bind(this));
+        window.addEventListener('mouseup', function (e) {
+                mousedown = false;
+        }.bind(this));
+}
+"use strict";
+
+window.addEventListener('load', mainCanvasInit);
+
+var gl;
+
+/*
+TODO: Filter blur sulle lettere
+
+inspiration:
+http://alexandrerochet.com/
+http://maxwellito.github.io/vivus/
+
+
+
+music genre: lullaby 
+instrument: Carillon
+https://www.youtube.com/watch?v=b3BMp7yBqws
+*/
+
+function mainCanvasInit() {
+
+    if (blockCanvasOnMobiles()) return;
+
+    // stealing protection
+    if (!document.querySelector(".mhCentral")) return;
+
+    window.canvas = document.getElementById("mainCanvas");
+    // window.gl;
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+
+    var names = ["webgl2"];
+
+    for (var i in names) {
+        try {
+            gl = canvas.getContext(names[i], {/* alpha: true, preserveDrawingBuffer: true */});
+
+            if (gl && typeof gl.getParameter == "function") {
+                // WebGL is enabled 
+                break;
+            }
+        } catch (e) {}
+    }
+
+    if (gl === null) alert("could not initialize WebGL");
+
+    window.camera = new createCamera();
+    window.cameraZ = 45;
+    camera.pos = [0, 0, cameraZ];
+    // camera.autoCentered = true;
+    // camera.autoRotate = true;
+    // camera.radius = 45;
+    window.step = Float32Array.BYTES_PER_ELEMENT;
+    window.zoom = 45;
+
+    window.projection = mat4.create();
+    window.model = mat4.create();
+    window.view = mat4.create();
+    window.screenRatio = innerWidth / innerHeight;
+    mat4.perspective(projection, 45 * Math.PI / 180, screenRatio, 0.1, 1000);
+
+    /* custom structures */
+    window.mouseController = new MouseController();
+    window.musicBox = new MusicBox('assets/music/test.mp3');
+
+    window.radius = 10;
+    window.Icosahedron = generate_icosahedron_wlines();
+
+    create_offscreen_multisampleFBOs();
+
+    create_postprocess_blit_in_main_FBO_program();
+
+    create_background_program();
+
+    create_offscreen_points_program();
+    create_icosahedron_program();
+    create_icosahedronTF_program();
+
+    create_icosahedron_lines_program();
+    create_icosahedronTF_lines_program();
+
+    setTimeout(function () {
+        musicBox.start();
+        removeInitialCurtain();
+        requestAnimationFrame(draw);
+    }, 1000);
+}
+
+var then = 0;
+function draw(now) {
+    requestAnimationFrame(draw);
+    now *= 0.001;
+    var deltatime = now - then;
+    then = now;
+
+    mouseController.update(deltatime);
+    musicBox.updateVisualizerTextureData(deltatime);
+    footerSVGHider(); /* defined in footer.js */
+
+    // draw_background(now, deltatime);
+
+    draw_static_background(now, deltatime);
+    draw_icosahedron(now, deltatime);
+    draw_icosahedron_lines(now, deltatime);
+    draw_luminous_points(now, deltatime);
+
+    postprocess_blit_in_main_FBO(now, deltatime);
+}
+
+// will be called by main.js
+function canvasResize() {
+    if (!canvas) return;
+
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+    gl.viewport(0, 0, innerWidth, innerHeight);
+
+    screenRatio = innerWidth / innerHeight;
+    mat4.perspective(projection, 45 * Math.PI / 180, screenRatio, 0.1, 1000);
+
+    gl.bindTexture(gl.TEXTURE_2D, FBOsoffscreen.texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, innerWidth, innerHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+
+    gl.bindRenderbuffer(gl.RENDERBUFFER, FBOsoffscreen.colorRenderBuffer);
+    gl.renderbufferStorageMultisample(gl.RENDERBUFFER, 4, gl.RGBA8, innerWidth, innerHeight);
+
+    if (screenRatio < 1.2 && innerWidth < 850) {
+        window.cameraZ = 65;
+        camera.pos = [0, 0, cameraZ];
+    } else {
+        window.cameraZ = 45;
+        camera.pos = [0, 0, cameraZ];
+    }
+}
+
+// we won't procede further if we're dealing with mobiles
+function blockCanvasOnMobiles() {
+    var isMobile = false; //initiate as false
+    // device detection
+    if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(navigator.userAgent) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(navigator.userAgent.substr(0, 4))) isMobile = true;
+
+    if (isMobile) {
+        var background = document.createElement("div");
+        background.style.background = "red";
+
+        document.body.insertAdjacentElement("afterbegin", background);
+        document.querySelector(".mhMusicBars").style.display = "none";
+    }
+
+    return isMobile;
+}
+
+function removeInitialCurtain() {
+    var curtainDOM = document.querySelector(".mhCurtain");
+    var centralSquareDOM = document.querySelector(".mhCentralSquare");
+    var siteTitleDOM = document.querySelector(".siteTitle");
+    curtainDOM.classList.toggle("active");
+
+    setTimeout(function () {
+        curtainDOM.style.display = "none";
+    }, 2000);
+
+    // setTimeout(function() {
+    //     centralSquareDOM.style.opacity = "1";
+    //     siteTitleDOM.style.opacity = "1";
+    // }, 2000);
+}
+
+// a new hashing function is needed
+// lines needs to be in a transform feedback, points (at least as of now, think about it again) do not.
+// fix a bit the code and separate it, it already stinks
+// separate program's creation from the icosahedron creation
+// http://www.hxa.name/minilight/
+// https://geometrian.com/programming/tutorials/radcol/index.php
+"use strict";
+
+function draw_background(now, deltatime) {
+
+    gl.useProgram(BackgroundProgram);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, BackgroundProgram.buffer);
+    gl.enableVertexAttribArray(BackgroundProgram.a1);
+    gl.vertexAttribPointer(BackgroundProgram.a1, 4, gl.FLOAT, false, 0, 0);
+
+    gl.uniform1f(BackgroundProgram.uTime, now);
+
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+}
+
+function draw_static_background(now, deltatime) {
+    gl.bindFramebuffer(gl.FRAMEBUFFER, FBOsoffscreen[FRAMEBUFFER.RENDERBUFFER]);
+
+    gl.clearColor(0.115, 0.115, 0.115, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+}
+
+function create_background_program() {
+
+    var Program = getShader(backgroundv, backgroundf, false);
+    Program.a1 = gl.getAttribLocation(Program, "pos");
+
+    Program.uTime = gl.getUniformLocation(Program, "uTime");
+
+    var vertices = [-1, -1, 0, 1, +1, -1, 0, 1, -1, +1, 0, 1, -1, +1, 0, 1, +1, -1, 0, 1, +1, +1, 0, 1];
+
+    Program.buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, Program.buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+    window.BackgroundProgram = Program;
+}
+"use strict";
+
+function compute_icosahedronTF(now, deltatime, whichOne) {
+
+    var tfBuffer;
+    var pointsBuffer;
+    var nverts;
+    var temp;
+
+    // swapping buffers
+    if (whichOne === 0) {
+        temp = IcosahedronTFProgram.buffer;
+        IcosahedronTFProgram.buffer = IcosahedronProgram.buffer;
+        IcosahedronProgram.buffer = temp;
+
+        tfBuffer = IcosahedronTFProgram.buffer;
+        pointsBuffer = IcosahedronProgram.buffer;
+        nverts = IcosahedronProgram.nverts;
+    }
+
+    // swapping bloom buffers
+    if (whichOne === 1) {
+        temp = IcosahedronTFProgram.bloombuffer;
+        IcosahedronTFProgram.bloombuffer = OffscreenPointsProgram.bloombuffer;
+        OffscreenPointsProgram.bloombuffer = temp;
+
+        tfBuffer = IcosahedronTFProgram.bloombuffer;
+        pointsBuffer = OffscreenPointsProgram.bloombuffer;
+        nverts = OffscreenPointsProgram.nBloomVerts;
+    }
+
+    gl.enable(gl.RASTERIZER_DISCARD);
+    gl.useProgram(IcosahedronTFProgram);
+    gl.enable(gl.DEPTH_TEST);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, tfBuffer);
+    gl.enableVertexAttribArray(IcosahedronTFProgram.a1);
+    gl.enableVertexAttribArray(IcosahedronTFProgram.a2);
+    gl.enableVertexAttribArray(IcosahedronTFProgram.a3);
+    gl.enableVertexAttribArray(IcosahedronTFProgram.a4);
+    gl.enableVertexAttribArray(IcosahedronTFProgram.a5);
+    gl.enableVertexAttribArray(IcosahedronTFProgram.a6);
+    gl.vertexAttribPointer(IcosahedronTFProgram.a1, 4, gl.FLOAT, false, step * 24, 0);
+    gl.vertexAttribPointer(IcosahedronTFProgram.a2, 4, gl.FLOAT, false, step * 24, step * 4);
+    gl.vertexAttribPointer(IcosahedronTFProgram.a3, 4, gl.FLOAT, false, step * 24, step * 8);
+    gl.vertexAttribPointer(IcosahedronTFProgram.a4, 4, gl.FLOAT, false, step * 24, step * 12);
+    gl.vertexAttribPointer(IcosahedronTFProgram.a5, 4, gl.FLOAT, false, step * 24, step * 16);
+    gl.vertexAttribPointer(IcosahedronTFProgram.a6, 4, gl.FLOAT, false, step * 24, step * 20);
+
+    gl.uniform1f(IcosahedronTFProgram.uTime, now);
+    gl.uniform1f(IcosahedronTFProgram.uCameraZ, cameraZ);
+    gl.uniform1f(IcosahedronTFProgram.uDeltaTime, deltatime);
+    gl.uniform1f(IcosahedronTFProgram.uScreenRatio, screenRatio);
+    gl.uniform3f(IcosahedronTFProgram.uMouseOrigin, mouseController.origin[0], mouseController.origin[1], mouseController.origin[2]);
+    gl.uniform3f(IcosahedronTFProgram.uMouseVelocity, mouseController.velocity[0], mouseController.velocity[1], mouseController.velocity[2]);
+
+    /* music box texture data */
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, musicBox.getVisualizerTexture());
+    gl.uniform1i(IcosahedronTFProgram.uMusicVisualizerData, 0);
+
+    // Specify the target buffer:
+    gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, IcosahedronTFProgram.transformFeedback);
+    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, pointsBuffer);
+    gl.beginTransformFeedback(gl.POINTS);
+    gl.drawArrays(gl.POINTS, 0, nverts);
+    gl.endTransformFeedback();
+    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, null);
+
+    gl.disable(gl.RASTERIZER_DISCARD);
+}
+
+function draw_icosahedron(now, deltatime) {
+
+    compute_icosahedronTF(now, deltatime, 0);
+
+    // gl.clearColor(0.115, 0.115, 0.115, 1.0);
+    // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    gl.useProgram(IcosahedronProgram);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, IcosahedronProgram.buffer);
+    // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, IcosahedronProgram.ebuffer);
+    gl.enableVertexAttribArray(IcosahedronProgram.a1);
+    gl.enableVertexAttribArray(IcosahedronProgram.a2);
+    gl.enableVertexAttribArray(IcosahedronProgram.a3);
+    gl.enableVertexAttribArray(IcosahedronProgram.a4);
+    gl.enableVertexAttribArray(IcosahedronProgram.a5);
+    gl.enableVertexAttribArray(IcosahedronProgram.a6);
+    gl.vertexAttribPointer(IcosahedronProgram.a1, 4, gl.FLOAT, false, step * 24, 0);
+    gl.vertexAttribPointer(IcosahedronProgram.a2, 4, gl.FLOAT, false, step * 24, step * 4);
+    gl.vertexAttribPointer(IcosahedronProgram.a3, 4, gl.FLOAT, false, step * 24, step * 8);
+    gl.vertexAttribPointer(IcosahedronProgram.a4, 4, gl.FLOAT, false, step * 24, step * 12);
+    gl.vertexAttribPointer(IcosahedronProgram.a5, 4, gl.FLOAT, false, step * 24, step * 16);
+    gl.vertexAttribPointer(IcosahedronProgram.a6, 4, gl.FLOAT, false, step * 24, step * 20);
+
+    mat4.identity(model);
+
+    gl.uniform1f(IcosahedronProgram.uTime, now);
+    gl.uniform1f(IcosahedronProgram.uDeltaTime, deltatime);
+
+    gl.uniformMatrix4fv(IcosahedronProgram.projection, false, projection);
+    gl.uniformMatrix4fv(IcosahedronProgram.model, false, model);
+    gl.uniformMatrix4fv(IcosahedronProgram.view, false, camera.getViewMatrix(deltatime, 0.3));
+
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.disable(gl.DEPTH_TEST);
+    gl.drawArrays(gl.POINTS, 0, IcosahedronProgram.nverts);
+    // gl.drawElements(gl.TRIANGLES, IcosahedronProgram.elength * 3, gl.UNSIGNED_SHORT, 0);
+}
+
+function draw_luminous_points(now, deltatime) {
+
+    compute_icosahedronTF(now, deltatime, 1);
+
+    // gl.bindFramebuffer(gl.FRAMEBUFFER, FBOoffscreen);
+    // gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    // gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.useProgram(OffscreenPointsProgram);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, OffscreenPointsProgram.bloombuffer);
+    gl.enableVertexAttribArray(OffscreenPointsProgram.a1);
+    gl.enableVertexAttribArray(OffscreenPointsProgram.a2);
+    gl.enableVertexAttribArray(OffscreenPointsProgram.a3);
+    gl.enableVertexAttribArray(OffscreenPointsProgram.a4);
+    gl.enableVertexAttribArray(OffscreenPointsProgram.a5);
+    gl.enableVertexAttribArray(OffscreenPointsProgram.a6);
+    gl.vertexAttribPointer(OffscreenPointsProgram.a1, 4, gl.FLOAT, false, step * 24, 0);
+    gl.vertexAttribPointer(OffscreenPointsProgram.a2, 4, gl.FLOAT, false, step * 24, step * 4);
+    gl.vertexAttribPointer(OffscreenPointsProgram.a3, 4, gl.FLOAT, false, step * 24, step * 8);
+    gl.vertexAttribPointer(OffscreenPointsProgram.a4, 4, gl.FLOAT, false, step * 24, step * 12);
+    gl.vertexAttribPointer(OffscreenPointsProgram.a5, 4, gl.FLOAT, false, step * 24, step * 16);
+    gl.vertexAttribPointer(OffscreenPointsProgram.a6, 4, gl.FLOAT, false, step * 24, step * 20);
+
+    mat4.identity(model);
+
+    gl.uniform1f(OffscreenPointsProgram.uTime, now);
+    gl.uniform1f(OffscreenPointsProgram.uDeltaTime, deltatime);
+
+    gl.uniformMatrix4fv(OffscreenPointsProgram.projection, false, projection);
+    gl.uniformMatrix4fv(OffscreenPointsProgram.model, false, model);
+    gl.uniformMatrix4fv(OffscreenPointsProgram.view, false, camera.getViewMatrix(deltatime, 0.3));
+
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE);
+    gl.disable(gl.DEPTH_TEST);
+    gl.drawArrays(gl.POINTS, 0, OffscreenPointsProgram.nBloomVerts);
+    // gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+}
+
+function create_icosahedron_program() {
+
+    var Program = getShader(icov, icof, false);
+    Program.a1 = gl.getAttribLocation(Program, "pos");
+    Program.a2 = gl.getAttribLocation(Program, "displacedPos");
+    Program.a3 = gl.getAttribLocation(Program, "musicDisplacedPos");
+    Program.a4 = gl.getAttribLocation(Program, "mouseVelocity");
+    Program.a5 = gl.getAttribLocation(Program, "fx");
+    Program.a6 = gl.getAttribLocation(Program, "fx2");
+
+    Program.uTime = gl.getUniformLocation(Program, "uTime");
+    Program.uDeltaTime = gl.getUniformLocation(Program, "uDeltaTime");
+
+    Program.projection = gl.getUniformLocation(Program, "projection");
+    Program.model = gl.getUniformLocation(Program, "model");
+    Program.view = gl.getUniformLocation(Program, "view");
+
+    Program.nverts = Icosahedron.nVerts;
+    // Program.elength = result.triangles.length;
+    Program.buffer = gl.createBuffer();
+    // Program.ebuffer = gl.createBuffer();
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, Program.buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(Icosahedron.verticesBuffer), gl.STATIC_DRAW);
+
+    window.IcosahedronProgram = Program;
+}
+
+function create_offscreen_points_program() {
+
+    var Program = getShader(offpointv, offpointf, false);
+    Program.a1 = gl.getAttribLocation(Program, "pos");
+    Program.a2 = gl.getAttribLocation(Program, "displacedPos");
+    Program.a3 = gl.getAttribLocation(Program, "musicDisplacedPos");
+    Program.a4 = gl.getAttribLocation(Program, "mouseVelocity");
+    Program.a5 = gl.getAttribLocation(Program, "fx");
+    Program.a6 = gl.getAttribLocation(Program, "fx2");
+
+    Program.uTime = gl.getUniformLocation(Program, "uTime");
+    Program.uDeltaTime = gl.getUniformLocation(Program, "uDeltaTime");
+
+    Program.projection = gl.getUniformLocation(Program, "projection");
+    Program.model = gl.getUniformLocation(Program, "model");
+    Program.view = gl.getUniformLocation(Program, "view");
+
+    Program.bloombuffer = gl.createBuffer();
+    Program.nBloomVerts = Icosahedron.nBloomVerts;
+    gl.bindBuffer(gl.ARRAY_BUFFER, Program.bloombuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(Icosahedron.bloomVerticesBuffer), gl.STATIC_DRAW);
+
+    window.OffscreenPointsProgram = Program;
+}
+
+function create_icosahedronTF_program() {
+
+    var Program = gl.createProgram();
+    gl.attachShader(Program, getTFShader(icoTFv, 'vert'));
+    gl.attachShader(Program, getTFShader(icoTFf, 'frag'));
+
+    // initializing transform feedback's varyings for this program, BEFORE LINKING IT
+    Program.transformFeedback = gl.createTransformFeedback();
+    gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, Program.transformFeedback);
+    gl.transformFeedbackVaryings(Program, ['tfPosition', 'tfDisplacedPos', 'tfMusicDisplacedPos', 'tfMouseVelocity', 'tfFX', 'tfFX2'], gl.INTERLEAVED_ATTRIBS);
+
+    gl.linkProgram(Program);
+    if (!gl.getProgramParameter(Program, gl.LINK_STATUS)) {
+        alert("Could not initialise shaders");
+        return null;
+    }
+
+    Program.a1 = gl.getAttribLocation(Program, "pos");
+    Program.a2 = gl.getAttribLocation(Program, "displacedPos");
+    Program.a3 = gl.getAttribLocation(Program, "musicDisplacedPos");
+    Program.a4 = gl.getAttribLocation(Program, "mouseVelocity");
+    Program.a5 = gl.getAttribLocation(Program, "fx");
+    Program.a6 = gl.getAttribLocation(Program, "fx2");
+
+    Program.uTime = gl.getUniformLocation(Program, "uTime");
+    Program.uCameraZ = gl.getUniformLocation(Program, "uCameraZ");
+    Program.uDeltaTime = gl.getUniformLocation(Program, "uDeltaTime");
+    Program.uScreenRatio = gl.getUniformLocation(Program, "uScreenRatio");
+    Program.uMouseOrigin = gl.getUniformLocation(Program, "uMouseOrigin");
+    Program.uMouseVelocity = gl.getUniformLocation(Program, "uMouseVelocity");
+    Program.uMusicVisualizerData = gl.getUniformLocation(Program, "uMusicVisualizerData");
+
+    Program.nverts = Icosahedron.nVerts;
+    Program.buffer = gl.createBuffer();
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, Program.buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(Icosahedron.verticesBuffer), gl.STATIC_DRAW);
+
+    Program.bloombuffer = gl.createBuffer();
+    Program.nBloomVerts = Icosahedron.nBloomVerts;
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, Program.bloombuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(Icosahedron.bloomVerticesBuffer), gl.STATIC_DRAW);
+
+    window.IcosahedronTFProgram = Program;
+}
+"use strict";
+
+function compute_icosahedronTF_lines(now, deltatime) {
+
+    var temp = IcosahedronLinesTFProgram.buffer;
+    IcosahedronLinesTFProgram.buffer = IcosahedronLinesProgram.buffer;
+    IcosahedronLinesProgram.buffer = temp;
+
+    gl.enable(gl.RASTERIZER_DISCARD);
+    gl.useProgram(IcosahedronLinesTFProgram);
+    gl.enable(gl.DEPTH_TEST);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, IcosahedronLinesTFProgram.buffer);
+    gl.enableVertexAttribArray(IcosahedronLinesTFProgram.a1);
+    gl.enableVertexAttribArray(IcosahedronLinesTFProgram.a2);
+    gl.enableVertexAttribArray(IcosahedronLinesTFProgram.a3);
+    gl.enableVertexAttribArray(IcosahedronLinesTFProgram.a4);
+    gl.enableVertexAttribArray(IcosahedronLinesTFProgram.a5);
+    gl.enableVertexAttribArray(IcosahedronLinesTFProgram.a6);
+    gl.enableVertexAttribArray(IcosahedronLinesTFProgram.a7);
+    gl.enableVertexAttribArray(IcosahedronLinesTFProgram.a8);
+    gl.enableVertexAttribArray(IcosahedronLinesTFProgram.a9);
+    gl.vertexAttribPointer(IcosahedronLinesTFProgram.a1, 4, gl.FLOAT, false, step * 36, 0);
+    gl.vertexAttribPointer(IcosahedronLinesTFProgram.a2, 4, gl.FLOAT, false, step * 36, step * 4);
+    gl.vertexAttribPointer(IcosahedronLinesTFProgram.a3, 4, gl.FLOAT, false, step * 36, step * 8);
+    gl.vertexAttribPointer(IcosahedronLinesTFProgram.a4, 4, gl.FLOAT, false, step * 36, step * 12);
+    gl.vertexAttribPointer(IcosahedronLinesTFProgram.a5, 4, gl.FLOAT, false, step * 36, step * 16);
+    gl.vertexAttribPointer(IcosahedronLinesTFProgram.a6, 4, gl.FLOAT, false, step * 36, step * 20);
+    gl.vertexAttribPointer(IcosahedronLinesTFProgram.a7, 4, gl.FLOAT, false, step * 36, step * 24);
+    gl.vertexAttribPointer(IcosahedronLinesTFProgram.a8, 4, gl.FLOAT, false, step * 36, step * 28);
+    gl.vertexAttribPointer(IcosahedronLinesTFProgram.a9, 4, gl.FLOAT, false, step * 36, step * 32);
+
+    gl.uniform1f(IcosahedronLinesTFProgram.uTime, now);
+    gl.uniform1f(IcosahedronLinesTFProgram.uDeltaTime, deltatime);
+    gl.uniform1f(IcosahedronLinesTFProgram.uCameraZ, cameraZ);
+    gl.uniform1f(IcosahedronLinesTFProgram.uScreenRatio, screenRatio);
+    gl.uniform3f(IcosahedronLinesTFProgram.uMouseOrigin, mouseController.origin[0], mouseController.origin[1], mouseController.origin[2]);
+    gl.uniform3f(IcosahedronLinesTFProgram.uMouseVelocity, mouseController.velocity[0], mouseController.velocity[1], mouseController.velocity[2]);
+
+    /* music box texture data */
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, musicBox.getVisualizerTexture());
+    gl.uniform1i(IcosahedronLinesTFProgram.uMusicVisualizerData, 0);
+
+    // Specify the target buffer:
+    gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, IcosahedronLinesTFProgram.transformFeedback);
+    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, IcosahedronLinesProgram.buffer);
+    gl.beginTransformFeedback(gl.LINES);
+    gl.drawArrays(gl.LINES, 0, IcosahedronLinesTFProgram.nverts);
+    gl.endTransformFeedback();
+    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, null);
+
+    gl.disable(gl.RASTERIZER_DISCARD);
+}
+
+function draw_icosahedron_lines(now, deltatime) {
+
+    compute_icosahedronTF_lines(now, deltatime);
+
+    gl.useProgram(IcosahedronLinesProgram);
+    // gl.enable(gl.DEPTH_TEST);
+    // gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, IcosahedronLinesProgram.buffer);
+    gl.enableVertexAttribArray(IcosahedronLinesProgram.a1);
+    gl.enableVertexAttribArray(IcosahedronLinesProgram.a2);
+    gl.enableVertexAttribArray(IcosahedronLinesProgram.a3);
+    gl.enableVertexAttribArray(IcosahedronLinesProgram.a4);
+    gl.enableVertexAttribArray(IcosahedronLinesProgram.a5);
+    gl.enableVertexAttribArray(IcosahedronLinesProgram.a6);
+    gl.enableVertexAttribArray(IcosahedronLinesProgram.a7);
+    gl.enableVertexAttribArray(IcosahedronLinesProgram.a8);
+    gl.enableVertexAttribArray(IcosahedronLinesProgram.a9);
+    gl.vertexAttribPointer(IcosahedronLinesProgram.a1, 4, gl.FLOAT, false, step * 36, 0);
+    gl.vertexAttribPointer(IcosahedronLinesProgram.a2, 4, gl.FLOAT, false, step * 36, step * 4);
+    gl.vertexAttribPointer(IcosahedronLinesProgram.a3, 4, gl.FLOAT, false, step * 36, step * 8);
+    gl.vertexAttribPointer(IcosahedronLinesProgram.a4, 4, gl.FLOAT, false, step * 36, step * 12);
+    gl.vertexAttribPointer(IcosahedronLinesProgram.a5, 4, gl.FLOAT, false, step * 36, step * 16);
+    gl.vertexAttribPointer(IcosahedronLinesProgram.a6, 4, gl.FLOAT, false, step * 36, step * 20);
+    gl.vertexAttribPointer(IcosahedronLinesProgram.a7, 4, gl.FLOAT, false, step * 36, step * 24);
+    gl.vertexAttribPointer(IcosahedronLinesProgram.a8, 4, gl.FLOAT, false, step * 36, step * 28);
+    gl.vertexAttribPointer(IcosahedronLinesProgram.a9, 4, gl.FLOAT, false, step * 36, step * 32);
+
+    mat4.identity(model);
+
+    gl.uniformMatrix4fv(IcosahedronLinesProgram.projection, false, projection);
+    gl.uniformMatrix4fv(IcosahedronLinesProgram.model, false, model);
+    gl.uniformMatrix4fv(IcosahedronLinesProgram.view, false, camera.getViewMatrix(deltatime, 0.3));
+
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.disable(gl.DEPTH_TEST);
+    gl.drawArrays(gl.LINES, 0, IcosahedronLinesProgram.nverts);
+}
+
+function create_icosahedron_lines_program() {
+
+    var Program = getShader(icolinesv, icolinesf, false);
+    Program.a1 = gl.getAttribLocation(Program, "v0");
+    Program.a2 = gl.getAttribLocation(Program, "v1");
+    Program.a3 = gl.getAttribLocation(Program, "v0displaced");
+    Program.a4 = gl.getAttribLocation(Program, "v1displaced");
+    Program.a5 = gl.getAttribLocation(Program, "v0musicDisplaced");
+    Program.a6 = gl.getAttribLocation(Program, "v1musicDisplaced");
+    Program.a7 = gl.getAttribLocation(Program, "mouseVelocity");
+    Program.a8 = gl.getAttribLocation(Program, "fx");
+    Program.a9 = gl.getAttribLocation(Program, "color");
+
+    Program.projection = gl.getUniformLocation(Program, "projection");
+    Program.model = gl.getUniformLocation(Program, "model");
+    Program.view = gl.getUniformLocation(Program, "view");
+
+    Program.nverts = Icosahedron.nLinesVerts;
+    Program.buffer = gl.createBuffer();
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, Program.buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(Icosahedron.linesBuffer), gl.STATIC_DRAW);
+
+    window.IcosahedronLinesProgram = Program;
+}
+
+function create_icosahedronTF_lines_program() {
+
+    var Program = gl.createProgram();
+    gl.attachShader(Program, getTFShader(icolinesTFv, 'vert'));
+    gl.attachShader(Program, getTFShader(icolinesTFf, 'frag'));
+
+    // initializing transform feedback's varyings for this program, BEFORE LINKING IT
+    Program.transformFeedback = gl.createTransformFeedback();
+    gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, Program.transformFeedback);
+    gl.transformFeedbackVaryings(Program, ['tfV0', 'tfV1', 'tfV0displaced', 'tfV1displaced', 'tfV0musicDisplaced', 'tfV1musicDisplaced', 'tfMouseVelocity', 'tfFx', 'tfColor'], gl.INTERLEAVED_ATTRIBS);
+
+    gl.linkProgram(Program);
+    if (!gl.getProgramParameter(Program, gl.LINK_STATUS)) {
+        alert("Could not initialise shaders");
+        return null;
+    }
+
+    Program.a1 = gl.getAttribLocation(Program, "v0");
+    Program.a2 = gl.getAttribLocation(Program, "v1");
+    Program.a3 = gl.getAttribLocation(Program, "v0displaced");
+    Program.a4 = gl.getAttribLocation(Program, "v1displaced");
+    Program.a5 = gl.getAttribLocation(Program, "v0musicDisplaced");
+    Program.a6 = gl.getAttribLocation(Program, "v1musicDisplaced");
+    Program.a7 = gl.getAttribLocation(Program, "mouseVelocity");
+    Program.a8 = gl.getAttribLocation(Program, "fx");
+    Program.a9 = gl.getAttribLocation(Program, "color");
+
+    Program.uTime = gl.getUniformLocation(Program, "uTime");
+    Program.uDeltaTime = gl.getUniformLocation(Program, "uDeltaTime");
+    Program.uCameraZ = gl.getUniformLocation(Program, "uCameraZ");
+    Program.uScreenRatio = gl.getUniformLocation(Program, "uScreenRatio");
+    Program.uMouseOrigin = gl.getUniformLocation(Program, "uMouseOrigin");
+    Program.uMouseVelocity = gl.getUniformLocation(Program, "uMouseVelocity");
+    Program.uMusicVisualizerData = gl.getUniformLocation(Program, "uMusicVisualizerData");
+
+    Program.nverts = Icosahedron.nLinesVerts;
+    Program.buffer = gl.createBuffer();
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, Program.buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(Icosahedron.linesBuffer), gl.STATIC_DRAW);
+
+    window.IcosahedronLinesTFProgram = Program;
+}
+"use strict";
+
+function postprocess_blit_in_main_FBO(now, deltatime) {
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+    gl.useProgram(PostProcessBlitInMainProgram);
+    gl.enableVertexAttribArray(PostProcessBlitInMainProgram.a1);
+    gl.enableVertexAttribArray(PostProcessBlitInMainProgram.a2);
+    gl.enableVertexAttribArray(PostProcessBlitInMainProgram.a3);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, PostProcessBlitInMainProgram.buffer);
+    gl.vertexAttribPointer(PostProcessBlitInMainProgram.a1, 2, gl.FLOAT, false, step * 5, 0);
+    gl.vertexAttribPointer(PostProcessBlitInMainProgram.a2, 2, gl.FLOAT, false, step * 5, step * 2);
+    gl.vertexAttribPointer(PostProcessBlitInMainProgram.a3, 1, gl.FLOAT, false, step * 5, step * 4);
+
+    // Blit framebuffers, no Multisample texture 2d in WebGL 2
+    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, FBOsoffscreen[FRAMEBUFFER.RENDERBUFFER]);
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, FBOsoffscreen[FRAMEBUFFER.COLORBUFFER]);
+    gl.clearBufferfv(gl.COLOR, 0, [0.0, 0.0, 0.0, 1.0]);
+    gl.blitFramebuffer(0, 0, innerWidth, innerHeight, 0, 0, innerWidth, innerHeight, gl.COLOR_BUFFER_BIT, gl.NEAREST);
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, FBOsoffscreen.texture);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.uniform1i(PostProcessBlitInMainProgram.uImage, 0);
+
+    var mouseSpeed = mouseController.postProcessVelocity * 0.07;
+
+    if (mouseSpeed < 0.3) mouseSpeed = 0;
+    if (mouseSpeed > 0.3) mouseSpeed = mouseSpeed - 0.3;
+    if (mouseSpeed > 3.0) mouseSpeed = 3.0;
+
+    gl.uniform1f(PostProcessBlitInMainProgram.uTime, now);
+    gl.uniform1f(PostProcessBlitInMainProgram.uMouseSpeed, mouseSpeed);
+
+    // gl.blendFunc(gl.ONE, gl.ONE);
+    // gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    gl.disable(gl.BLEND);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+}
+
+function create_postprocess_blit_in_main_FBO_program() {
+    var Program = getShader(postProcBlitv, postProcBlitf, false);
+    Program.a1 = gl.getAttribLocation(Program, "pos");
+    Program.a2 = gl.getAttribLocation(Program, "coord");
+    Program.a3 = gl.getAttribLocation(Program, "id");
+
+    Program.uTime = gl.getUniformLocation(Program, "uTime");
+    Program.uImage = gl.getUniformLocation(Program, "uImage");
+    Program.uMouseSpeed = gl.getUniformLocation(Program, "uMouseSpeed");
+
+    var vertices = [-1.0, -1.0, 0.0, 0.0, 0, -1.0, +1.0, 0.0, 1.0, 0, +1.0, -1.0, 1.0, 0.0, 0, +1.0, -1.0, 1.0, 0.0, 0, -1.0, +1.0, 0.0, 1.0, 0, +1.0, +1.0, 1.0, 1.0, 0];
+
+    Program.buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, Program.buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+    //assegnalo così puoi usare il nome che vuoi quando serve
+    window.PostProcessBlitInMainProgram = Program;
+}
+
+// function create_offscreen_FBOs() {
+//     var FBO = gl.createFramebuffer();
+//     gl.bindFramebuffer(gl.FRAMEBUFFER, FBO);
+
+//     FBO.texture = gl.createTexture();
+
+//     gl.bindTexture(gl.TEXTURE_2D, FBO.texture);
+//     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+//     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+//     // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+//     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+//     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+//     // gl.texParameteri(gl.TEXTURE_2D, gl.GENERATE_MIPMAP, gl.TRUE);
+//     gl.generateMipmap(gl.TEXTURE_2D);
+
+//     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, innerWidth, innerHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+//     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, FBO.texture, 0);
+
+//     gl.bindTexture(gl.TEXTURE_2D, null);
+//     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+//     window.FBOoffscreen = FBO;
+// }
+
+function create_offscreen_multisampleFBOs() {
+    window.FRAMEBUFFER_SIZE = {
+        x: innerWidth,
+        y: innerHeight
+    };
+
+    var texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, FRAMEBUFFER_SIZE.x, FRAMEBUFFER_SIZE.y, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+
+    // -- Init Frame Buffers
+    window.FRAMEBUFFER = {
+        RENDERBUFFER: 0,
+        COLORBUFFER: 1
+    };
+
+    var framebuffers = [gl.createFramebuffer(), gl.createFramebuffer()];
+
+    var colorRenderbuffer = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, colorRenderbuffer);
+    gl.renderbufferStorageMultisample(gl.RENDERBUFFER, 4, gl.RGBA8, FRAMEBUFFER_SIZE.x, FRAMEBUFFER_SIZE.y);
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffers[FRAMEBUFFER.RENDERBUFFER]);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, colorRenderbuffer);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffers[FRAMEBUFFER.COLORBUFFER]);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+    window.FBOsoffscreen = framebuffers;
+    FBOsoffscreen.texture = texture;
+    FBOsoffscreen.colorRenderBuffer = colorRenderbuffer;
+}
+'use strict';
+
+var shaderPart_maxDistance = '\n    const float maxDistance = 4.0;\n';
+
+var shaderPart_colors = '\n    #define RED;\n';
+
+var shaderPart_screenRatio = '\n    // const float uScreenRatio = ' + innerWidth / innerHeight + ';\n    uniform float uScreenRatio;\n';
+
+var shaderPart_canvasHeight = '\n    const float canvasHeight = ' + innerHeight + '.0;\n';
+
+var shaderPart_FOV = '\n    const int FOV = ' + 45 * Math.PI / 180 + ';\n';
+
+var shaderPart_tan225 = '\n    const float tan225 = 0.4142135623730950488016887242097;\n';
+
+var shaderPart_cameraZ = '\n    // const float cameraZ = 45.0;\n    uniform float uCameraZ;\n';
+
+var shaderPart_sphereRadius = '\n    const float sphereRadius = 10.0;\n    const float halfSphereRadius = 5.0;\n    const float sphereCircleLength = 62.83185307179586476925286766559; // sphereRadius * 2 * PI;\n';
+
+var shaderPart_mouseConstants = '\n    const float   powerStrenght   = 0.02;\n    const float   reboundStrenght = 0.975;\n';
+
+/** COLORS -  original */
+// var shaderPart_colors_TFlineAttractor = `
+//     vec4(redComp * colorMult * 1.5, 0.1 * colorMult, 0.1 * colorMult * 2.0, 0);
+// `;
+// var shaderPart_colors_TFlineShatter = `
+//     vec4(0, 0, 1, 0);
+// `;
+// var shaderPart_colors_offpointsCol1 = `
+//     vec3(0.9, 0.6, 0.3);
+// `;
+// var shaderPart_colors_offpointsCol2 = `
+//     vec3(1.0, 0.2, 0.2);
+// `;
+// var shaderPart_pointsMouseSpeedColor = `
+//     Color.xyz = vec3(1,   max(1.0 - mouseSpeed, 0.1),   max(1.0 - mouseSpeed, 0.1));
+// `;
+
+
+/** COLORS - random */
+// var shaderPart_colors_TFlineAttractor = "" +
+// "    vec4(" + rnd() + ", " + rnd() + ", " + rnd() + ", 0) * colorMult;";
+
+// var shaderPart_colors_TFlineShatter = "" +
+// "    vec4(" + rnd() + ", " + rnd() + ", " + rnd() + ", 0);";
+
+// var shaderPart_colors_offpointsCol1 = "" +
+// "    vec3(" + rnd() + ", " + rnd() + ", " + rnd() + ");";
+
+// var shaderPart_colors_offpointsCol2 = "" +
+// "    vec3(" + rnd() + ", " + rnd() + ", " + rnd() + ");";
+
+// var shaderPart_pointsMouseSpeedColor = "" +
+// "    Color.xyz = mix(vec3(" + rnd() + ", " + rnd() + ", " + rnd() + "), vec3(" + rnd() + ", " + rnd() + ", " + rnd() + "), max(1.0 - mouseSpeed * 2.0, 0.0));";
+
+
+/* WITHEISH */
+var shaderPart_colors_TFlineAttractor = '    vec4(0.38914890463251887, 0.3817349169527625274, 0.38217114972887741, 0) * colorMult;';
+var shaderPart_colors_TFlineShatter = '    vec4(0.983629832789459, 0.3219759252018275, 0.3940256881549994, 0);';
+var shaderPart_colors_offpointsCol1 = '    vec3(0.5376075549191675, 0.9749653113259806, 0.9577071140151332);';
+var shaderPart_colors_offpointsCol2 = '    vec3(0.49472422263778955, 0.35799897323872586, 0.22805524678906958);';
+var shaderPart_pointsMouseSpeedColor = '    Color.xyz = mix(vec3(0.7726033988519405, 0.7861298760738663, 0.49679731181152237), vec3(0.4486490118661614, 0.449526516430272487, 0.448020577528358366), max(1.0 - mouseSpeed * 2.0, 0.0));';
+// var shaderPart_pointsOutsideSpeedColor = '    Color.xyz = mix(vec3(0.9726033988519405, 0.0861298760738663, 0.09679731181152237), vec3(0.4486490118661614, 0.029526516430272487, 0.048020577528358366), max(1.0 - mouseSpeed * 2.0, 0.0));';
+
+
+function getColors() {
+    var str = '\n            var shaderPart_colors_TFlineAttractor = \'' + shaderPart_colors_TFlineAttractor + '\';\n            var shaderPart_colors_TFlineShatter = \'' + shaderPart_colors_TFlineShatter + '\';\n            var shaderPart_colors_offpointsCol1 = \'' + shaderPart_colors_offpointsCol1 + '\';\n            var shaderPart_colors_offpointsCol2 = \'' + shaderPart_colors_offpointsCol2 + '\';\n            var shaderPart_pointsMouseSpeedColor = \'' + shaderPart_pointsMouseSpeedColor + '\';\n        ';
+
+    something = window.open("data:text/json," + encodeURIComponent(JSON.stringify({ str: str })), "_blank");
+    something.focus();
+}
+"use strict";
+
+var shaderPart_general = "\n#define PI 3.1415926535897932384626433832795\n#define RS 0.4142135623730950488016887242097\n";
+
+var shaderPart_simpleRand = "\nfloat rand(vec2 c){\n\treturn fract(sin(dot(c.xy ,vec2(12.9898,78.233))) * 43758.5453);\n}";
+
+var shaderPart_perlinNoise = "\nfloat rand(vec2 c){\n\treturn fract(sin(dot(c.xy ,vec2(12.9898,78.233))) * 43758.5453);\n}\n\nfloat noise(vec2 p, float freq ){\n\tfloat unit = " + 1 + ".0 / freq;\n\tvec2 ij = floor(p/unit);\n\tvec2 xy = mod(p,unit)/unit;\n\t//xy = 3.*xy*xy-2.*xy*xy*xy;\n\txy = .5*(1.-cos(PI*xy));\n\tfloat a = rand((ij+vec2(0.,0.)));\n\tfloat b = rand((ij+vec2(1.,0.)));\n\tfloat c = rand((ij+vec2(0.,1.)));\n\tfloat d = rand((ij+vec2(1.,1.)));\n\tfloat x1 = mix(a, b, xy.x);\n\tfloat x2 = mix(c, d, xy.x);\n\treturn mix(x1, x2, xy.y);\n}\n\nfloat pNoise(vec2 p, int res){\n\tfloat persistance = .5;\n\tfloat n = 0.;\n\tfloat normK = 0.;\n\tfloat f = 4.;\n\tfloat amp = 1.;\n\tint iCount = 0;\n\tfor (int i = 0; i<50; i++){\n\t\tn+=amp*noise(p, f);\n\t\tf*=2.;\n\t\tnormK+=amp;\n\t\tamp*=persistance;\n\t\tif (iCount == res) break;\n\t\tiCount++;\n\t}\n\tfloat nf = n/normK;\n\treturn nf*nf*nf*nf;\n}";
+
+var shaderPart_classicPerlinNoise = "\n//\tClassic Perlin 2D Noise \n//\tby Stefan Gustavson\n//\nvec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}\nvec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}\nvec2 fade(vec2 t) {return t*t*t*(t*(t*6.0-15.0)+10.0);}\n\nfloat cnoise(vec2 P){\n  vec4 Pi = floor(P.xyxy) + vec4(0.0, 0.0, 1.0, 1.0);\n  vec4 Pf = fract(P.xyxy) - vec4(0.0, 0.0, 1.0, 1.0);\n  Pi = mod(Pi, 289.0); // To avoid truncation effects in permutation\n  vec4 ix = Pi.xzxz;\n  vec4 iy = Pi.yyww;\n  vec4 fx = Pf.xzxz;\n  vec4 fy = Pf.yyww;\n  vec4 i = permute(permute(ix) + iy);\n  vec4 gx = 2.0 * fract(i * 0.0243902439) - 1.0; // 1/41 = 0.024...\n  vec4 gy = abs(gx) - 0.5;\n  vec4 tx = floor(gx + 0.5);\n  gx = gx - tx;\n  vec2 g00 = vec2(gx.x,gy.x);\n  vec2 g10 = vec2(gx.y,gy.y);\n  vec2 g01 = vec2(gx.z,gy.z);\n  vec2 g11 = vec2(gx.w,gy.w);\n  vec4 norm = 1.79284291400159 - 0.85373472095314 * \n    vec4(dot(g00, g00), dot(g01, g01), dot(g10, g10), dot(g11, g11));\n  g00 *= norm.x;\n  g01 *= norm.y;\n  g10 *= norm.z;\n  g11 *= norm.w;\n  float n00 = dot(g00, vec2(fx.x, fy.x));\n  float n10 = dot(g10, vec2(fx.y, fy.y));\n  float n01 = dot(g01, vec2(fx.z, fy.z));\n  float n11 = dot(g11, vec2(fx.w, fy.w));\n  vec2 fade_xy = fade(Pf.xy);\n  vec2 n_x = mix(vec2(n00, n01), vec2(n10, n11), fade_xy.x);\n  float n_xy = mix(n_x.x, n_x.y, fade_xy.y);\n  return 2.3 * n_xy;\n}";
+
+var shaderPart_hash3 = "\nvec3 hash3( vec2 p ){\n    vec3 q = vec3( dot(p,vec2(127.1,311.7)), \n\t\t\t\t   dot(p,vec2(269.5,183.3)), \n\t\t\t\t   dot(p,vec2(419.2,371.9)) );\n\treturn fract(sin(q)*43758.5453);\n}";
+
+var shaderPart_atan2 = "\nfloat atan2(in float y, in float x)\n{\n    bool s = (abs(x) > abs(y));\n    return mix(PI/2.0 - atan(x,y), atan(y,x), s);\n}";
+
+var shaderPart_rotMatrix = "\nmat4 rotationMatrix(vec3 axis, float angle)\n{\n    axis = normalize(axis);\n    float s = sin(angle);\n    float c = cos(angle);\n    float oc = 1.0 - c;\n    \n    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,\n                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,\n                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,\n                0.0,                                0.0,                                0.0,                                1.0);\n}";
+
+var shaderPart_sphericalDistance = "\nfloat sphericalDistance(vec3 p0, vec3 p1)\n{\n\t// 2*PI  *r   for a circle    \n\t// angle *r   for an arc\n\n\tfloat angle = acos(dot(p0, p1));\n\treturn angle * sphereRadius;\n}";
+
+var shaderPart_attractVertex = "\nvec4 attractVertex(vec4 attractor, vec4 vertex, out float distanceFromAttractor)\n{\n\t vec3 normAttr = normalize(attractor.xyz);\n\t vec3 normVert = normalize(vertex.xyz);\n\n     float angle = acos(dot(normAttr, normVert));\n\n     float sphereDist = sphericalDistance(normAttr, normVert);\n\t distanceFromAttractor = sphereDist;\n\n\t /**\n\t  *  **Lower** values for compressionStrenght will make compression stronger\n\t  *  Should be moved to the CPU\n\t  */\n\t float compressionStrenght = clamp(pow(cnoise(vec2(uTime * 0.1, 45.0)) * 0.5 + 0.5, 2.0) * 7.0, 0.2, 7.0);\n\t float attractorPower = pow(clamp(1.0 - sphereDist / (sphereCircleLength * 0.5), 0.0, 1.0),   compressionStrenght);\n\t \n\t vec3 rotAxis = cross(normAttr, normVert);\n\n     return rotationMatrix(normalize(rotAxis), angle * attractorPower) * vertex;\n}";
+
+var shaderPart_offsetVertexMouse = "\nvoid offsetVertexMouseVelocity(vec4 vertex, int whichVertex, float powerMult) {\n    float z = abs(vertex.z - uCameraZ);\n    float hwh = z * tan225;\n    float hww = z * tan225 * uScreenRatio;\n\n    vec4 worldSpaceMouseOrigin = vec4(0.0);\n\n    // uMouseOrigin is in NDC   -1...1\n    worldSpaceMouseOrigin.x = hww * uMouseOrigin.x;\n    worldSpaceMouseOrigin.y = hwh * uMouseOrigin.y;\n    worldSpaceMouseOrigin.z = -z;\n\n    vec3 fakevertex = vertex.xyz;\n    fakevertex.z -= uCameraZ;\n\n    float distance = length(fakevertex - worldSpaceMouseOrigin.xyz);\n\n\n    /**\n     * \n     *  Points have a stronger powerStrenght ------------------ v\n     *                                                          v\n     */\n    float power = powerStrenght / (pow(distance, 3.0) + 1.0) * powerMult;\n    \n\n    // mouse velocities are different for both vertices\n    // v0 will have a different mouseVelocity than v1, and we'll store both of them in   xy & zw of mouseVelocity\n    if(whichVertex == 0) {\n        tfMouseVelocity.xy += uMouseVelocity.xy * power;\n    } else {\n        tfMouseVelocity.zw += uMouseVelocity.xy * power;\n    }\n}";
+
+var shaderPart_offsetVertexMusic = "\nvec4 offsetVertexMusic(vec4 vertex, vec4 startVertex) {\n\t\n\t// at this point tfMouseVelocity is already defined by offsetVertexMouseVelocity();\n\t// so we can just increment it with the incrementor += operator\n\n    float coord_s = 1.0 - abs(atan2(startVertex.y, startVertex.x) / PI);\n\tfloat value = texture(uMusicVisualizerData, vec2(coord_s                 * 0.7, 0.5)).x;\n\n    value = ((value == 0.0 ? -140.0 : value) + 140.0) * 0.075; \n    value = max(value, 0.0);\n\n    float mult  = 0.0;    \n    vec3 displace = normalize(vertex.xyz) * value;\n\n    mult = clamp(1.0 - abs(vertex.z) / 5.0, 0.0, 1.0);\n    mult *= clamp((vertex.y + sphereRadius) * 0.2, 0.0, 1.0);\n\n    vertex.xyz += displace * mult;\n\n    return vertex;\n}";
+
+var shaderPart_applyVelocityToVertex = "\nvoid applyVelocityToVertex(inout vec4 vertex, int whichVertex) {\n\tif(whichVertex == 0) {\n        vertex.xy += tfMouseVelocity.xy;\n    } else {  \n        vertex.xy += tfMouseVelocity.zw;\n    }\n}";
+"use strict";
+
+var postProcBlitv = "#version 300 es\nlayout(location = 0) in vec2  pos;\nlayout(location = 1) in vec2  coord;\nlayout(location = 2) in float id;\n\nout vec2  Coord;\nout float ID;\n\nvoid main() {\t\t\n    gl_Position = vec4(pos.xy, 0.0, 1.0);\t\t\n    Coord = coord;\t\t\n    ID    = id;\n}";
+
+var postProcBlitf = "#version 300 es\nprecision highp float;\n\nin vec2  Coord;\nin float ID;\n\nuniform sampler2D uImage;\nuniform float uTime;\nuniform float uMouseSpeed;\n\nout vec4 FragColor;\n\n\n/* CONSTANTS */\n" + shaderPart_general + "\n\n\n/* FUNCTIONS */\n" + shaderPart_atan2 + "\n\n\nvoid main() {\t\t\t\t\n\n    vec2 blurVector = Coord - vec2(0.5);\n    float distance = length(blurVector);\n\n\n    vec2 NDCCoord = Coord * 2.0 - 1.0;\n\n    float angle = atan2(NDCCoord.y, NDCCoord.x);\n    float angleMultiplier = pow(sin(angle * 6.0 + uTime * 6.0) * .5 + .7, 2.0) * 4.67 * distance;\n    // if(distance < 0.4) angleMultiplier *= distance / 0.4 * 0.5;\n    \n\n\n\n    vec4 col1 = texture(uImage, Coord + 0.00135 * uMouseSpeed * angleMultiplier);\n    vec4 col2 = texture(uImage, Coord - 0.00135 * uMouseSpeed * angleMultiplier);\n    vec4 col = texture(uImage, Coord);\n    col.x = col1.x;\n    col.y = col2.y;\n    \n    \n    vec4 blurcol;\n    float activeDistance = max(0.25 - uMouseSpeed * 0.05, 0.15);\n\n\n\n    if(distance > activeDistance) {\n\n        float redistance = (distance - activeDistance) * 0.175 * uMouseSpeed;\n\n        vec4 sample1 = texture(uImage, Coord + blurVector * 0.025 * redistance);\n        vec4 sample2 = texture(uImage, Coord + blurVector * 0.05 * redistance);\n        vec4 sample3 = texture(uImage, Coord + blurVector * 0.1 * redistance);\n        vec4 sample4 = texture(uImage, Coord + blurVector * 0.125 * redistance);\n        vec4 sample5 = texture(uImage, Coord + blurVector * 0.15 * redistance);\n        vec4 sample6 = texture(uImage, Coord + blurVector * 0.2 * redistance);\n        vec4 sample7 = texture(uImage, Coord + blurVector * 0.225 * redistance);\n        vec4 sample8 = texture(uImage, Coord + blurVector * 0.25 * redistance);\n\n        blurcol = sample1 + sample2 + sample3 + sample4 + sample5 + sample6 + sample7 + sample8;\n        blurcol *= 0.125;\n        col = mix(blurcol, col, 0.5);\n    } \n\n    // float blackness = 1.0 - distance / 0.5;\n    // FragColor.xyz = col.xyz * 0.6 + col.xyz * blackness * 0.4;\n    // FragColor.a = 1.0;\n\n\n\n    FragColor = col;\n    // FragColor = vec4(1.0 - col.xyz, 1.0);\n}";
+"use strict";
+
+var offpointv = "#version 300 es\nlayout(location = 0) in vec4 pos;\nlayout(location = 1) in vec4 displacedPos;\nlayout(location = 2) in vec4 musicDisplacedPos;\nlayout(location = 3) in vec4 mouseVelocity;\nlayout(location = 4) in vec4 fx;\nlayout(location = 5) in vec4 fx2;\n\nuniform mat4 projection;\nuniform mat4 model;\nuniform mat4 view;  \n\n#define PI 3.1415926535897932384626433832795\n#define RS 0.4142135623730950488016887242097\n\n\n\nuniform float uTime;\nuniform float uDeltaTime;\n\n\n\nout vec4 Color;\n\n\n/*  defines  */\n" + shaderPart_colors + "\n\n/*  constants declarations  */\n" + shaderPart_sphereRadius + "   \n" + shaderPart_canvasHeight + "   \n\nvoid main() {\t\t\n\n    float saveTheAttributes = pos.x + fx.x + mouseVelocity.x + displacedPos.x;\n\n\n    vec4 transformedPos = musicDisplacedPos;\n\n    \n    gl_Position = projection * view * model * vec4(transformedPos.xyz,   1.0);\n    \n    float world_point_size = 0.15;\n    float distance_from_view = -(view * model * vec4(transformedPos.xyz, 1.0)).z;\n    float r = RS; //tan(22.5 * (PI / 180.0));\n    float whsize = distance_from_view * r * 2.0;\n    float size   = (world_point_size / whsize) * canvasHeight;\n\n    // points closer to the attractor will be smaller in size, the distance was measured (inside pointsTF) as the \n    // Arc length between the two points\n    float attractorArcDistance = fx.x;\n    float attrSizeMult         = min(fx.x / (sphereCircleLength * 0.15) + 0.1, 1.0);\n\n\n\n    float sizeSinWave = ((sin(uTime * 3.0 + pos.w * 0.05) * 0.5 + 0.5) * 1.5 + 0.6);\n\n\n    gl_PointSize = size * attrSizeMult * sizeSinWave;\n\n    Color = vec4(1,1,1,1);\n\n\n    float mouseSpeed = length(mouseVelocity.xy);\n    //if(mod(pos.w, 2.0) == 0.0) {\n    //    Color.x = max(1.0 - mouseSpeed, 0.1);\n    //    Color.y = max(1.0 - mouseSpeed, 0.1);\n    //}\n\n    //if(mod(pos.w, 2.0) == 1.0) {\n    //    Color.y = max(1.0 - mouseSpeed, 0.1);\n    //    Color.z = max(1.0 - mouseSpeed, 0.1);\n    //}\n\n\n\n\n    gl_PointSize *= length(mouseVelocity.xy) * 0.3 + 1.0;\n\n\n\n\n    // if this is a hidden point let it's opacity grow only if its moving\n    if(fx2.x > 0.9) {\n        // Color.xyz = vec3(0,1,0);\n\n        float distanceFromOriginalPos = clamp(length(musicDisplacedPos.xyz) / 10.5, 1.0, 3.0);\n        distanceFromOriginalPos = (distanceFromOriginalPos - 1.0) * 0.5;\n\n        vec3 col1 = " + shaderPart_colors_offpointsCol1 + " \n        vec3 col2 = " + shaderPart_colors_offpointsCol2 + " \n\n        Color.xyz = mix(col1, col2, clamp((pos.x + 15.0 / 30.0), 0.0, 1.0));\n        \n        Color.a = clamp(distanceFromOriginalPos * mouseSpeed * 1.5, 0.0, 1.0);\n        gl_PointSize *= (1.5 + abs(sin(pos.w) * 2.0));\n    }\n}";
+
+var offpointf = "#version 300 es\nprecision mediump float;\n\nin vec4 Color;\n\nout vec4 FragColor;\n\nvoid main() {\n    float distance = length(gl_PointCoord - vec2(0.5, 0.5));\n    float alpha    = 1.0;\n    if(distance > 0.15) alpha = 1.0 - (distance - 0.15) / 0.35; \n    if(distance > 0.5) discard;\t\t\n    \n    FragColor = vec4(Color.xyz * pow(alpha, 3.0) * Color.a, 0.0);\n}";
+"use strict";
+
+var backgroundv = "#version 300 es\nlayout(location = 0) in vec4 pos;\n\nvoid main() {\t\n    gl_Position = pos;\n}";
+
+var backgroundf = "#version 300 es\nprecision mediump float;\n\nuniform float uTime;\n\nout vec4 FragColor;\n\n" + shaderPart_simpleRand + "\n" + shaderPart_general + "\n\n\nvoid main() {\n    float random = rand(gl_FragCoord.xy);\n    float gray = random * 0.055 + 0.08;     // + sin(uTime * 3.0 + random * 575474.0) * 0.015;\n\t\n    // if(random > 0.998) {\n    // float t = mod((random * random * 7759.0 + uTime), 500.0);\n    // if( t < 1.0 ) {\n    //     gray += sin(t * PI * 2.0) * 0.5;\n    // }\n    // }\n\n\n    FragColor = vec4(gray,gray,gray,1);\n}";
+"use strict";
+
+var icoTFv = "#version 300 es\nlayout(location = 0) in vec4 pos;\nlayout(location = 1) in vec4 displacedPos;\nlayout(location = 2) in vec4 musicDisplacedPos;\nlayout(location = 3) in vec4 mouseVelocity;\nlayout(location = 4) in vec4 fx;\nlayout(location = 5) in vec4 fx2;\n\n\nout vec4 tfPosition;\nout vec4 tfDisplacedPos;\nout vec4 tfMusicDisplacedPos;\nout vec4 tfMouseVelocity;\nout vec4 tfFX;\nout vec4 tfFX2;\n\n\nuniform float uTime;\nuniform float uDeltaTime;\nuniform vec3  uMouseOrigin;\nuniform vec3  uMouseVelocity;\n\nuniform sampler2D uMusicVisualizerData;\n\n\nout vec3 Color;\n\n\n\n/*  constants declarations  */\n" + shaderPart_maxDistance + "\n" + shaderPart_screenRatio + "\n" + shaderPart_tan225 + "\n" + shaderPart_cameraZ + "\n" + shaderPart_mouseConstants + "\n" + shaderPart_sphereRadius + "   \n" + shaderPart_general + "\n\n/*  functions declarations  */\n" + shaderPart_classicPerlinNoise + "\n" + shaderPart_atan2 + "\n" + shaderPart_rotMatrix + "\n" + shaderPart_sphericalDistance + "\n" + shaderPart_attractVertex + "\n" + shaderPart_offsetVertexMouse + "\n" + shaderPart_offsetVertexMusic + "\n" + shaderPart_applyVelocityToVertex + "\n\n\nvoid main() {\t\t\n\n\n    float saveTheAttributes = musicDisplacedPos.x;\n\n\n    /* DISPLACEMENT ROUTINE  --  SHOULD BE APPLIED ALSO TO LINESTF.JS */\n    /* DISPLACEMENT ROUTINE  --  SHOULD BE APPLIED ALSO TO LINESTF.JS */\n    /* DISPLACEMENT ROUTINE  --  SHOULD BE APPLIED ALSO TO LINESTF.JS */\n\n\n\n/* noise deflater - will make noise less apparent if the point is close to the deflaterPoint */\n   \n    /*  CAN BE OFFLOADED TO THE CPU */\n    /*  CAN BE OFFLOADED TO THE CPU */\n    vec2 phitheta = vec2(sin(uTime * 0.2) * PI, sin(uTime * 0.1) * PI);\n    vec3 pointOnSphere = vec3(cos(phitheta.x) * cos(phitheta.y),  cos(phitheta.y), sin(phitheta.x) * cos(phitheta.y));\n    pointOnSphere *= sphereRadius;\n    /*  CAN BE OFFLOADED TO THE CPU */\n    /*  CAN BE OFFLOADED TO THE CPU */\n\n    float distanceFromDeflater = length(pos.xyz - pointOnSphere);\n    /** just a linear interpolation -   eg.   distanceFromDeflater is  12, deflaterRadius is 10,   from 10 to 15 we linearly\n     *  interpolate the strenght of the deflater so we have     (12 - 10) / (15 - 10)  and we clamp the result */\n    float deflaterRadius = sphereRadius;\n    float deflaterInterp = deflaterRadius * 0.5;\n    float noiseDeflaterStrenght = clamp((distanceFromDeflater - deflaterRadius) / (deflaterInterp), 0.0, 1.0);\n\n\n\n\n\n    \n\n    /** \n     *      ATTRACTORS - will be calculated against non-displaced vertices, v0 & v1\n     */\n\n     // attractVertex will normalize the attractor\n     vec4 attractorExample = vec4(sin(uTime * 0.2 + 345.0), sin(uTime * 0.37 + 10.0), 1, 1);\n     float distanceFromAttractor = 0.0;\n     vec4 attractedPos = attractVertex(attractorExample, pos, distanceFromAttractor);\n\n\n\n\n\n\n\n    vec4 toCenter = pos * 1.0;\n    float noise = cnoise(vec2(uTime * 0.03 + pos.x * 0.1, uTime * 0.03 + pos.y * 0.1));\n    float noise2 = cnoise(vec2(uTime * 0.3 + pos.x * 0.5, uTime * 0.3 + pos.y * 0.3));\n    vec4 whereShouldPosBe = attractedPos + (toCenter * noise * 0.5 + toCenter * noise2 * 0.15) * noiseDeflaterStrenght;\n    \n\n    vec4 wherePosIs = displacedPos;\n\n\n\n\n\n    /** VELOCITIES ROUTINE  */\n\n    tfMouseVelocity.xy = mouseVelocity.xy;\n\n    offsetVertexMouseVelocity(wherePosIs, 0, 1.3);\n    applyVelocityToVertex(wherePosIs, 0);\n    \n    tfMouseVelocity.xy *= reboundStrenght;\n\n    /** VELOCITIES ROUTINE - END  */\n\n\n\n\n\n\n    // put it back where it should be\n    tfPosition = pos;\n\n    tfDisplacedPos = wherePosIs * 0.965 + whereShouldPosBe * 0.035;\n\n    tfMusicDisplacedPos = offsetVertexMusic(tfDisplacedPos, pos);\n\n    /* DISPLACEMENT ROUTINE  --  SHOULD BE APPLIED ALSO TO LINESTF.JS */\n    /* DISPLACEMENT ROUTINE  --  SHOULD BE APPLIED ALSO TO LINESTF.JS */\n    /* DISPLACEMENT ROUTINE  --  SHOULD BE APPLIED ALSO TO LINESTF.JS */\n\n\n\n\n    tfFX           = fx;     // fx.x    distance from attractor\n    tfFX.x         = distanceFromAttractor; // points closer to the attractor \n                                            // will be smaller in size\n\n    tfFX2          = fx2;   \n\n    // tfMouseVelocity = mouseVelocity;\n}";
+
+var icoTFf = "#version 300 es\nprecision mediump float;\n\nvoid main() {\n\n}";
+"use strict";
+
+var icov = "#version 300 es\nlayout(location = 0) in vec4 pos;\nlayout(location = 1) in vec4 displacedPos;\nlayout(location = 2) in vec4 musicDisplacedPos;\nlayout(location = 3) in vec4 mouseVelocity;\nlayout(location = 4) in vec4 fx;\nlayout(location = 5) in vec4 fx2;\n\nuniform mat4 projection;\nuniform mat4 model;\nuniform mat4 view;  \n\n#define PI 3.1415926535897932384626433832795\n#define RS 0.4142135623730950488016887242097\n\n\n\nuniform float uTime;\nuniform float uDeltaTime;\n\n\nout vec4 Color;\nout float vSize;\n\n\n/*  defines  */\n" + shaderPart_colors + "\n\n/*  constants declarations  */\n" + shaderPart_sphereRadius + "   \n" + shaderPart_canvasHeight + "   \n\nvoid main() {\t\t\n\n    float saveTheAttributes = pos.x + fx.x + fx2.x + mouseVelocity.x + displacedPos.x;\n\n\n    vec4 transformedPos = musicDisplacedPos;\n\n    \n    gl_Position = projection * view * model * vec4(transformedPos.xyz,   1.0);\n    \n    float world_point_size = 0.15;\n    float distance_from_view = -(view * model * vec4(transformedPos.xyz, 1.0)).z;\n    float r = RS; //tan(22.5 * (PI / 180.0));\n    float whsize = distance_from_view * r * 2.0;\n    float size   = (world_point_size / whsize) * canvasHeight;\n\n    // points closer to the attractor will be smaller in size, the distance was measured (inside pointsTF) as the \n    // Arc length between the two points\n    float attractorArcDistance = fx.x;\n    float attrSizeMult         = min(fx.x / (sphereCircleLength * 0.15) + 0.1, 1.0);\n\n\n\n    float sizeSinWave = ((sin(uTime * 3.0 + pos.w * 0.05) * 0.5 + 0.5) * 1.5 + 0.6);\n\n\n    gl_PointSize = size * attrSizeMult * sizeSinWave;\n\n    Color = vec4(1,1,1,1);\n\n\n    float mouseSpeed = length(mouseVelocity.xy);\n\n   \n    Color.xyz = " + shaderPart_pointsMouseSpeedColor + " \n   \n    // if(pos.x < 0.0) Color.xyz = + shaderPart_pointsOutsideSpeedColor +   \n\n\n\n    // if this is a hidden point let it's opacity grow only if its moving\n    if(fx2.x > 0.9) {\n        Color.a = clamp(mouseSpeed, 0.0, 1.0);\n    }\n\n    \n    gl_PointSize *= length(mouseVelocity.xy) * 0.3 + 1.0;\n\n    // DOF effect - once every 3 points    \n    vSize = mod(pos.w, 3.0) == 0.0 ? 70.0 * (gl_PointSize / canvasHeight) : 0.0;\n}";
+
+var icof = "#version 300 es\nprecision mediump float;\n\nin vec4 Color;\nin float vSize;\n\nout vec4 FragColor;\n\nvoid main() {\n    float distance = length(gl_PointCoord - vec2(0.5, 0.5));\n    float alpha    = 1.0;\n    if(distance > 0.4) alpha = 1.0 - (distance - 0.4) / 0.1; \n    if(distance > 0.5) discard;\t\t\n\n    // DOF effect\n    if(vSize > 0.0 && distance < 0.4) alpha = mix(1.0, pow((distance / 0.4), 1.5), min(vSize, 2.0));\n    \n    FragColor = vec4(Color.xyz, alpha * 0.6 * Color.a);\n}";
+"use strict";
+
+var icolinesTFv = "#version 300 es\nlayout(location = 0) in vec4 v0;\nlayout(location = 1) in vec4 v1;\nlayout(location = 2) in vec4 v0displaced;\nlayout(location = 3) in vec4 v1displaced;\nlayout(location = 4) in vec4 v0musicDisplaced;\nlayout(location = 5) in vec4 v1musicDisplaced;\nlayout(location = 6) in vec4 mouseVelocity;\nlayout(location = 7) in vec4 fx;\nlayout(location = 8) in vec4 color;\n\nout vec4 tfV0;\nout vec4 tfV1;\nout vec4 tfV0displaced;\nout vec4 tfV1displaced;\nout vec4 tfV0musicDisplaced;\nout vec4 tfV1musicDisplaced;\nout vec4 tfMouseVelocity;\nout vec4 tfFx;              // tfFx.x  should dictate wheter this is the 'left' or 'right' vertex\n                            // tfFx.y  is the angle of the rotation\n                            // tfFx.z  is the angular accelleration\n                            // tfFx.w  is the opacity - could be collapsed in tfColor.a\nout vec4 tfColor;\n\n\n\nuniform float uTime;\nuniform float uDeltaTime;\n\nuniform vec3  uMouseOrigin;\nuniform vec3  uMouseVelocity;\n\nuniform sampler2D uMusicVisualizerData;\n\n\n/*  defines  */\n" + shaderPart_colors + "\n\n/*  constants declarations  */\n" + shaderPart_general + "\n" + shaderPart_maxDistance + "\n" + shaderPart_screenRatio + "\n" + shaderPart_tan225 + "\n" + shaderPart_cameraZ + "\n" + shaderPart_mouseConstants + "   \n" + shaderPart_sphereRadius + "   \n\n/*  functions declarations  */\n" + shaderPart_classicPerlinNoise + "\n" + shaderPart_atan2 + "\n" + shaderPart_rotMatrix + "\n" + shaderPart_sphericalDistance + "\n" + shaderPart_attractVertex + "\n" + shaderPart_offsetVertexMouse + "\n" + shaderPart_offsetVertexMusic + "\n" + shaderPart_applyVelocityToVertex + "\n\nvoid main() {\n    float saveTheAttributes = color.x + fx.x;\n\n\n    /* DISPLACEMENT ROUTINE  --  SHOULD BE APPLIED ALSO TO POINTSTF.JS */\n    /* DISPLACEMENT ROUTINE  --  SHOULD BE APPLIED ALSO TO POINTSTF.JS */\n    /* DISPLACEMENT ROUTINE  --  SHOULD BE APPLIED ALSO TO POINTSTF.JS */\n\n   \n    /* noise deflater - will make noise less apparent if the point is close to the deflaterPoint */\n   \n    /*  CAN BE OFFLOADED TO THE CPU */\n    /*  CAN BE OFFLOADED TO THE CPU */\n    vec2 phitheta = vec2(sin(uTime * 0.2) * PI, sin(uTime * 0.1) * PI);\n    vec3 pointOnSphere = vec3(cos(phitheta.x) * cos(phitheta.y),  cos(phitheta.y), sin(phitheta.x) * cos(phitheta.y));\n    pointOnSphere *= sphereRadius;\n    /*  CAN BE OFFLOADED TO THE CPU */\n    /*  CAN BE OFFLOADED TO THE CPU */\n\n\n    /** just a linear interpolation -   eg.   distanceFromDeflater is  12, deflaterRadius is 10,   from 10 to 15 we linearly\n     *  interpolate the strenght of the deflater so we have     (12 - 10) / (15 - 10)  and we clamp the result */\n    float deflaterRadius = sphereRadius;\n    float deflaterInterp = deflaterRadius * 0.5;\n\n    float distanceFromDeflaterV0 = length(v0.xyz - pointOnSphere);\n    float noiseDeflaterStrenghtV0 = clamp((distanceFromDeflaterV0 - deflaterRadius) / (deflaterInterp), 0.0, 1.0);\n    float distanceFromDeflaterV1 = length(v1.xyz - pointOnSphere);\n    float noiseDeflaterStrenghtV1 = clamp((distanceFromDeflaterV1 - deflaterRadius) / (deflaterInterp), 0.0, 1.0);\n\n\n\n\n\n    \n\n    /** \n     *      ATTRACTORS - will be calculated against non-displaced vertices, v0 & v1\n     */\n\n     // attractVertex will normalize the attractor\n     vec4 attractorExample = vec4(sin(uTime * 0.2 + 345.0), sin(uTime * 0.37 + 10.0), 1, 1);\n\n     float unusedAttractDistanceV0;   // will be used in pointsTF \n     vec4 attractedV0 = attractVertex(attractorExample, v0, unusedAttractDistanceV0);\n     vec4 attractedV1 = attractVertex(attractorExample, v1, unusedAttractDistanceV0);\n\n\n\n\n\n\n    /* noise displacement */\n    vec4 toCenter = v0 * 1.0;\n    float noise = cnoise(vec2(uTime * 0.03 + v0.x * 0.1, uTime * 0.03 + v0.y * 0.1));\n    float noise2 = cnoise(vec2(uTime * 0.3 + v0.x * 0.5, uTime * 0.3 + v0.y * 0.3));\n    /* noise displacement */\n    vec4 whereShouldv0Be = attractedV0 + (toCenter * noise * 0.5 + toCenter * noise2 * 0.15) * noiseDeflaterStrenghtV0;\n\n    toCenter = v1 * 1.0;\n    noise = cnoise(vec2(uTime * 0.03 + v1.x * 0.1, uTime * 0.03 + v1.y * 0.1));\n    noise2 = cnoise(vec2(uTime * 0.3 + v1.x * 0.5, uTime * 0.3 + v1.y * 0.3));    \n    vec4 whereShouldv1Be = attractedV1 + (toCenter * noise * 0.5 + toCenter * noise2 * 0.15) * noiseDeflaterStrenghtV1;\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n    vec4 wherev0is = v0displaced;\n    vec4 wherev1is = v1displaced;\n\n    /** VELOCITIES ROUTINE  */\n\n    tfMouseVelocity.xy = mouseVelocity.xy;\n    tfMouseVelocity.zw = mouseVelocity.zw;\n\n    offsetVertexMouseVelocity(wherev0is, 0, 1.0);\n    offsetVertexMouseVelocity(wherev1is, 1, 1.0);\n    \n    applyVelocityToVertex(wherev0is, 0);\n    applyVelocityToVertex(wherev1is, 1);\n\n    // decreasing velocities\n    tfMouseVelocity.xy *= 0.99; //reboundStrenght;\n    tfMouseVelocity.zw *= 0.99; //reboundStrenght;\n\n\n    /** VELOCITIES ROUTINE - END  */\n\n\n\n\n\n\n\n\n    // put it back where it should be\n    tfV0 = v0;\t\t\n    tfV1 = v1;\n\n    tfV0displaced = wherev0is * 0.965 + whereShouldv0Be * 0.035;\n    tfV1displaced = wherev1is * 0.965 + whereShouldv1Be * 0.035;\n\n\n    // final deformation step\n    tfV0musicDisplaced = offsetVertexMusic(tfV0displaced, v0);\n    tfV1musicDisplaced = offsetVertexMusic(tfV1displaced, v1);\n\n    \n    \n\n    /* DISPLACEMENT ROUTINE  --  SHOULD BE APPLIED ALSO TO POINTSTF.JS */\n    /* DISPLACEMENT ROUTINE  --  SHOULD BE APPLIED ALSO TO POINTSTF.JS */\n    /* DISPLACEMENT ROUTINE  --  SHOULD BE APPLIED ALSO TO POINTSTF.JS */\n\n    tfFx = fx;\t\n\n\n\n\n\n\n\n\n\n\n\n    /**\n     * lines closer to the attractor will be more reddish\n     */\n    float colorMult = (length(mouseVelocity.xy) * 10.0 + 1.0);\n    float redComp   = 0.1 + \n    \n    pow(                                                         //  vvv radius which shows the effect \n        clamp(1.0 - (unusedAttractDistanceV0 / (sphereCircleLength * 0.4)), 0.0, 1.0)\n    , 0.9) * 0.85;\n\n\n\n\n    // tfColor = vec4(redComp * colorMult * 1.5, 0.1 * colorMult, 0.1 * colorMult * 2.0, 0);\n    tfColor = " + shaderPart_colors_TFlineAttractor + "    \n\n\n\n\n\n\n\n    /**\n     * \n     * animate line shatter \n     * \n     */\n\n    // the transform feedback will be responsible for color changes, opacity, angle of rotation and angular velocity\n\n    float distancev0v1 = length(v0musicDisplaced.xyz - v1musicDisplaced.xyz);\n    \n    if(distancev0v1 > maxDistance) {\n    \n        tfColor = " + shaderPart_colors_TFlineShatter + "    \n\n\n        float angularVelocity = tfFx.z;\n        float angleRotation   = tfFx.y;\n\n\n        if(angularVelocity == 0.0) { \n            angularVelocity = 0.06;\n            tfFx.y = 0.0; \n            tfFx.w = 1.0; \n        }\n\n\n        tfFx.z  = angularVelocity * 0.995; \n        tfFx.y  = angleRotation + tfFx.z; \n        tfFx.w  = tfFx.w * 0.99;\n\n        return;\n    } \n\n\n    // put lines back togheter if we got there, since they're close togheter    \n    \n    tfFx.z  = 0.0;     // reset angular velocity \n    tfFx.y  *= 0.93;   // slowly rerotate the lines back into place\n    tfFx.w  = min(tfFx.w + uDeltaTime, 1.0);\n}";
+
+var icolinesTFf = "#version 300 es\nprecision mediump float;\n\nout vec4 FragColor;\n\nvoid main() {\n    FragColor = vec4(0);\n}";
+"use strict";
+
+var icolinesv = "#version 300 es\nlayout(location = 0) in vec4 v0;\nlayout(location = 1) in vec4 v1;\nlayout(location = 2) in vec4 v0displaced;\nlayout(location = 3) in vec4 v1displaced;\nlayout(location = 4) in vec4 v0musicDisplaced;\nlayout(location = 5) in vec4 v1musicDisplaced;\nlayout(location = 6) in vec4 mouseVelocity;\nlayout(location = 7) in vec4 fx;\nlayout(location = 8) in vec4 color;\n\nuniform mat4 projection;\nuniform mat4 model;\nuniform mat4 view;  \n\nout vec4 Color;\n\n\n" + shaderPart_maxDistance + "\n\n\n" + shaderPart_general + "\n" + shaderPart_hash3 + "\n" + shaderPart_rotMatrix + "\n\n\n\nvec4 rotateVertex(float distancev0v1, float maxDistance) {\n    float isTheRightVertex = fx.x;\n\n    vec4 v0subv1 = v0musicDisplaced - v1musicDisplaced;\n    vec4 v0midv1 = (v0musicDisplaced + v1musicDisplaced) / 2.0;\n\n\n    float angularRotation = fx.y;\n\n     \n    vec4 centered = (v0subv1) * 0.5;\n    centered = rotationMatrix(normalize(hash3(v0.xy + v1.xy * 0.376 + angularRotation * 0.000000001)), angularRotation) * centered;\n    centered *= 1.0 / (distancev0v1 / maxDistance);\n    centered += v0midv1;\n\n    return centered;\n}\n\n\nvoid main() {\t\n    vec4 finalPos = v0musicDisplaced;\t\n\n\n\n    float globalLineAlpha = 0.15 + length(mouseVelocity.xy) * 0.001;\n\n\n\n    Color.xyz = color.xyz;\n    Color.a   = fx.w * 0.5 * globalLineAlpha;\n\n    float saveTheAttributes = mouseVelocity.x + v0displaced.x + v1displaced.x;\n\n\n    float distancev0v1 = length(v0musicDisplaced.xyz - v1musicDisplaced.xyz);\n\n    // animate line shatter\n    if(distancev0v1 > maxDistance) {\n        finalPos = rotateVertex(distancev0v1, maxDistance);\n        Color.a   = fx.w * 0.65 * globalLineAlpha;\n    } else {\n        finalPos = rotateVertex(distancev0v1, distancev0v1);        \n    }\n\n    gl_Position = projection * view * model * vec4(finalPos.xyz, 1.0);\n}";
+
+var icolinesf = "#version 300 es\nprecision mediump float;\n\nin vec4 Color;\n\nout vec4 FragColor;\n\nvoid main() {\n\tFragColor = Color;\n}";
+"use strict";
+
+function generate_icosahedron_wlines() {
+    var t = 1.61803399;
+
+    var vertices = [[-1, t, 0], [1, t, 0], [-1, -t, 0], [1, -t, 0], [0, -1, t], [0, 1, t], [0, -1, -t], [0, 1, -t], [t, 0, -1], [t, 0, 1], [-t, 0, -1], [-t, 0, 1]];
+
+    // the hash property will return the index of the vertex in vertices
+    var verticeshashtable = {};
+    for (var i = 0; i < vertices.length; i++) {
+        var hash = strhash("x" + vertices[i][0] + "y" + vertices[i][1] + "z" + vertices[i][2]);
+        verticeshashtable[hash] = i;
+    }
+
+    var triangles = [[0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11], [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6], [7, 1, 8], [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9], [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1]];
+
+    var newVertices = [];
+    var newTriangles = [];
+    var recursions = 4;
+    for (var i = 0; i < recursions; i++) {
+        for (var j = 0; j < triangles.length; j++) {
+
+            var v0 = vertices[triangles[j][0]];
+            var v1 = vertices[triangles[j][1]];
+            var v2 = vertices[triangles[j][2]];
+            var midpointv0v1 = [(v0[0] + v1[0]) * 0.5, (v0[1] + v1[1]) * 0.5, (v0[2] + v1[2]) * 0.5];
+            var midpointv0v2 = [(v0[0] + v2[0]) * 0.5, (v0[1] + v2[1]) * 0.5, (v0[2] + v2[2]) * 0.5];
+            var midpointv1v2 = [(v1[0] + v2[0]) * 0.5, (v1[1] + v2[1]) * 0.5, (v1[2] + v2[2]) * 0.5];
+
+            // TODO: the hashing function is slow. find something else 
+            var hash1 = strhash("x" + midpointv0v1[0] + "y" + midpointv0v1[1] + "z" + midpointv0v1[2]);
+            if (verticeshashtable[hash1] === undefined) {
+                vertices.push(midpointv0v1);
+                verticeshashtable[hash1] = vertices.length - 1;
+            }
+
+            var hash2 = strhash("x" + midpointv0v2[0] + "y" + midpointv0v2[1] + "z" + midpointv0v2[2]);
+            if (verticeshashtable[hash2] === undefined) {
+                vertices.push(midpointv0v2);
+                verticeshashtable[hash2] = vertices.length - 1;
+            }
+
+            var hash3 = strhash("x" + midpointv1v2[0] + "y" + midpointv1v2[1] + "z" + midpointv1v2[2]);
+            if (verticeshashtable[hash3] === undefined) {
+                vertices.push(midpointv1v2);
+                verticeshashtable[hash3] = vertices.length - 1;
+            }
+
+            var mid01index = verticeshashtable[hash1];
+            var mid02index = verticeshashtable[hash2];
+            var mid12index = verticeshashtable[hash3];
+
+            // newTriangles.push([    triangles[j][0], mid01index, mid02index    ]);
+            // newTriangles.push([    triangles[j][1], mid01index, mid12index    ]);
+            // newTriangles.push([    triangles[j][2], mid02index, mid12index    ]);
+            // newTriangles.push([    mid02index, mid01index, mid12index         ]);
+
+            newTriangles.push([triangles[j][0], mid01index, mid02index]);
+            newTriangles.push([mid01index, triangles[j][1], mid12index]);
+            newTriangles.push([mid02index, mid12index, triangles[j][2]]);
+            newTriangles.push([mid01index, mid02index, mid12index]);
+        }
+
+        triangles = newTriangles;
+        newTriangles = [];
+    }
+
+    pushVerticesOnSphereBoundaries(vertices);
+
+    var hashAline = function hashAline(v0, v1) {
+        // var hash  = "" + strhash("x"  + v0[0] + "y"  + v0[1] + "z"  + v0[2] +
+        //                          "x1" + v1[0] + "y1" + v1[1] + "z1" + v1[2]);
+
+        var hash = "" + strhash("x" + (v0[0] + v1[0]) + "y" + (v0[1] + v1[1]) + "z" + (v0[2] + v1[2]));
+
+        if (linesHashTable[hash] === undefined) {
+            linesBuffer.push(v0[0], v0[1], v0[2], 0, // v0
+            v1[0], v1[1], v1[2], 0, // v1
+            v0[0], v0[1], v0[2], 0, // v0displacement - initially set to original pos
+            v1[0], v1[1], v1[2], 0, // v0displacement - initially set to original pos
+            0, 0, 0, 0, 0, 0, 0, 0, // v0 & v1 musicDisplacement
+            0, 0, 0, 0, // mouseVelocity
+            0, 0, 0, 0, // fx       fx.x indicates if it's the first or second vertex
+            1, 0, 0, 0, // color
+
+
+            v1[0], v1[1], v1[2], 0, v0[0], v0[1], v0[2], 0, v1[0], v1[1], v1[2], 0, v0[0], v0[1], v0[2], 0, 0, 0, 0, 0, 0, 0, 0, 0, // v0 & v1 musicDisplacement                                    
+            0, 0, 0, 0, // mouseVelocity                                    
+            1, 0, 0, 0, // fx.x indicates this is the second vertex of the line
+            1, 0, 0, 0);
+
+            linesHashTable[hash] = 1;
+        }
+    };
+
+    var linesBuffer = [];
+    var linesHashTable = {};
+    // for all triangles, compute lines
+    for (var i = 0; i < triangles.length; i++) {
+        var v0 = vertices[triangles[i][0]];
+        var v1 = vertices[triangles[i][1]];
+        var v2 = vertices[triangles[i][2]];
+
+        // if(i % 5 !== 0) continue;
+
+        hashAline(v0, v1);
+        hashAline(v1, v2);
+        hashAline(v2, v0);
+    }
+
+    var nLinesVerts = linesBuffer.length / 36;
+
+    var verticesBuffer = [];
+    var bloomVerticesBuffer = [];
+    for (var i = 0; i < vertices.length; i++) {
+
+        // if(i % 9 !== 0) continue;
+
+        verticesBuffer.push(vertices[i][0], vertices[i][1], vertices[i][2], i, vertices[i][0], vertices[i][1], vertices[i][2], i, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+        /* enable points gone wild */
+        if (i == vertices.length - 1) continue;
+        for (var j = 0; j < 35; j++) {
+            var t0 = j / 5 + 1 / 5;
+            var t1 = 1 - t0;
+
+            // t0 *= 0.6;
+            // t1 *= 0.6;
+
+            var x = vertices[i][0] * t0 + vertices[i + 1][0] * t1;
+            var y = vertices[i][1] * t0 + vertices[i + 1][1] * t1;
+            var z = vertices[i][2] * t0 + vertices[i + 1][2] * t1;
+
+            verticesBuffer.push(x, y, z, i, x, y, z, i, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0); // fx2.x tells us if this is a hidden vertex
+
+            if (j < 13) {
+                bloomVerticesBuffer.push(x, y, z, i, x, y, z, i, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0); // fx2.x tells us if this is a hidden vertex
+            }
+        }
+        /* enable points gone wild - END*/
+    }
+
+    return {
+        vertices: vertices,
+        bloomVerticesBuffer: bloomVerticesBuffer,
+        verticesBuffer: verticesBuffer,
+        linesBuffer: linesBuffer,
+        nVerts: verticesBuffer.length / 24,
+        nBloomVerts: bloomVerticesBuffer.length / 24,
+        nLinesVerts: nLinesVerts
+    };
+}
+
+function pushVerticesOnSphereBoundaries(vertices) {
+    for (var i = 0, l = vertices.length; i < l; i++) {
+        var vec = vec3.fromValues(vertices[i][0], vertices[i][1], vertices[i][2]);
+        var length = vec3.len(vec);
+
+        var ratio = radius / length;
+
+        vertices[i][0] *= ratio;
+        vertices[i][1] *= ratio;
+        vertices[i][2] *= ratio;
+    }
+}
+
+// deprecated
+// deprecated
+// deprecated
+// deprecated
+// function generate_icosahedron() {   
+//     var t = 1.61803399;
+
+//     var vertices = [
+//         [-1,  t,  0],
+//         [ 1,  t,  0],
+//         [-1, -t,  0],
+//         [ 1, -t,  0],
+//         [ 0, -1,  t],
+//         [ 0,  1,  t],
+//         [ 0, -1, -t],
+//         [ 0,  1, -t],
+//         [ t,  0, -1],
+//         [ t,  0,  1],
+//         [-t,  0, -1],
+//         [-t,  0,  1]
+//     ];
+
+//     var colors = [];
+//     for(var i = 0; i < 12; i++) colors.push([1,1,1]);
+
+//     // the hash property will return the index of the vertex in vertices
+//     verticeshashtable = {};
+//     for(var i = 0; i < vertices.length; i++) {
+//         var hash = strhash("x" + vertices[i][0] + "y" + vertices[i][1] + "z" + vertices[i][2]);
+//         verticeshashtable[hash] = i;
+//     }
+
+//     var triangles = [
+//         [0, 11, 5 ],
+//         [0, 5, 1  ],
+//         [0, 1, 7  ],
+//         [0, 7, 10 ],
+//         [0, 10, 11],
+
+//         [1, 5, 9  ],
+//         [5, 11, 4 ],
+//         [11, 10, 2],
+//         [10, 7, 6 ],
+//         [7, 1, 8  ],
+
+//         [3, 9, 4],
+//         [3, 4, 2],
+//         [3, 2, 6],
+//         [3, 6, 8],
+//         [3, 8, 9],
+
+//         [4, 9, 5 ],
+//         [2, 4, 11],
+//         [6, 2, 10],
+//         [8, 6, 7 ],
+//         [9, 8, 1 ]
+//     ];
+
+//     var newVertices = [];
+//     var newTriangles = [];
+//     var recursions   = 3;
+//     for(var i = 0; i < recursions; i++) {
+//         for(var j = 0; j < triangles.length; j++) {
+
+//             var v0 = vertices[triangles[j][0]];        
+//             var v1 = vertices[triangles[j][1]];        
+//             var v2 = vertices[triangles[j][2]];        
+//             var midpointv0v1 = [ (v0[0] + v1[0]) * 0.5, (v0[1] + v1[1]) * 0.5,  (v0[2] + v1[2]) * 0.5];
+//             var midpointv0v2 = [ (v0[0] + v2[0]) * 0.5, (v0[1] + v2[1]) * 0.5,  (v0[2] + v2[2]) * 0.5];
+//             var midpointv1v2 = [ (v1[0] + v2[0]) * 0.5, (v1[1] + v2[1]) * 0.5,  (v1[2] + v2[2]) * 0.5];
+
+
+//             // TODO: the hashing function is PAINFULLY slow. find something else 
+//             var hash1 = strhash("x" + midpointv0v1[0] + "y" + midpointv0v1[1] + "z" + midpointv0v1[2]);
+//             if(verticeshashtable[hash1] === undefined) {
+//                 vertices.push(midpointv0v1);
+//                 verticeshashtable[hash1] = vertices.length - 1;
+//                 colors.push([1,1,1]);
+//                 if(i == 2    && j == 1) { colors[colors.length-1] = [0,1,0]; }          
+//             }
+
+//             var hash2 = strhash("x" + midpointv0v2[0] + "y" + midpointv0v2[1] + "z" + midpointv0v2[2]);
+//             if(verticeshashtable[hash2] === undefined) {
+//                 vertices.push(midpointv0v2);
+//                 verticeshashtable[hash2] = vertices.length - 1;
+//                 colors.push([1,1,1]);       
+//                 if(i == 2    && j == 1) { colors[colors.length-1] = [0,0,1]; }         
+//             }
+
+//             var hash3 = strhash("x" + midpointv1v2[0] + "y" + midpointv1v2[1] + "z" + midpointv1v2[2]);
+//             if(verticeshashtable[hash3] === undefined) {
+//                 vertices.push(midpointv1v2);
+//                 verticeshashtable[hash3] = vertices.length - 1;
+//                 colors.push([1,1,1]);         
+//                 if(i == 2    && j == 1) { colors[colors.length-1] = [1,0,0]; }               
+//             }
+
+
+//             var mid01index = verticeshashtable[hash1];
+//             var mid02index = verticeshashtable[hash2];
+//             var mid12index = verticeshashtable[hash3];
+
+//             newTriangles.push([    triangles[j][0], mid01index, mid02index    ]);
+//             newTriangles.push([    triangles[j][1], mid01index, mid12index    ]);
+//             newTriangles.push([    triangles[j][2], mid02index, mid12index    ]);
+//             newTriangles.push([    mid02index, mid01index, mid12index         ]);
+//         }
+
+//         triangles = newTriangles;
+//         newTriangles = [];
+//     }
+
+
+//     var arr = [];
+//     var earr = [];
+//     for(var i = 0; i < vertices.length; i++) {
+//         arr.push(vertices[i][0], vertices[i][1], vertices[i][2], colors[i][0], colors[i][1], colors[i][2]);
+//     }
+//     for(var i = 0; i < triangles.length; i++) {
+//         earr.push(triangles[i][0], triangles[i][1], triangles[i][2]);
+//     }
+
+
+//     return {
+//         vertices:  vertices,
+//         triangles: triangles,
+//         verticesBuffer: arr,
+//         elementsBuffer: earr
+//     };
+// }
+"use strict";
+
+function footerResize() {
+    var footerSvg1 = document.getElementById("footerSvg1");
+    var DOMfooter = document.getElementsByClassName("pageFooter")[0];
+    var DOMenhancingWebExp = document.getElementsByClassName("fewe")[0];
+
+    var svgRatio = 1.47;
+    var svgWidth = innerWidth;
+    var svgHeight = innerWidth / svgRatio;
+    var svgHeightDock = 0.82;
+
+    var screenRatio = innerWidth / innerHeight;
+    if (screenRatio <= 1.2) {
+        svgWidth *= 1.5;
+        svgHeight *= 1.5;
+        svgHeightDock = 0.76;
+    }
+
+    var footerOffsetTop = DOMfooter.getBoundingClientRect().top;
+    var feweOffsetBottom = DOMenhancingWebExp.getBoundingClientRect().bottom;
+
+    footerSvg1.style.top = feweOffsetBottom - footerOffsetTop - svgHeight * svgHeightDock + "px";
+}
+
+function footerSVGHider() {
+    if (footerSVGHider.prototype.hidden === false && window.pageYOffset === 0) {
+        /* hide svgs, animating dasharray is performance intensive */
+        document.querySelector("#footerSvg1").style.display = "none";
+        footerSVGHider.prototype.hidden = true;
+    }
+
+    if (footerSVGHider.prototype.hidden === true && window.pageYOffset !== 0) {
+        document.querySelector("#footerSvg1").style.display = "block";
+        footerSVGHider.prototype.hidden = false;
+    }
+}
+footerSVGHider.prototype.hidden = false;
+"use strict";
+
+function MusicBox(filepath) {
+
+    /* musicBars DOM element controller */
+    var musicBarsDOM = document.querySelector(".mhMusicBars");
+    musicBarsDOM.addEventListener("click", function (e) {
+
+        if (!musicBoxReady) return;
+
+        musicBarsDOM.classList.toggle("active");
+
+        if (gainNode.gain.value === 0) gainNode.gain.value = 0.45;else gainNode.gain.value = 0;
+    });
+
+    /* musicBars DOM element controller - END */
+
+    /*   Audio context creation   */
+    var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    var request = new XMLHttpRequest();
+    request.open('GET', filepath, true);
+    request.responseType = 'arraybuffer';
+
+    request.onload = function () {
+        var audioData = request.response;
+
+        audioCtx.decodeAudioData(audioData, initBackgroundMusic, function (e) {
+            console.log("Error with decoding audio data" + e.err);
+        });
+    };
+    request.send();
+    /*   Audio context creation - END   */
+
+    var musicAnalyser;
+    var gainNode;
+    var floatTimeDomainDataArray;
+    var musicBoxReady = false;
+    var source;
+    function initBackgroundMusic(buffer) {
+
+        musicAnalyser = audioCtx.createAnalyser();
+        musicAnalyser.fftSize = 512;
+        musicAnalyser.smoothingTimeConstant = 0.8;
+
+        gainNode = audioCtx.createGain();
+        gainNode.gain.value = 0.45;
+
+        var bufferLength = musicAnalyser.frequencyBinCount;
+        floatTimeDomainDataArray = new Float32Array(bufferLength);
+        for (var i = 0; i < bufferLength; i++) {
+            floatTimeDomainDataArray[i] = -140;
+        }createVisualizerTextureData();
+
+        source = audioCtx.createBufferSource();
+        source.buffer = buffer;
+        source.loop = true;
+
+        source.connect(gainNode);
+        gainNode.connect(musicAnalyser);
+        musicAnalyser.connect(audioCtx.destination);
+
+        musicBoxReady = true;
+    }
+
+    var visualizerTexture;
+    function createVisualizerTextureData() {
+        visualizerTexture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, visualizerTexture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.R32F, floatTimeDomainDataArray.length, 1, 0, gl.RED, gl.FLOAT, floatTimeDomainDataArray);
+
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    }
+
+    /*   public members   */
+    this.updateVisualizerTextureData = function (deltatime) {
+        if (!musicBoxReady) return;
+
+        // musicAnalyser.getFloatTimeDomainData(floatTimeDomainDataArray); 
+        musicAnalyser.getFloatFrequencyData(floatTimeDomainDataArray);
+
+        gl.bindTexture(gl.TEXTURE_2D, visualizerTexture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.R32F, floatTimeDomainDataArray.length, 1, 0, gl.RED, gl.FLOAT, floatTimeDomainDataArray);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    };
+
+    this.getVisualizerTexture = function () {
+        return visualizerTexture;
+    };
+    // it polls musicBoxReady to check if we can start the song
+    this.start = function () {
+        var centralSquareDOM = document.querySelector(".mhCentralSquare");
+        var siteTitleDOM = document.querySelector(".siteTitle");
+
+        var startIntervalID = setInterval(function () {
+            console.log("there");
+            if (musicBoxReady) {
+
+                if (audioCtx.state == "suspended") {
+                    var clickedSomewhere = function clickedSomewhere() {
+
+                        onAudioContextReady();
+
+                        document.body.removeChild(clickAnywhereText);
+                        window.removeEventListener("mousedown", clickedSomewhere);
+                        window.removeEventListener("touchstart", clickedSomewhere);
+                    };
+
+                    var clickAnywhereText = document.createElement("p");
+                    clickAnywhereText.textContent = "Click anywhere to start";
+                    clickAnywhereText.style.position = "absolute";
+                    clickAnywhereText.style.top = "2em";
+                    // clickAnywhereText.style.transform = "translateY(-50%)";
+                    clickAnywhereText.style.width = "100%";
+                    clickAnywhereText.style.textAlign = "center";
+                    clickAnywhereText.style.fontFamily = "Josefin Slab";
+                    clickAnywhereText.style.fontSize = "calc(0.95vw + 1em)";
+                    clickAnywhereText.style.color = "white";
+                    document.body.appendChild(clickAnywhereText);
+
+                    window.addEventListener("mousedown", clickedSomewhere);
+                    window.addEventListener("touchstart", clickedSomewhere);
+                } else {
+                    onAudioContextReady();
+                }
+
+                window.clearInterval(startIntervalID);
+            }
+        }, 3000);
+
+        function onAudioContextReady() {
+            source.start();
+            centralSquareDOM.style.opacity = "1";
+            siteTitleDOM.style.opacity = "1";
+        }
+    };
+    /*   public members - END  */
+}
+"use strict";
+
+function initRateStars() {
+    var DOMstars = document.querySelectorAll('div.fcentered svg[id*="svgRateStar"]');
+
+    var enterCallback = function enterCallback(e) {
+        var starId = parseInt(e.currentTarget.id.substr(e.currentTarget.id.length - 1, 1));
+        for (var i = 0; i < starId; i++) {
+            DOMstars[i].setAttribute("class", "active");
+        }
+    };
+
+    var leaveCallback = function leaveCallback(e) {
+        for (var i = 0; i < 5; i++) {
+            DOMstars[i].setAttribute("class", "");
+        }
+    };
+
+    for (var i = 0; i < DOMstars.length; i++) {
+        DOMstars[i].addEventListener("mouseenter", enterCallback);
+        DOMstars[i].addEventListener("mouseleave", leaveCallback);
+    }
+}
+'use strict';
+
+function lazyloadImages() {
+    [].forEach.call(document.getElementsByClassName('lazyload'), function (item, index) {
+        item.setAttribute('src', item.getAttribute('data-src'));
+    });
+
+    /* check for HD screens to place pixel perfect images */
+    [].forEach.call(document.getElementsByClassName('lazyloadfooter'), function (item, index) {
+        if (screen.width < 1800) item.setAttribute('src', item.getAttribute('data-src'));else item.setAttribute('src', item.getAttribute('data-src-hd'));
+    });
+}
+'use strict';
+
+function initTypography() {
+
+    if (document.documentElement.className.indexOf("fonts-loaded") > -1) {
+        // cookie is defined, fonts are already loaded 
+        return;
+    }
+
+    var font1 = new FontFaceObserver('Anders');
+    var font2 = new FontFaceObserver('Josefin Slab');
+    var font3 = new FontFaceObserver('Sorts Mill');
+
+    Promise.all([font1.load(), font2.load(), font3.load()]).then(function () {
+        document.documentElement.className += " fonts-loaded";
+    });
+}
+"use strict";
+
+function initMenu() {
+    var DOMMenu = document.querySelector(".mhMenuIcon");
+    var DOMMenuCellsContainer = document.querySelector(".mhOpenMenuContainer");
+
+    var active = false;
+
+    DOMMenu.addEventListener("click", function () {
+        DOMMenu.classList.toggle("active");
+        DOMMenuCellsContainer.classList.toggle("active");
+
+        if (!active) {
+            DOMMenuCellsContainer.style.pointerEvents = "all";
+        } else {
+            DOMMenuCellsContainer.style.pointerEvents = "none";
+        }
+
+        active = !active;
+    });
+}
+"use strict";
+
+window.addEventListener("load", init);
+window.addEventListener("resize", onResize);
+
+function init() {
+    initTypography();
+    initRateStars();
+    initMenu();
+
+    lazyloadImages();
+
+    onResize();
+}
+
+function onResize() {
+    canvasResize();
+    footerResize();
+}
