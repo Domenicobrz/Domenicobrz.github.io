@@ -349,42 +349,121 @@ function loadModel(hdrCubeRenderTarget) {
         reflectivity: 0.8,
     } );
 
-    function meshScale(mesh) {
-        mesh.scale.set(0.0035, 0.0035, 0.0035);
-        mesh.rotation.x = -Math.PI/2;
-        mesh.rotation.y = 0;
+
+
+    let poleHighestY = 0;
+    let scaleFactor = 0.0035;
+    function geometryScale(mesh, applyRotation) {
+        let positionArray = mesh.geometry.attributes.position.array;
+        let normalArray   = mesh.geometry.attributes.normal.array;
+
+        let isPole = mesh.name == "pole";
+        if (isPole) poleHighestY = 0;
+
+        let rotAxis = new THREE.Vector3(1, 0, 0);
+        let rotAngle = -Math.PI / 2; 
+
+        if (!applyRotation) rotAngle = 0;
+
+        for (let i = 0; i < positionArray.length; i += 3) {
+            let x = positionArray[i + 0];
+            let y = positionArray[i + 1];
+            let z = positionArray[i + 2];
+
+            if(z > poleHighestY && isPole) poleHighestY = z;
+            if(y > poleHighestY && isPole) poleHighestY = y;
+
+            let vector = new THREE.Vector3(x, y, z);
+            vector.applyAxisAngle(rotAxis, rotAngle);
+
+            positionArray[i + 0] = vector.x * scaleFactor;
+            positionArray[i + 1] = vector.y * scaleFactor;
+            positionArray[i + 2] = vector.z * scaleFactor;
+
+
+            let nx = normalArray[i + 0];
+            let ny = normalArray[i + 1];
+            let nz = normalArray[i + 2];
+
+            vector.set(nx, ny, nz);
+            vector.applyAxisAngle(rotAxis, rotAngle);
+            
+            normalArray[i + 0] = vector.x;
+            normalArray[i + 1] = vector.y;
+            normalArray[i + 2] = vector.z;
+        }
+
+        // console.log("poleHighestY: " + poleHighestY);
+
+        setArmPosition();
 
         mesh.castShadow = true;
         mesh.receiveShadow = false;
     }
 
-    loader.load( "assets/models/MA1-B180-102-000100.obj", function( object ) {
+    function setArmPosition() {
+        let armMesh = scene.getObjectByName("arm");
+        console.log(poleHighestY);
+
+        if(armMesh) {
+            armMesh.position.set(0, poleHighestY * scaleFactor - 0.3, 0);
+        }
+    }
+
+
+    let armPath = "assets/models/MA1-B180-102-000100.obj"; 
+    // let polePath = "assets/models/PAS-0000010.obj"; 
+    let polePath1 = "assets/models/poles/pole_12.obj"; 
+    let polePath2 = "assets/models/poles/pole_11_arm_17_lum_9.obj"; 
+    let polePath3 = "assets/models/PAS-0000010.obj"; 
+    let polePath4 = "assets/models/PL4-000185.obj"; 
+
+    loader.load( armPath, function( object ) {
 
         let mesh = object.children[0];
-
-        meshScale(mesh);
-        mesh.position.set(0, 21, 0);
-        mesh.material = shirtMaterial;
-
+        mesh.name = "arm";
         scene.add( mesh );
-        // scene.add(new THREE.Mesh(new THREE.SphereGeometry(0,0, 5), shirtMaterial));
+
+        geometryScale(mesh, true);
+        mesh.material = shirtMaterial;
+        // scene.add(new THREE.Mesh(new THREE.SphereGeometry(0, 0, 5), shirtMaterial));
     } );
 
-    loader.load( "assets/models/PAS-0000010.obj", function( object ) {
+    loader.load( polePath1, function( object ) {
         let mesh = object.children[0];
-
-        meshScale(mesh);
-        mesh.material = shirtMaterial;
-
+        mesh.name = "pole";
         scene.add( mesh );
-        // scene.add(new THREE.Mesh(new THREE.SphereGeometry(0,0, 5), shirtMaterial));
-        
+
+        geometryScale(mesh);
+        mesh.material = shirtMaterial;
     });
 
 
 
+    let buttons = document.querySelectorAll(".placeholder-controls .button");
+    for (let i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener("click", function() {
+            let path = "";
+            if(i === 0) path = polePath1;
+            if(i === 1) path = polePath2;
+            if(i === 2) path = polePath3;
+            if(i === 3) path = polePath4;
 
+            let applyRotation = i >= 2 ? true : false;
 
+            loader.load( path, function( object ) {
+                var previousPole = scene.getObjectByName("pole");
+                if(previousPole) scene.remove( previousPole );              
+                
+                let mesh = object.children[0];
+                mesh.name = "pole";
+                scene.add( mesh );
+        
+                geometryScale(mesh, applyRotation);
+                mesh.material = shirtMaterial;
+            });
+        });
+    }
 
 
 
@@ -417,10 +496,12 @@ function loadModel(hdrCubeRenderTarget) {
         planeMesh.castShadow    = false;
         planeMesh.receiveShadow = true;
         planeMesh.rotation.x    = -Math.PI / 2;
+        planeMesh.position.set(0, -0.01, 0);
+
+
 
 
 
 
     scene.add(planeMesh);
-
 }

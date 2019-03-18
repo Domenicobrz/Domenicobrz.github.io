@@ -5,3 +5,44 @@ html, body {
     overflow: hidden;
     margin: 0;
 }
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.placeholder-controls {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 0.5em;
+
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.placeholder-controls .button {
+    width:  2.25em;
+    height: 2.25em;
+
+    border-radius: 8px;
+    border: 2px solid white;
+    color: white;
+
+    cursor: pointer;
+
+    font-family: Georgia, 'Times New Roman', Times, serif;
+
+    line-height: 2.25em;
+    text-align: center;
+
+    font-size: 1.35em;
+
+    margin: 0.5em;
+}
+
+.placeholder-controls .button:active {
+    color: #444;
+    border: 2px solid #444;
+}
