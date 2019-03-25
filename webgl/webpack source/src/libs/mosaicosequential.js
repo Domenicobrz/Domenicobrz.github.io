@@ -1,5 +1,6 @@
 import { dom } from "./DOMreferences";
 import { selectedPosts } from "./posts";
+import { isMobile } from "./isMobile";
 
 
 var CELL_MARGIN = 2;
@@ -75,7 +76,10 @@ function deleteExistingChildren() {
 
 
 function RenderMosaicoGrid(resizeOnly) {
+    
     var containerWidth = innerWidth - CELL_MARGIN * 2;
+    // fixes an android bug where innerWidth is unreliable
+    if (isMobile()) containerWidth = Math.min(innerWidth, outerWidth) - CELL_MARGIN * 2;
 
     if (innerWidth > 600) containerWidth  = 580 - CELL_MARGIN * 2;
     if (innerWidth > 900) containerWidth  = 700;
