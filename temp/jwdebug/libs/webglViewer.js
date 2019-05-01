@@ -457,7 +457,24 @@ class WebGLViewer {
         console.log(this.exrCubeRenderTarget.texture);
 
 
-        this.scene.add( mesh );
+
+
+
+
+
+        let pg = new THREE.PlaneBufferGeometry(2,2);
+        let pm = new THREE.MeshBasicMaterial( {
+            color:  0xffffff,
+            map:    diffuseTexture,
+            side: THREE.DoubleSide,  
+        });
+        let pme = new THREE.Mesh(pg, pm);
+        this.scene.add(pme);
+
+
+
+
+        // this.scene.add( mesh );
     }
 
     // /**
