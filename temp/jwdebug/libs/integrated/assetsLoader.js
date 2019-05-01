@@ -360,19 +360,16 @@ function AssetsLoader() {
             }
         );
 
-        console.log(asset);
+        // console.log(asset);
 
         let types = ['diffuse', 'normal', 'ao', 'roughness', 'metalness'];
         for(let i = 0; i < types.length; i++) {
             let type = types[i];
-            console.log("for loop iteration with: " + (type+"Path"));
 
             if(asset[type + "Path"] !== undefined) {
-                console.log("trying to load: " + asset[type+"Path"]);
-
                 new THREE.TextureLoader().load( asset[type + "Path"], function(texture) {
-                    console.log("loaded: " + asset[type+"Path"]);
-                    console.log(texture);
+                    // console.log("loaded: " + asset[type+"Path"]);
+                    // console.log(texture);
 
                     if(type == "diffuse") diffuseTexture = texture;
                     if(type == "normal") normalTexture = texture;
@@ -388,8 +385,8 @@ function AssetsLoader() {
             itemsDownloaded++;
             if(itemsDownloaded !== itemsToDownload) return;
 
-            console.log("firing update call with: ");
-            console.log(diffuseTexture);
+            // console.log("firing update call with: ");
+            // console.log(diffuseTexture);
 
             update({ 
                 asset: asset, 

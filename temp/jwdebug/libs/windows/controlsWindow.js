@@ -104,12 +104,18 @@ class ControlsWindow {
             let roughnessTexture;
             let metalnessTexture;
             let count = files.length;
+
+            console.log(files);
             
             for (let i=0; i < files.length; i++) {
                 let file = files[i];
                 let reader = new FileReader();
+
                   
                 reader.addEventListener("load", function () {
+                    console.log("file read: " + file.name);
+                    console.log("file read result: " + reader.result);
+
                     let result = reader.result;
                     if(file.name.includes(".obj")) obj = result;
                     if(file.name.includes("_diffuse")) diffuseTexture = result;
@@ -180,309 +186,11 @@ class ControlsWindow {
             );
         }
 
-        function MannequinOBJDropped(element, result, file) {
-            commonFunc({
-                "type": "MANNEQUIN_MODEL",
-                "path": result,
-                
-            }, 
-            element, 
-            result, 
-            file);
-        }
-
-        function ShirtOBJDropped(element, result, file) {
-
-            commonFunc({
-                "type": "SHIRT_MODEL",
-                "path": result,
-                "translation": {
-                    "x": 0,
-                    "y": -6.1588506461421,
-                    "z": 0.32928441021662125
-                },
-                "scale": 0.27063357446419517,
-                "materialDefaults": {
-                    "shirt_roughness":       "1",  // those needs to be set to 1 initially!! since these are multiplied by the ORM texture
-                    // "shirt_metallic":        "1",
-                    // "shirt_reflectivity":    "1",
-                    "shirt_envMapIntensity": "1",
-                    "mannequin_color": "0xffffff"
-                }
-            }, 
-            element, 
-            result, 
-            file,
-            function() {
-
-                if(sceneScalingCheckbox.checked) return;
-
-                let mesh = app.webGLViewer.scene.getObjectByName("shirtmodel");
-                let positionArray = mesh.geometry.attributes.position.array;
-                let minVertex = {
-                    x: 9999999999,
-                    y: 9999999999,
-                    z: 9999999999,
-                }
-                let maxVertex = {
-                    x: -9999999999,
-                    y: -9999999999,
-                    z: -9999999999,
-                }
-                for( let i = 0; i < positionArray.length; i+=3 ) {
-                    let px = positionArray[i + 0];
-                    let py = positionArray[i + 1];
-                    let pz = positionArray[i + 2];
-
-                    if(px < minVertex.x) minVertex.x = px;
-                    if(py < minVertex.y) minVertex.y = py;
-                    if(pz < minVertex.z) minVertex.z = pz;
-
-                    if(px > maxVertex.x) maxVertex.x = px;
-                    if(py > maxVertex.y) maxVertex.y = py;
-                    if(pz > maxVertex.z) maxVertex.z = pz;
-                } 
-
-                let yDiff = maxVertex.y - minVertex.y;
-                scaleFactor = 8 / yDiff;
-
-                yTransl = -((maxVertex.y + minVertex.y) / 2) * scaleFactor; 
-                xTransl = -((maxVertex.x + minVertex.x) / 2) * scaleFactor; 
-                zTransl = -((maxVertex.z + minVertex.z) / 2) * scaleFactor; 
-
-                app.webGLViewer.updateGarmentMatrices({ x: xTransl, y: yTransl, z: zTransl }, scaleFactor);
-
-                console.log("computed bbox: ");
-                console.log(minVertex);
-                console.log(maxVertex);
-                console.log(mesh);
-            });
-        }
-
-        function DiffuseTextureDropped(element, result, file) {
-            commonFunc({
-                "type": "SHIRT_TEXTURE",
-                "path": result,
-            }, element, result, file);
-        }
-
-        function MannequinDiffuseTextureDropped(element, result, file) {
-            commonFunc({
-                "type": "MANNEQUIN_TEXTURE",
-                "path": result,
-            }, element, result, file);
-        }
-
-        function MannequinMaskTextureDropped(element, result, file) {
-            commonFunc({
-                "type": "MANNEQUIN_TEXTURE",
-                "maskPath": result,
-            }, element, result, file);
-        }
-
-        function MannequinRoughnessTextureDropped(element, result, file) {
-            commonFunc({
-                "type": "MANNEQUIN_TEXTURE",
-                "roughnessPath": result,
-            }, element, result, file);
-        }
-        
-        function MannequinMetalnessTextureDropped(element, result, file) {
-            commonFunc({
-                "type": "MANNEQUIN_TEXTURE",
-                "metalnessPath": result,
-            }, element, result, file);
-        }
-
-        function MannequinAOTextureDropped(element, result, file) {
-            commonFunc({
-                "type": "MANNEQUIN_TEXTURE",
-                "aoPath": result,
-            }, element, result, file);
-        }
-
-        function MannequinNormalTextureDropped(element, result, file) {
-            commonFunc({
-                "type": "MANNEQUIN_TEXTURE",
-                "normalPath": result,
-            }, element, result, file);
-        }
-
-        function NormalTextureDropped(element, result, file) {
-            commonFunc({
-                "type": "SHIRT_TEXTURE",
-                "normalPath": result,
-            }, element, result, file);
-        }
-
-        function ShirtAoTextureDropped(element, result, file) {
-            commonFunc({
-                "type": "SHIRT_TEXTURE",
-                "aoPath": result,
-            }, element, result, file);
-        }
-
-        function ShirtFuzzTextureDropped(element, result, file) {
-            commonFunc({
-                "type": "SHIRT_TEXTURE",
-                "fuzzPath": result,
-            }, element, result, file);
-        }
-
-        function ShirtRoughnessTextureDropped(element, result, file) {
-            commonFunc({
-                "type": "SHIRT_TEXTURE",
-                "roughnessPath": result,
-            }, element, result, file);
-        }
-
-        function ShirtMetalnessTextureDropped(element, result, file) {
-            commonFunc({
-                "type": "SHIRT_TEXTURE",
-                "metalnessPath": result,
-            }, element, result, file);
-        }
-
-        function EnvironmentMapDropped(element, result, file) {
-            commonFunc({
-                "type": "ENV_MAP",
-                "path": result,
-
-                "envMapRotation": 40,
-                "envMapTranslationY": 0,
-
-                "materialScalars": {
-			    	"mannequin_roughness": "1",
-			    	"mannequin_metallic": "1",
-			    	"mannequin_reflectivity": "1",
-			    	"mannequin_envMapIntensity": "1",
-			    	"shirt_roughness": "1",
-			    	"shirt_metallic": "1",
-			    	"shirt_reflectivity": "1",
-                    "shirt_envMapIntensity": "1"
-			    }
-            }, element, result, file);
-        }
-
-        function RadianceMapDropped(element, result, file) {
-            commonFunc({
-                "type": "ENV_MAP",
-                "radianceMapPath": result,
-
-                "envMapRotation": 40,
-                "envMapTranslationY": 0,
-
-                "materialScalars": {
-			    	"mannequin_roughness": "1",
-			    	"mannequin_metallic": "1",
-			    	"mannequin_reflectivity": "1",
-			    	"mannequin_envMapIntensity": "1",
-			    	"shirt_roughness": "1",
-			    	"shirt_metallic": "1",
-			    	"shirt_reflectivity": "1",
-                    "shirt_envMapIntensity": "1"
-			    }
-            }, element, result, file);
-        }
 
 
 
 
 
-
-
-
-        var ShirtRoughnessSlider = new rSlider({
-            target: document.querySelector(".slider-shirt-roughness"), //'#slider',  
-            scale:    false,
-            width: 150,
-            step: 0.01,
-            set: [1],
-            values: {min: 0, max: 1},
-            range: false, // range slider
-            onChange: function(value) {
-                app.webGLViewer.materialDefaults.shirt_roughness = parseFloat(value);
-                app.webGLViewer._updateSceneMaterials({ });
-                app.webGLViewer.render();
-            },
-            labels:   false,
-        });
-        var ShirtMetalnessSlider = new rSlider({
-            target: document.querySelector(".slider-shirt-metalness"), //'#slider',  
-            scale:    false,
-            width: 150,
-            step: 0.01,
-            set: [1],
-            values: {min: 0, max: 1},
-            range: false, // range slider
-            onChange: function(value) {
-                app.webGLViewer.materialDefaults.shirt_metallic = parseFloat(value);
-                app.webGLViewer._updateSceneMaterials({ });
-                app.webGLViewer.render();
-            },
-            labels:   false,
-        });
-        var ShirtReflectivitySlider = new rSlider({
-            target: document.querySelector(".slider-shirt-reflectivity"), //'#slider',  
-            scale:    false,
-            width: 150,
-            step: 0.01,
-            set: [0],
-            values: {min: 0, max: 1},
-            range: false, // range slider
-            onChange: function(value) {
-                app.webGLViewer.materialDefaults.shirt_reflectivity = parseFloat(value);
-                app.webGLViewer._updateSceneMaterials({ });
-                app.webGLViewer.render();
-            },
-            labels:   false,
-        });
-        var ShirtEnvmapIntensitySlider = new rSlider({
-            target: document.querySelector(".slider-shirt-envmap-intensity"), //'#slider',  
-            scale:    false,
-            width: 150,
-            step: 0.05,
-            set: [1],
-            values: {min: 0, max: 3},
-            range: false, // range slider
-            onChange: function(value) {
-                app.webGLViewer.materialDefaults.shirt_envMapIntensity = parseFloat(value);
-                app.webGLViewer._updateSceneMaterials({ });
-                app.webGLViewer.render();
-            },
-            labels:   false,
-        });
-
-        var MannequinReflectivitySlider = new rSlider({
-            target: document.querySelector(".slider-mannequin-reflectivity"), //'#slider',  
-            scale:    false,
-            width: 150,
-            step: 0.01,
-            set: [0],
-            values: {min: 0, max: 1},
-            range: false, // range slider
-            onChange: function(value) {
-                app.webGLViewer.default_mannequin_reflectivity = parseFloat(value);
-                app.webGLViewer._updateSceneMaterials({ });
-                app.webGLViewer.render();
-            },
-            labels:   false,
-        });
-        var MannequinEnvmapIntensitySlider = new rSlider({
-            target: document.querySelector(".slider-mannequin-envmap-intensity"), //'#slider',  
-            scale:    false,
-            width: 150,
-            step: 0.05,
-            set: [1],
-            values: {min: 0, max: 3},
-            range: false, // range slider
-            onChange: function(value) {
-                app.webGLViewer.default_mannequin_envmap_intensity = parseFloat(value);
-                app.webGLViewer._updateSceneMaterials({ });
-                app.webGLViewer.render();
-            },
-            labels:   false,
-        });
         var SceneEnvmapIntensitySlider = new rSlider({
             target: document.querySelector(".slider-scene-envmap-intensity"), //'#slider',  
             scale:    false,
@@ -500,12 +208,6 @@ class ControlsWindow {
 
 
         this.renderer = new THREE.WebGLRenderer( { antialias: true, /*alpha: true*/ } );
-        // this.renderer.autoClear = false;    
-        // this.renderer.setPixelRatio( window.devicePixelRatio );
-        // this.renderer.setSize( width, height );
-
-        // this.initORMCreator();
-        // this.initAlbedoMoireFix();
     }
 
 
