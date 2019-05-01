@@ -1,0 +1,103 @@
+.app-component-color-selector {
+    
+    .selector-header {
+        // text-align: center;
+
+        font-family: $font-paragraph-2;
+        color: $color-invision-1;
+        margin: 2em 0 0.5em 0;
+    }
+
+    .colors-container {
+        display: flex;
+        flex-flow: row wrap;
+
+        justify-content: center;
+        align-items: center;
+
+        width: 100%;
+
+        margin: auto;
+
+
+        // old styling:   no wrap and scroll auto
+        // flex-flow: row nowrap;
+        // /* we can't use justify-content: center because when there are multiple elements and they need to overflow 
+        //    it wont behave as expected. instead we'll apply a cool trick to center the elements when they're not enough
+        //    to overflow but still allow the overflowing to behave as we expect in case it happens */
+        // // justify-content: center;
+        // &::before, &::after {
+        //     content: '';  /* Insert pseudo-element */
+        //     margin: auto; /* Make it push flex items to the center */
+        // }
+        // overflow-x: auto;
+
+        &.underline-selection {
+            .color-entry.active {
+                border: none;
+                transform: none;
+
+                &.bright-color {
+                    border: 1px solid #ccc;
+                }
+
+                &::before {
+                    content: " ";
+                    position: absolute;
+                    bottom: -9px;
+                    left: 0;
+
+                    width: 100%;
+                    height: 5px;
+                    background: $color-secondary;
+                }
+            }
+        }
+
+        .color-entry {
+            position: relative;
+
+            flex: 0 0 2.5em;
+            height: 2.5em;
+
+            margin: 0.35em;
+
+            border-radius: 4px;
+            box-sizing: border-box;
+
+            transition: transform .25s;
+
+            cursor: pointer;
+
+            svg.close-icon {
+                position: absolute;
+
+                width:  1.1em;
+                height: 1.1em;
+
+                // fill decided by .js depending on the color entry
+
+                top:  50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            &.unavailable {
+                // background: #ddd;
+                // color: $color-tertiary;
+                // border: 1px solid #ddd;
+                cursor: not-allowed;
+            }
+
+            // unactive bright colors might end up being white on white, a little border will prevent that
+            &.bright-color {
+                border: 1px solid #ccc;
+            }
+
+            &.active {
+                border: 1px solid $color-tertiary;
+                // transform: scale(1.15, 1.15);
+            }
+        }
+    }
+}

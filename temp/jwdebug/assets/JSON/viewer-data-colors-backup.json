@@ -1,0 +1,431 @@
+{
+    "mannequinModel": {
+        "type": "MANNEQUIN_MODEL",
+        "path": "https://storage.googleapis.com/drapr-jigsaw/viewer-assets/bodies/jeans/outputDesired_hourglass-67-jeans.ctm",
+        "translation": {
+            "x": 0.14080471619570112,
+            "y": -7.0447202755786,
+            "z": 0.6237112365842499
+        },
+        "scale": 0.27063357446419517,
+        "mannequinTextures": {
+            "type": "MANNEQUIN_TEXTURE",
+            "path": "https://storage.googleapis.com/drapr-viewer-assets/persistent/bodies/textures/marble1/jeans-diffuse.jpg",
+            "aoPath": "https://storage.googleapis.com/drapr-viewer-assets/persistent/bodies/textures/marble1/jeans-ao.jpg",
+            "normalPath": "https://storage.googleapis.com/drapr-viewer-assets/persistent/bodies/textures/marble1/jeans-normal.jpg",
+            "rmaPath": "https://storage.googleapis.com/drapr-viewer-assets/persistent/bodies/textures/marble1/jeans-arm.jpg"
+        }
+    },
+    "catalog": [
+        {
+            "articleName": "Pima Cotton Sleeve - White2",
+            "articleTitle": "Pima Cotton Sleeve - White2",
+            "articleDescription": "PHA+Q2xhc3NpYyBULXNoaXJ0IGluIHNvZnRlc3QgPGVtPnBpbWEgY290dG9uPC9lbT4uIEVsZWdhbnQgPGk+c2Nvb3A8L2k+IDxzdHJvbmc+bmVjazwvc3Ryb25nPi48L3A+IDxwPlRoaXMgcGllY2UgaXMgcGFydCBvZiB0aGUgPHN0cm9uZz5KaWdzYXcgRXNzZW50aWFsIGxpbmU8L3N0cm9uZz47IGRlc2lnbmVkIHdpdGggc3R5bGUsIGFuZCBjcmFmdGVkIHRvIGxhc3QuPC9wPg==",
+            "browsePhoto": "https://storage.googleapis.com/drapr-jigsaw/viewer-assets/photos/70/73-1.jpg",
+            "articleModels": [
+                {
+                    "size": "S",
+                    "articlePrice": "43.00",
+                    "articleColors": [
+                        {
+                            "colorTitle": "white",
+                            "colorHex": "assets/images/paisley.jpg",
+                            "articleId": "1237",
+                            "enabledForUsers": true,
+                            "articlePhotos": [
+                                "https://storage.googleapis.com/drapr-jigsaw/viewer-assets/photos/70/73-1.jpg",
+                                "https://storage.googleapis.com/drapr-jigsaw/viewer-assets/photos/70/73-2.jpg",
+                                "https://storage.googleapis.com/drapr-jigsaw/viewer-assets/photos/70/73-3.jpg",
+                                "https://storage.googleapis.com/drapr-jigsaw/viewer-assets/photos/70/73-4.jpg",
+                                "https://storage.googleapis.com/drapr-jigsaw/viewer-assets/photos/70/73-5.jpg"
+                            ],
+                            "articleData": [
+                                {
+                                    "type": "SHIRT_TEXTURE",
+                                    "path": "assets/images/paisley.jpg"
+                                },
+                                {
+                                    "type": "SHIRT_MODEL",
+                                    "path": "https://storage.googleapis.com/drapr-jigsaw/viewer-assets/8/articles/TEST_FINAL_hourglass-67-131291533059638-cropped-h-prepared-753211/garment.ctm",
+                                    "translation": {
+                                        "x": 0,
+                                        "y": -7.0447202755786,
+                                        "z": 0.32928441021662125
+                                    },
+                                    "scale": 0.27063357446419517,
+                                    "materialDefaults": {
+                                        "shirt_roughness": "1",
+                                        "shirt_metallic": "1",
+                                        "shirt_reflectivity": "0",
+                                        "shirt_envMapIntensity": "1.6",
+                                        "mannequin_color": "0xffffff"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "colorTitle": "dark red",
+                            "colorHex": "883535",
+                            "articleId": "1245",
+                            "enabledForUsers": false,
+                            "articlePhotos": [
+                                "assets/textures/garment-dark-red.jpg",
+                                "assets/textures/garment-dark-red.jpg",
+                                "assets/textures/garment-dark-red.jpg",
+                                "assets/textures/garment-dark-red.jpg",
+                                "assets/textures/garment-dark-red.jpg"
+                            ],
+                            "articleData": [
+                                {
+                                    "type": "SHIRT_TEXTURE",
+                                    "path": "assets/textures/garment-dark-red.jpg"
+                                },
+                                {
+                                    "type": "SHIRT_MODEL",
+                                    "path": "https://storage.googleapis.com/drapr-jigsaw/viewer-assets/8/articles/TEST_FINAL_hourglass-67-131291533059638-cropped-h-prepared-753211/garment.ctm",
+                                    "translation": {
+                                        "x": 0,
+                                        "y": -7.0447202755786,
+                                        "z": 0.32928441021662125
+                                    },
+                                    "scale": 0.27063357446419517,
+                                    "materialDefaults": {
+                                        "shirt_roughness": "1",
+                                        "shirt_metallic": "1",
+                                        "shirt_reflectivity": "0",
+                                        "shirt_envMapIntensity": "2",
+                                        "mannequin_color": "0xffffff"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "colorTitle": "white",
+                            "colorHex": "f3f3f3",
+                            "articleId": "1238",
+                            "enabledForUsers": false,
+                            "articlePhotos": [
+                                "assets/textures/garment-dark-red.jpg",
+                                "assets/textures/garment-dark-red.jpg",
+                                "assets/textures/garment-dark-red.jpg",
+                                "assets/textures/garment-dark-red.jpg",
+                                "assets/textures/garment-dark-red.jpg"
+                            ],
+                            "articleData": [
+                                {
+                                    "type": "SHIRT_TEXTURE",
+                                    "path": "assets/textures/garment-dark-red.jpg"
+                                },
+                                {
+                                    "type": "SHIRT_MODEL",
+                                    "path": "https://storage.googleapis.com/drapr-jigsaw/viewer-assets/8/articles/TEST_FINAL_hourglass-67-131291533059638-cropped-h-prepared-753211/garment.ctm",
+                                    "translation": {
+                                        "x": 0,
+                                        "y": -7.0447202755786,
+                                        "z": 0.32928441021662125
+                                    },
+                                    "scale": 0.27063357446419517,
+                                    "materialDefaults": {
+                                        "shirt_roughness": "1",
+                                        "shirt_metallic": "1",
+                                        "shirt_reflectivity": "0",
+                                        "shirt_envMapIntensity": "2",
+                                        "mannequin_color": "0xffffff"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "size": "M",
+                    "articlePrice": "93.00",
+                    "articleColors": [
+                        {
+                            "colorTitle": "dark",
+                            "colorHex": "353535",
+                            "articleId": "1239",
+                            "enabledForUsers": true,
+                            "articlePhotos": [
+                                "assets/textures/garment-dark.jpg",
+                                "assets/textures/garment-dark.jpg",
+                                "assets/textures/garment-dark.jpg",
+                                "assets/textures/garment-dark.jpg",
+                                "assets/textures/garment-dark.jpg"
+                            ],
+                            "articleData": [
+                                {
+                                    "type": "SHIRT_TEXTURE",
+                                    "path": "assets/textures/garment-dark.jpg"
+                                },
+                                {
+                                    "type": "SHIRT_MODEL",
+                                    "path": "https://storage.googleapis.com/drapr-jigsaw/viewer-assets/8/articles/TEST_FINAL_hourglass-67-131291533059638-cropped-h-prepared-753211/garment.ctm",
+                                    "translation": {
+                                        "x": 0,
+                                        "y": -7.0447202755786,
+                                        "z": 0.32928441021662125
+                                    },
+                                    "scale": 0.27063357446419517,
+                                    "materialDefaults": {
+                                        "shirt_roughness": "1",
+                                        "shirt_metallic": "1",
+                                        "shirt_reflectivity": "0",
+                                        "shirt_envMapIntensity": "2",
+                                        "mannequin_color": "0xffffff"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "colorTitle": "dark red",
+                            "colorHex": "883535",
+                            "articleId": "1240",
+                            "enabledForUsers": false,
+                            "articlePhotos": [
+                                "assets/textures/garment-dark-red.jpg",
+                                "assets/textures/garment-dark-red.jpg",
+                                "assets/textures/garment-dark-red.jpg",
+                                "assets/textures/garment-dark-red.jpg",
+                                "assets/textures/garment-dark-red.jpg"
+                            ],
+                            "articleData": [
+                                {
+                                    "type": "SHIRT_TEXTURE",
+                                    "path": "assets/textures/garment-dark-red.jpg"
+                                },
+                                {
+                                    "type": "SHIRT_MODEL",
+                                    "path": "https://storage.googleapis.com/drapr-jigsaw/viewer-assets/8/articles/TEST_FINAL_hourglass-67-131291533059638-cropped-h-prepared-753211/garment.ctm",
+                                    "translation": {
+                                        "x": 0,
+                                        "y": -7.0447202755786,
+                                        "z": 0.32928441021662125
+                                    },
+                                    "scale": 0.27063357446419517,
+                                    "materialDefaults": {
+                                        "shirt_roughness": "1",
+                                        "shirt_metallic": "1",
+                                        "shirt_reflectivity": "0",
+                                        "shirt_envMapIntensity": "2",
+                                        "mannequin_color": "0xffffff"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+
+        {
+            "articleName": "Pima Cotton Sleeve - White",
+            "articleTitle": "Pima Cotton Sleeve - White",
+            "articleDescription": "PHA+Q2xhc3NpYyBULXNoaXJ0IGluIHNvZnRlc3QgcGltYSBjb3R0b24uIEVsZWdhbnQgc2Nvb3AgbmVjay4gVGhpcyBwaWVjZSBpcyBwYXJ0IG9mIHRoZSBKaWdzYXcgRXNzZW50aWFsIGxpbmU7IGRlc2lnbmVkIHdpdGggc3R5bGUsIGFuZCBjcmFmdGVkIHRvIGxhc3QuPC9wPg==",
+            "browsePhoto": "assets/images/73-1.jpg",
+            "articleModels": [
+                {
+                    "size": "XS",
+                    "articlePrice": "33.00",
+                    "articleColors": [
+                        {
+                            "colorTitle": "blue",
+                            "colorHex": "00a5ff",
+                            "articleId": "1241",
+                            "enabledForUsers": true,
+                            "articlePhotos": [
+                                "assets/textures/garment-blue.jpg",
+                                "assets/textures/garment-blue.jpg",
+                                "assets/textures/garment-blue.jpg",
+                                "assets/textures/garment-blue.jpg",
+                                "assets/textures/garment-blue.jpg"
+                            ],
+                            "articleData": [
+                                {
+                                    "type": "SHIRT_TEXTURE",
+                                    "path": "assets/textures/garment-blue.jpg"
+                                },
+                                {
+                                    "type": "SHIRT_MODEL",
+                                    "path": "https://storage.googleapis.com/drapr-jigsaw/viewer-assets/8/articles/TEST_FINAL_hourglass-67-131291533059638-cropped-h-prepared-753211/garment.ctm",
+                                    "translation": {
+                                        "x": 0,
+                                        "y": -7.0447202755786,
+                                        "z": 0.32928441021662125
+                                    },
+                                    "scale": 0.27063357446419517,
+                                    "materialDefaults": {
+                                        "shirt_roughness": "1",
+                                        "shirt_metallic": "1",
+                                        "shirt_reflectivity": "0",
+                                        "shirt_envMapIntensity": "2",
+                                        "mannequin_color": "0xffffff"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+
+
+
+
+
+
+
+        {
+            "articleName": "Cashmere test",
+            "articleTitle": "Cashmere test",
+            "articleDescription": "PHA+Q2xhc3NpYyBULXNoaXJ0IGluIHNvZnRlc3QgcGltYSBjb3R0b24uIEVsZWdhbnQgc2Nvb3AgbmVjay4gVGhpcyBwaWVjZSBpcyBwYXJ0IG9mIHRoZSBKaWdzYXcgRXNzZW50aWFsIGxpbmU7IGRlc2lnbmVkIHdpdGggc3R5bGUsIGFuZCBjcmFmdGVkIHRvIGxhc3QuPC9wPg==",
+            "browsePhoto": "assets/images/73-1.jpg",
+            "articleModels": [
+                {
+                    "size": "XS",
+                    "articlePrice": "33.00",
+                    "articleColors": [
+                        {
+                            "colorTitle": "blue",
+                            "colorHex": "00a5ff",
+                            "articleId": "1242",
+                            "enabledForUsers": true,
+                            "articlePhotos": [
+                                "assets/textures/garment-blue.jpg",
+                                "assets/textures/garment-blue.jpg",
+                                "assets/textures/garment-blue.jpg",
+                                "assets/textures/garment-blue.jpg",
+                                "assets/textures/garment-blue.jpg"
+                            ],
+                            "articleData": [
+                                {
+                                    "type": "SHIRT_TEXTURE",
+                                    "path": "assets/models/1309_Diffuse.jpg",
+                                    "ormPath": "assets/models/1309_ORM2.jpg",
+                                    "normalPath": "assets/models/1309_Normaldx.jpg"
+                                },
+                                {
+                                    "type": "SHIRT_MODEL",
+                                    "path": "assets/models/1309_UVed.obj",
+                                    "translation": {
+                                        "x": 0,
+                                        "y": -7.0447202755786,
+                                        "z": 0.32928441021662125
+                                    },
+                                    "scale": 0.27063357446419517,
+                                    "materialDefaults": {
+                                        "shirt_roughness": "1",
+                                        "shirt_metallic": "1",
+                                        "shirt_reflectivity": "0",
+                                        "shirt_envMapIntensity": "2",
+                                        "mannequin_color": "0xffffff"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "articleName": "Pima Cotton Sleeve - White",
+            "articleTitle": "Pima Cotton Sleeve - White",
+            "articleDescription": "PHA+Q2xhc3NpYyBULXNoaXJ0IGluIHNvZnRlc3QgcGltYSBjb3R0b24uIEVsZWdhbnQgc2Nvb3AgbmVjay4gVGhpcyBwaWVjZSBpcyBwYXJ0IG9mIHRoZSBKaWdzYXcgRXNzZW50aWFsIGxpbmU7IGRlc2lnbmVkIHdpdGggc3R5bGUsIGFuZCBjcmFmdGVkIHRvIGxhc3QuPC9wPg==",
+            "browsePhoto": "assets/images/73-1.jpg",
+            "articleModels": [
+                {
+                    "size": "XS",
+                    "articlePrice": "33.00",
+                    "articleColors": [
+                        {
+                            "colorTitle": "blue",
+                            "colorHex": "00a5ff",
+                            "articleId": "1243",
+                            "enabledForUsers": true,
+                            "articlePhotos": [
+                                "assets/textures/garment-blue.jpg",
+                                "assets/textures/garment-blue.jpg",
+                                "assets/textures/garment-blue.jpg",
+                                "assets/textures/garment-blue.jpg",
+                                "assets/textures/garment-blue.jpg"
+                            ],
+                            "articleData": [
+                                {
+                                    "type": "SHIRT_TEXTURE",
+                                    "path": "assets/textures/garment-blue.jpg"
+                                },
+                                {
+                                    "type": "SHIRT_MODEL",
+                                    "path": "https://storage.googleapis.com/drapr-jigsaw/viewer-assets/8/articles/TEST_FINAL_hourglass-67-131291533059638-cropped-h-prepared-753211/garment.ctm",
+                                    "translation": {
+                                        "x": 0,
+                                        "y": -7.0447202755786,
+                                        "z": 0.32928441021662125
+                                    },
+                                    "scale": 0.27063357446419517,
+                                    "materialDefaults": {
+                                        "shirt_roughness": "1",
+                                        "shirt_metallic": "1",
+                                        "shirt_reflectivity": "0",
+                                        "shirt_envMapIntensity": "2",
+                                        "mannequin_color": "0xffffff"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "articleName": "Pima Cotton Sleeve - White",
+            "articleTitle": "Pima Cotton Sleeve - White",
+            "articleDescription": "PHA+Q2xhc3NpYyBULXNoaXJ0IGluIHNvZnRlc3QgcGltYSBjb3R0b24uIEVsZWdhbnQgc2Nvb3AgbmVjay4gVGhpcyBwaWVjZSBpcyBwYXJ0IG9mIHRoZSBKaWdzYXcgRXNzZW50aWFsIGxpbmU7IGRlc2lnbmVkIHdpdGggc3R5bGUsIGFuZCBjcmFmdGVkIHRvIGxhc3QuPC9wPg==",
+            "browsePhoto": "assets/images/73-1.jpg",
+            "articleModels": [
+                {
+                    "size": "XS",
+                    "articlePrice": "33.00",
+                    "articleColors": [
+                        {
+                            "colorTitle": "blue",
+                            "colorHex": "00a5ff",
+                            "articleId": "1244",
+                            "enabledForUsers": true,
+                            "articlePhotos": [
+                                "assets/textures/garment-blue.jpg",
+                                "assets/textures/garment-blue.jpg",
+                                "assets/textures/garment-blue.jpg",
+                                "assets/textures/garment-blue.jpg",
+                                "assets/textures/garment-blue.jpg"
+                            ],
+                            "articleData": [
+                                {
+                                    "type": "SHIRT_TEXTURE",
+                                    "path": "assets/textures/garment-blue.jpg"
+                                },
+                                {
+                                    "type": "SHIRT_MODEL",
+                                    "path": "https://storage.googleapis.com/drapr-jigsaw/viewer-assets/8/articles/TEST_FINAL_hourglass-67-131291533059638-cropped-h-prepared-753211/garment.ctm",
+                                    "translation": {
+                                        "x": 0,
+                                        "y": -7.0447202755786,
+                                        "z": 0.32928441021662125
+                                    },
+                                    "scale": 0.27063357446419517,
+                                    "materialDefaults": {
+                                        "shirt_roughness": "1",
+                                        "shirt_metallic": "1",
+                                        "shirt_reflectivity": "0",
+                                        "shirt_envMapIntensity": "2",
+                                        "mannequin_color": "0xffffff"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }                
+            ]
+        }
+    ]
+}

@@ -1,0 +1,78 @@
+.app-download-app-modal {
+    background: white;
+
+    padding: 1.65em;
+
+    display: flex;
+    flex-flow: column nowrap;
+
+    .spacer {
+        flex: 1 1 0;
+    }
+
+    header {
+        display: flex;
+        flex-flow: row-reverse wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0 0 2em 0;
+
+        svg {
+            width:  1.7em;
+            height: 1.7em;
+            fill: $color-invision-1;
+            // &:first-child {
+                // margin-right: 0.5em;
+            // }
+        }
+
+        h2 {
+            // text-align: center;
+            font-family: $font-header;
+            font-weight: 900;
+            font-size: 2.15em;
+            color: $color-invision-1;
+        }
+    }
+
+    img {
+        margin: auto;
+        display: block;
+    }
+
+    div.drapr-shopping {
+        flex: 3 1 5em;
+        width: 100%;
+
+        background: url(../assets/images/drapr-app.png);
+        background-size: contain;
+        /* margin: auto; */
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    img.apple-store {
+        max-width: 72%;
+        height: auto;
+    }
+
+    h3 {
+        font-family: $font-header;
+        font-size: 1.1em;
+        color: $color-invision-1;
+        font-weight: 800;
+
+        text-align: center;
+
+        margin: 1em 0 0.5em 0;
+    }
+
+    p {
+        font-family: $font-paragraph;
+        font-size: 0.9em;
+        text-align: center;
+        color: $color-invision-1;
+
+        margin: 0 0 1em 0;
+    }
+}

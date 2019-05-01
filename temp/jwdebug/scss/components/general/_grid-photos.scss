@@ -1,0 +1,20 @@
+.app-component-grid-photos {
+    
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+
+    width: 100%;
+
+    padding: 0.5em;
+    margin: 1em 0;
+
+    .photo-item {
+        // flex width & height decided by .js
+
+        border-radius: 4px;
+        margin: 4px;
+
+        cursor: pointer;
+    }
+}

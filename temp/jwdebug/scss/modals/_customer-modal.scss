@@ -1,0 +1,125 @@
+.app-customer-modal {
+
+    display: flex;
+    flex-flow: column nowrap;
+
+    // background: $color-secondary;
+    background: white;
+
+    -webkit-overflow-scrolling: touch;
+    overflow: auto;
+
+
+    padding: 0em 2em;
+
+    .customer-modal-header {
+        margin: 0 -1em 0.0em -1em;
+
+        -moz-user-select: none;
+        user-select: none;
+
+        height: 2em;
+
+        header {
+            position: relative;
+
+            display: flex;
+            flex-flow: row-reverse wrap;
+            // justify-content: center;
+            align-items: center;
+
+            svg {
+                flex: 0 0 auto;
+                width:  1.7em;
+                height: 1.7em;
+            }
+
+            svg.close-icon {
+                fill: $color-invision-1;
+                cursor: pointer;
+    
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+
+
+            h2 {
+                flex: 1 0 auto;
+
+                text-align: center;
+                font-family: $font-header;
+                font-weight: 800;
+                color: $color-invision-1;
+                font-size: 2em;
+            }
+        }
+
+        p {
+            display: none;
+            margin: 0 1.75em 0.75em 1.75em;
+            font-family: $font-paragraph;
+
+            color: #717171;
+
+            font-size: 0.9em;
+        }
+    }
+
+
+    .change-body-btn {
+        .buttons-container {
+          
+            .btn-entry.text-btn.active {
+
+
+                flex: 1 0 auto;
+                max-width: 65%;
+
+                background: #557b97;
+                padding: 14px 0.65em;
+                color: white;
+                border-radius: 2px;
+
+                font-size: 0.95em;
+                font-family: $font-header, Verdana, Geneva, Tahoma, sans-serif;
+                font-weight: 600;
+                text-align: center;
+                text-transform: uppercase;
+                letter-spacing: 0.065em;
+                -webkit-font-smoothing: antialiased;  
+
+                transition: background .3s;
+
+                &:hover, &:focus {
+                    background-color: #436076;
+                }
+
+
+                // font-family: $font-header;
+                // font-weight: 800;
+                // font-size: 1em;
+                // color: white;
+                // background: $color-invision-2;
+                // border-radius: 4px;
+                // border: none;
+                // box-sizing: border-box;
+    
+                // transition: border .25s, background .25s, color .25s;
+    
+                // cursor: pointer;
+    
+                &.active {
+                    border: none;
+                    // color: #ddd;
+    
+                    &.text-btn {
+                        // background: $color-invision-1;
+                        // background: $color-invision-2;
+                        color: white;
+                    }    
+                }
+            }
+        }
+    }
+}

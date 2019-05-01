@@ -1,0 +1,96 @@
+{
+    "atlasPath": "assets/envmaps/envmap_atlas.jpg",
+    "atlasXaxisSize": 3,
+    "atlasItemsCount": 9,
+    "envmaps": [
+        {
+            "type": "ENV_MAP",
+            "path": "assets/envmaps/daylight/2-backup.jpg",
+            "radianceMapPath": "assets/envmaps/daylight/2r.jpg",
+
+            "envMapName": "Center City Plaza",
+            "envMapThumb": "assets/envmaps/thumb-daylight/1.jpg",
+            "envMapRotation": 40,
+            "envMapTranslationY": 0,
+
+            "materialScalars": {
+                "iPhone6fix": 1.7,
+				"mannequin_envMapIntensity": "1.3",
+                "shirt_envMapIntensity": "1.1"
+            }
+        }, 
+        {
+            "type": "ENV_MAP",
+            "envMapName": "Park",
+            "path": "assets/envmaps/daylight/2r4.jpg",
+            "radianceMapPath": "assets/envmaps/daylight/2r.jpg",
+
+            "envMapThumb": "assets/envmaps/thumb-daylight/2.jpg",
+            "envMapRotation": 270,
+            "envMapTranslationY": 0,
+
+            "materialScalars": {
+				"mannequin_roughness": "1",
+				"mannequin_metallic": "1",
+				"mannequin_reflectivity": "1",
+				"mannequin_envMapIntensity": "1",
+				"shirt_roughness": "1",
+				"shirt_metallic": "1",
+				"shirt_reflectivity": "1",
+                "shirt_envMapIntensity": "1"
+			}
+        }, 
+        {
+            "type": "ENV_MAP",
+            "envMapName": "Office",
+            "path": "assets/envmaps/daylight/3.jpg",
+            "envMapThumb": "assets/envmaps/thumb-daylight/3.jpg"
+        }, 
+        {
+            "type": "ENV_MAP",
+            "envMapName": "City at Sunset",
+            "path": "assets/envmaps/sunset/1.jpg",
+            "envMapThumb": "assets/envmaps/thumb-sunset/1.jpg"
+        }, 
+        {
+            "type": "ENV_MAP",
+            "envMapName": "Beach",
+            "path": "assets/envmaps/sunset/2.jpg",
+            "envMapThumb": "assets/envmaps/thumb-sunset/2.jpg"
+        }, 
+        {
+            "type": "ENV_MAP",
+            "envMapName": "Mountain",
+            "path": "assets/envmaps/sunset/3.jpg",
+            "envMapThumb": "assets/envmaps/thumb-sunset/3.jpg",
+            "materialScalars": {
+				"mannequin_roughness": "1",
+				"mannequin_metallic": "1",
+				"mannequin_reflectivity": "1",
+				"mannequin_envMapIntensity": "2",
+				"shirt_roughness": "1",
+				"shirt_metallic": "1",
+				"shirt_reflectivity": "1",
+				"shirt_envMapIntensity": "2"
+			}
+        },
+        {
+            "type": "ENV_MAP",
+            "envMapName": "City at Night",
+            "path": "assets/envmaps/night/1.jpg",
+            "envMapThumb": "assets/envmaps/thumb-night/1.jpg"
+        }, 
+        {
+            "type": "ENV_MAP",
+            "envMapName": "Nightclub",
+            "path": "assets/envmaps/night/2.jpg",
+            "envMapThumb": "assets/envmaps/thumb-night/2.jpg"
+        }, 
+        {
+            "type": "ENV_MAP",
+            "envMapName": "Railroad Arch",
+            "path": "assets/envmaps/night/3.jpg",
+            "envMapThumb": "assets/envmaps/thumb-night/3.jpg"
+        }
+    ]
+}

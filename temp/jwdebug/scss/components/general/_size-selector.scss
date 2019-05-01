@@ -1,0 +1,53 @@
+.app-component-size-selector {
+    
+    .selector-header {
+        text-align: center;
+
+        font-family: $font-paragraph;
+        color: $color-tertiary;
+        margin: 1em 0 0 0;
+    }
+
+    .sizes-container {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: center;
+        
+        padding: 0em 2em; 
+        
+        width: 100%;
+
+
+        .size-entry {
+            width: 2.5em;
+            height: 2.5em;
+
+            margin: 0.35em;
+
+            background: white;
+            color: $color-tertiary;
+            border: 1px solid $color-tertiary;
+            // border-radius: 4px;
+
+            line-height: 2.5em;
+            text-align: center;
+
+            transition: background .25s;
+
+            cursor: pointer;
+
+            &.unavailable {
+                background: #ddd;
+                color: $color-tertiary;
+                border: 1px solid #ddd;
+                cursor: not-allowed;
+            }
+
+            &.active {
+                background: $color-tertiary;
+                color: #ddd;
+                border: 1px solid $color-tertiary;
+            }
+        }
+    }
+}

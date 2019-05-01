@@ -1,0 +1,24 @@
+{
+	"stores": [
+		{
+			"displayName": "Burlingame",
+			"storeEmail": "burlingame-ca@jigsawusa.com"
+		},
+		{
+			"displayName": "Bloomingdales SF",
+			"storeEmail": "bloomingdales-sf@jigsawusa.com"
+		},
+		{
+			"displayName": "Fillmore SF",
+			"storeEmail": "fillmore-sf@jigsawusa.com"
+		},
+		{
+			"displayName": "Palo Alto / Stanford Shopping Center",
+			"storeEmail": "paloalto-stanford@jigsawusa.com"
+		},
+		{
+			"displayName": "Berkeley / 4th Street",
+			"storeEmail": "berkeley-4thst@jigsawusa.com"
+		}
+	]
+}
