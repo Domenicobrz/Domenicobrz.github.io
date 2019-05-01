@@ -37,22 +37,25 @@ function JSONAPIController() {
 
     this.requestViewerData = function(callback) {
 
-        var params = this.getBodytypeGETParams() + "&" + this.getGeneralGETParams(); 
 
-        var req = new XMLHttpRequest();
-        req.open('GET', viewerDataHost + "?" + params);
-        req.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-	    req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        return;
 
-        req.onreadystatechange = function () {
-            if(req.readyState === 4 && req.status === 200) {
-                var newViewerData = JSON.parse(req.responseText);
+        // var params = this.getBodytypeGETParams() + "&" + this.getGeneralGETParams(); 
 
-                callback(newViewerData);
-            }
-        };
+        // var req = new XMLHttpRequest();
+        // req.open('GET', viewerDataHost + "?" + params);
+        // req.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+	    // req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        // req.onreadystatechange = function () {
+        //     if(req.readyState === 4 && req.status === 200) {
+        //         var newViewerData = JSON.parse(req.responseText);
+
+        //         callback(newViewerData);
+        //     }
+        // };
         
-        req.send(params);
+        // req.send(params);
     };
     
     this.requestShortcutLink = function(customerId, selectiondata, callback) {

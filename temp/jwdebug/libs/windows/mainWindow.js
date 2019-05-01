@@ -56,34 +56,18 @@ class MainWindow {
     }
 
     _requestViewerData() {
-        // ask for viewerData
-        app.jsonAPIController.requestViewerData(
-            // on viewer data update, initialize the 3d viewer etc.
-            (newViewerData) => {
+      
+        let canvasDimensions = { w: app.viewContainer.clientWidth, h: app.viewContainer.clientHeight };
+        app.webGLViewer      = new WebGLViewer(canvasDimensions.w, canvasDimensions.h);
+        this._canvasContainer.insertBefore(app.webGLViewer.renderer.domElement, this._canvasContainer.firstChild);
+        
+        // needs to be fired instantly and without delays, otherwise there's the risk that the user selects a garment before this function fires and
+        // the garment's batch will be queued before the envmap batch is
+        // in that case materials wont be compiled correctly
+        
+        app.garmentLoader.loadEnvmap(this._onEnvmapLoaded.bind(this));
 
-                if(this._firstViewerDataDownload ) {
-                    let canvasDimensions = { w: app.viewContainer.clientWidth, h: app.viewContainer.clientHeight };
-                    app.webGLViewer      = new WebGLViewer(canvasDimensions.w, canvasDimensions.h);
-                    this._canvasContainer.insertBefore(app.webGLViewer.renderer.domElement, this._canvasContainer.firstChild);
-                    
-                    // needs to be fired instantly and without delays, otherwise there's the risk that the user selects a garment before this function fires and
-                    // the garment's batch will be queued before the envmap batch is
-                    // in that case materials wont be compiled correctly
-                    
-                    app.garmentLoader.viewerData = newViewerData;
-                    app.garmentLoader.loadEnvmap(this._onEnvmapLoaded.bind(this));
-
-                    this._firstViewerDataDownload = false;
-                } else {
-                    app.garmentLoader.viewerData = newViewerData;
-
-                    this._ldsRollerContainer.classList.add("active");
-                    app.garmentLoader.onViewerDataChange(app.garmentLoader.viewerData, () => {
-                        this._ldsRollerContainer.classList.remove("active");
-                    }, 300);
-                }
-            }
-        );
+        this._firstViewerDataDownload = false;
     }
 
 
