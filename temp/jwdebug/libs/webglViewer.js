@@ -453,8 +453,8 @@ class WebGLViewer {
         });
         mesh.material = material;
 
-        console.log(diffuseTexture);
-        console.log(this.exrCubeRenderTarget.texture);
+        // console.log(diffuseTexture);
+        // console.log(this.exrCubeRenderTarget.texture);
 
 
 

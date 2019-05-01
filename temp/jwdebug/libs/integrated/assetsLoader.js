@@ -364,7 +364,12 @@ function AssetsLoader() {
         for(let i = 0; i < types.length; i++) {
             let type = types[i];
             if(asset[type + "Path"] !== undefined) {
+                console.log("trying to load: " + asset[type+"Path"]);
+
                 new THREE.TextureLoader().load( asset[type + "Path"], function(texture) {
+                    console.log("loaded: " + asset[type+"Path"]);
+                    console.log(texture);
+
                     if(type == "diffuse") diffuseTexture = texture;
                     if(type == "normal") normalTexture = texture;
                     if(type == "ao") aoTexture = texture;
@@ -378,6 +383,9 @@ function AssetsLoader() {
         function onDownloadComplete() {
             itemsDownloaded++;
             if(itemsDownloaded !== itemsToDownload) return;
+            
+            console.log("firing update call with: ");
+            console.log(diffuseTexture);
 
             update({ 
                 asset: asset, 
