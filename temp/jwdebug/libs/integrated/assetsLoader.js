@@ -360,9 +360,13 @@ function AssetsLoader() {
             }
         );
 
+        console.log(asset);
+
         let types = ['diffuse', 'normal', 'ao', 'roughness', 'metalness'];
         for(let i = 0; i < types.length; i++) {
             let type = types[i];
+            console.log("for loop iteration with: " + (type+"Path"));
+
             if(asset[type + "Path"] !== undefined) {
                 console.log("trying to load: " + asset[type+"Path"]);
 
@@ -383,7 +387,7 @@ function AssetsLoader() {
         function onDownloadComplete() {
             itemsDownloaded++;
             if(itemsDownloaded !== itemsToDownload) return;
-            
+
             console.log("firing update call with: ");
             console.log(diffuseTexture);
 
