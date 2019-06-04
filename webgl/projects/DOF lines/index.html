@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="author" content="3D Viewer" />
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+   
+   
+    <link href="main.css" rel="stylesheet" type="text/css" />
+
+    
+    <script src="libs/dependencies/webgl/three.js"></script>
+    <script src="libs/dependencies/webgl/OrbitControls.js"></script>
+    <!-- <script src="libs/dependencies/webgl/OBJLoader.js"></script> -->
+    <script src="libs/dependencies/webgl/LoaderSupport.js"></script>
+    <script src="libs/dependencies/webgl/OBJLoader2.js"></script>
+    <script src="libs/dependencies/dat.gui.min.js"></script>
+
+    <script src="libs/shaders/connectedLine.js"></script>
+    <script src="libs/shaders/postproc.js"></script>
+    <script src="libs/shaders/line.js"></script>
+    <script src="libs/shaders/node.js"></script>
+
+    <script src="libs/utils.js"></script>
+    <script src="libs/main.js"></script>
+
+
+    <style>
+        .controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+
+            color: white;
+            font-size: 0.9em;
+
+            padding: 1em;
+
+            z-index: 2;
+        }
+
+        .controls p {
+            font-family: Helvetica;
+            margin: 0.45em;
+        }
+
+        .controls p span {
+            color: #ff5677;
+        }
+    </style>
+
+
+</head>
+<body>
+
+
+
+    <div class="controls">
+        <p>press <span>o</span> or <span>p</span> to change focal length</p>
+        <p>press <span>k</span> or <span>l</span> to change bokeh strength</p>
+        <p>press <span>n</span> or <span>m</span> to change bokeh falloff</p>
+        <p>press <span>y</span> to change falloff equation</p>
+        <p>press <span>u</span> to change bokeh preset</p>
+    </div>
+
+
+
+</body>
+</html>

@@ -1,6 +1,7 @@
 var posts = [
     { imgPath: "images/caustics.jpg",  link: "http://domenicobrz.github.io/webgl/projects/dispersion-caustics/", description: "", tags: ["webgl"] },
     { imgPath: "images/lumen2d.jpg",  link: "https://github.com/Domenicobrz/Lumen-2D", description: "", tags: ["geometry", "misc"] },
+    { imgPath: "images/doflines.jpg",  link: "http://domenicobrz.github.io/webgl/projects/DOF lines/", description: "", tags: ["webgl", "threejs"] },
     { imgPath: "images/volumetricart.png",  link: "http://domenicobrz.github.io/webgl/projects/Volumetric art/", description: "", tags: ["webgl"] },
     { imgPath: "images/frontend2.jpg",  link: "http://domenicobrz.github.io/webgl/projects/frontend 2/", description: "", tags: ["threejs", "misc"] },
     { imgPath: "images/sidescroller.jpg",  link: "http://domenicobrz.github.io/webgl/projects/Sidescroller anim/", description: "", tags: ["webgl"] },
