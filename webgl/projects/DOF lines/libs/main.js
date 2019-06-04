@@ -393,22 +393,22 @@ function buildControls() {
     });
 
 
-    let layout = -1;
+    let layout = 0;
     window.addEventListener("keypress", function(e) {
         if(e.key == "u") {
-            layout = ++layout % 3;
+            layout = ++layout % 2;
 
             switch(layout) {
                 case 0:
+                    cameraFocalDistance = 49.2;
+                    falloffType = 1;
                     bokehFalloff = 130;
                     bokehStrength = 0.021;
                     break;
                 case 1:
-                    bokehFalloff = 80;
-                    bokehStrength = 0.018;
-                    break;
-                case 2:
-                    bokehFalloff  = 241;
+                    cameraFocalDistance = 47.8;
+                    falloffType = 1;
+                    bokehFalloff  = 361;
                     bokehStrength = 0.004;
                     break;
             }
