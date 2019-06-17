@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Wavelenghts</title>
+
+
+
+<script id="mainv" type="vert">
+	attribute vec3 pos;
+	//non è manco necessario, basta usare la x stessa per capire l'id del quad!!
+	attribute float ID;
+
+	uniform mat4 projection;
+	uniform mat4 model;
+	uniform mat4 view;
+
+	uniform vec4 values[128];
+
+	varying float IDD;
+	varying float IDz;
+	varying float y;
+	varying float alpha;
+	varying float alphaback;
+	varying float alphaleft;
+	varying float alpharight;
+
+
+
+	void main()
+	{
+		int index = int(pos.x + 256.0);
+		int mod = index - ((index / 4) * 4);
+		float ypos = 0.0;
+		if(mod == 0) ypos = values[index / 4].x * 200.0;
+		if(mod == 1) ypos = values[index / 4].y * 200.0;
+		if(mod == 2) ypos = values[index / 4].z * 200.0;
+		if(mod == 3) ypos = values[index / 4].w * 200.0;
+
+		if(pos.x + 256.0 < 256.0)
+		{
+			float ratio = (pos.x + 256.0) / 256.0;
+			ypos *= ratio;
+		}
+		else
+		{
+			float ratio = 1.0 - (pos.x / 256.0);
+			ypos *= ratio; 
+		}
+
+
+		//smoothed
+		if(abs(pos.z) < 256.0)
+		{
+			if(abs(pos.z) < 180.0) {
+				float ratio = abs(pos.z) / 180.0;
+				ypos *= pow(ratio, 2.0);
+			}
+			else {
+				float ratio = (abs(pos.z) - 180.0) / 76.0;
+				float r = ypos;
+				ypos *= pow(ratio, 0.24);
+				ypos += r;
+			}
+		}
+		else
+		{
+			if(abs(pos.z) < 384.0) {
+				float ratio = 1.0 - ((abs(pos.z) - 256.0) / 128.0);
+				float r = ypos;
+				ypos *= pow(ratio, 0.24);
+				ypos += r;
+			}
+			else {
+				float ratio = 1.0 - (abs(pos.z) - 384.0) / 128.0;
+				ypos *= pow(ratio, 2.0);
+			}
+		}
+
+
+		y = pos.y + ypos;
+
+		vec3 position = vec3(pos.x, pos.y + ypos, -abs(pos.z) / 1.8);
+
+		gl_Position = projection * model * view * vec4(position, 1.0);
+
+
+		int ids = int(ID);
+		int modulus = ids - ((ids / 2) * 2);
+		IDD = float(modulus);
+
+		float frontorback = 0.0;
+		if(pos.z < 0.0) frontorback = 1.0;
+		int idt = int(-pos.z +frontorback);
+		int moduluss = idt - ((idt / 2) * 2);
+		IDz = float(moduluss);
+
+		//alpha front
+		alpha = pow(abs(pos.z) / 512.0, 0.8);
+		alphaback = 1.0 - pow(abs(pos.z) / 512.0, 0.9);
+		alphaleft = pow((pos.x + 256.0) / 512.0, 0.45);
+		alpharight = 1.0 - pow((pos.x + 256.0) / 512.0, 2.00);
+		//alphaback = 1.0;
+	}
+</script>
+
+<script id="mainf" type="frag">
+	precision mediump float;
+
+	varying float IDD;
+	varying float IDz;
+	varying float y;
+	varying float alpha;
+	varying float alphaback;
+	varying float alphaleft;
+	varying float alpharight;
+
+	void main()
+	{
+		//float col = 0.5;//IDD;
+		//if(IDz == 0.0) 
+		//{
+		//	if(col == 0.0)
+		//		col = 1.0;
+		//	else
+		//		col = 0.0;
+		//}
+
+		//float col = ((y + 40.0) *2.8) / 80.0;
+		float col = 1.9;
+		if(y > 0.0)
+			col += (y / 100.0) * 3.5; 
+		if(y < 0.0 && y > -85.0)		//fra 0.7 e 0
+			col *= pow(1.0 - abs(y) / 85.0, 2.65);
+		if(y < -85.0)
+			col = 0.0;
+
+		gl_FragColor = vec4(vec3(col * alpha * alphaback * alphaleft* alpharight), 1.0);
+	}
+</script>
+
+
+<!-- POINT SHADERS -->
+<script id="pointv" type="vert">
+
+	//id.x rappresenta le x ed è un numero fra 0 e 64
+	//id.y rappresenta le Z ed è un numero fra 0 e 64
+	//è necessario moltiplicare per 8.0 per arrivare al 512 richiesto per
+	//la consistenza nel plotting
+	attribute vec2 id;
+
+	uniform mat4 projection;
+	uniform mat4 model;
+	uniform mat4 view;
+
+	uniform vec4 samples[128];
+	uniform float pheight;
+
+	varying float alpha;
+
+
+	void main()
+	{
+
+		int index = int(id.x);
+		index *= 8;
+		//index -= 256;
+		float ypos = samples[index / 4].x;
+		if(ypos < 0.0 && pheight < 0.0) ypos *= 220.0;
+		else		   ypos *= 200.0;
+
+
+		if((id.x * 8.0) < 256.0)
+		{
+			float ratio = (id.x * 8.0) / 256.0;
+			ypos *= ratio;
+		}
+		else
+		{
+			float ratio = 1.0 - ((id.x * 8.0 - 256.0) / 256.0);
+			ypos *= ratio; 
+		}
+
+		//smoothed
+		if(abs(id.y * 8.0) < 256.0)
+		{
+			if(abs(id.y * 8.0) < 180.0) {
+				float ratio = abs(id.y * 8.0) / 180.0;
+				ypos *= pow(ratio, 2.0);
+			}
+			else {
+				float ratio = (abs(id.y * 8.0) - 180.0) / 76.0;
+				float r = ypos;
+				ypos *= pow(ratio, 0.24);
+				ypos += r;
+			}
+		}
+		else
+		{
+			if(abs(id.y * 8.0) < 384.0) {
+				float ratio = 1.0 - ((abs(id.y * 8.0) - 256.0) / 128.0);
+				float r = ypos;
+				ypos *= pow(ratio, 0.24);
+				ypos += r;
+			}
+			else {
+				float ratio = 1.0 - (abs(id.y * 8.0) - 384.0) / 128.0;
+				ypos *= pow(ratio, 2.0);
+			}
+		}
+
+
+		gl_PointSize = 1.0;
+		vec3 position = vec3(id.x * 8.0 - 256.0,   
+							 pheight + ypos,  
+							 (-id.y * 8.0) / 1.8
+							);
+		gl_Position = projection * view * model * vec4(position.xyz, 1.0);
+
+
+		alpha = 1.0 - ((id.y * 8.0) / 512.0) * 0.6;
+
+	}
+</script>
+<script id="pointf" type="frag">
+	precision mediump float;
+
+	varying float alpha;
+
+	void main()
+	{
+		gl_FragColor = vec4(vec3(1.0 * alpha), 1.0);
+	}
+</script>
+<!-- POINT SHADERS - END -->
+
+
+
+
+
+
+
+	<script type="text/javascript" src="gl-matrix-min.js"></script>
+	<script type="text/javascript" src="shader.js"></script>
+	<script type="text/javascript" src="fx.js">
+	</script>
+
+
+<style>
+
+	* {
+		margin: 0;
+		padding:0;
+
+		font-family: sans-serif;
+		font-size: 12px;
+	}
+
+	html, body {
+		overflow: hidden;
+		
+		background: #000; /* Old browsers */
+		background: -moz-radial-gradient(center, ellipse cover,  #111111 0%		, #000000 100%); /* FF3.6-15 */
+		background: -webkit-radial-gradient(center, ellipse cover,  #111111		 0%,#000000 100%); /* Chrome10-25,Safari5.1-6 */
+		background: radial-gradient(ellipse at center,  #111111 0%,#000000 		100%);
+	}
+
+	#controls {
+		padding-top: 10px;
+		padding-right: 5px;
+		position: absolute;
+		margin: auto;
+		right:0;
+		top: 15px;
+		text-align: center;
+
+		box-shadow: 0px 0px 10px 1px #555;
+		padding-left: 7px;
+		padding-bottom: 10px;
+		border-bottom-left-radius: 10px;
+		border-top-left-radius: 10px;
+	}
+
+	#controls span {
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		text-decoration: none;
+		cursor:default;
+		pointer-events: none;
+		display: block;
+		color: white;
+		margin-bottom: -2px;
+	}
+
+	#controls input{
+		position:relative;
+		z-index: 10;
+	}
+
+	#footer {
+		pointer-events: none;
+		position: absolute;
+		bottom: 8px;
+		text-align: center;
+		width: 100%;
+		font-size: 12px;
+		color: #585858;
+	}
+
+	input[type=range]{
+    	/* fix for FF unable to apply focus style bug  */
+    	/*required for proper track sizing in FF*/
+	}
+	
+	input[type=range]::-moz-range-track {
+	    height: 2px;
+	    background: #444;
+	    border: none;
+	    border-radius: 3px;
+	}
+	
+	input[type=range]::-moz-range-thumb {
+	    border: none;
+	    height: 10px;
+	    width: 10px;
+	    border-radius: 50%;
+	    background: red;
+	}
+	
+	/*hide the outline behind the border*/
+	input[type=range]:-moz-focusring{
+	}
+	
+	input[type=range]:focus::-moz-range-track {
+	    background: #ccc;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	input[type=range]{
+	    -webkit-appearance: none;
+	    background: transparent;
+	}
+	
+	input[type=range]::-webkit-slider-runnable-track {
+		margin-top: 9px;
+		margin-bottom: 9px;
+		height: 2px;
+	    border: 1px solid #333;
+	}
+	
+	input[type=range]::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		margin-top: -3px;
+	    border: none;
+		height: 10px;
+		width: 10px;
+		border-radius: 50%;
+		background: red;
+	}
+
+
+	#loading {
+		pointer-events: none;
+		position: absolute;
+		top:0;
+		left:0;
+		width: 100vw;
+		height: 100vh;
+
+		display: flex;
+		flex-flow: column nowrap;
+		justify-content:center;
+		align-content:center;
+		align-items:center;
+	}
+
+	#loading div {
+
+		color:white;
+		font-size: 3em;
+	}
+
+
+</style>
+
+</head>
+<body>
+
+	<canvas id="canvas" style="border: none;"></canvas>
+
+
+
+	<div id="loading"><div>Loading...</div></div>
+
+
+
+	<div id="controls">
+		<span>Byquadfilter frequency: </span>
+		<input type="range" name="Hz" min="440" max="8800" step="32" defaultValue="440" oninput="freq(this.value)">
+		<span>Gain value: </span>
+		<input type="range" name="volume" min="0" max="1" step="0.01" defaultValue="0.5" oninput="gainv(this.value)">
+		<span>Noise Factor: </span>
+		<input type="range" name="noise" min="0" max="0.5" step="0.01" defaultValue="0" oninput="noise(this.value)">
+		<span style="font-size: 10px; color: #AAA; margin-bottom: 1px;">convolver only works in firefox</span>
+		<span>Convolver Reverb time: </span>
+		<input type="range" name="power" min="0" max="5" step="1" defaultValue="0" oninput="exponentialc(this.value)">
+		<span>Frequency Analyser ratio: </span>
+		<input type="range" name="anrat" min="0" max="1000" step="10" defaultValue="20" oninput="analratio(this.value)">
+		<span>Plotting Offset: </span>
+		<input type="range" name="anrat" min="-20" max="20" step="1" defaultValue="0" oninput="pointheight(this.value)">
+		<span style="font-size: 10px; color: #AAA">(experimental)</span>
+		<span style="font-size: 10px; color: #AAA">seems to work best in chrome</span>
+		<span>From Microphone 
+			<input style="display:inline-block; top:3px; pointer-events: initial;"type="checkbox" name="mic" onclick="mic(this.checked);">
+		</span>
+	</div>
+
+
+
+	<div id="footer">
+		<p style="font-size: 11px; color: #3A3A3A;">&#10094;=   Drag to move  =&#10095;</p>
+		<p> Graphical representation of sound waves plotted in a 3D graph. Enjoy the miracle of physics through your monitor -</p>
+	</div>
+
+</body>
+</html>
