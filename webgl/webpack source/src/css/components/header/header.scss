@@ -149,9 +149,13 @@ nav.header_social_icon_links {
     justify-content: center;
     align-items: center;
     align-content: center;
+
+    &.sketches_header_container {
+        margin: 2rem 0 2rem 0;
+    }
 }
 
-h1.portfolio_text {
+h1.portfolio_text, h1.sketches_text {
     font-family: 'Sacramento', cursive;
     font-size: 2.5rem;
     color: #333;

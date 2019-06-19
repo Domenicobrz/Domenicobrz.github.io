@@ -69,7 +69,6 @@ function updatePaginatorButtons() {
 
         paginatorContainer.appendChild(paginatorButton);
     }
-
 }
 
 

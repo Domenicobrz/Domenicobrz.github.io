@@ -5,6 +5,10 @@ var dom = {
     HeaderContainer: document.querySelector('.header'),
     
     TagSelectors: document.getElementsByClassName("TagSelector"),
+
+    SketchesContainer: document.querySelector(".sketches_container"),
+
+    main: document.querySelector("body > main"),
 };
 
 
