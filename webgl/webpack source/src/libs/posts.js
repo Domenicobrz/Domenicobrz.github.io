@@ -4,12 +4,12 @@ var posts = [
     { imgPath: "images/projects/doflines.jpg",  link: "http://domenicobrz.github.io/webgl/projects/DOF lines/", description: "", tags: ["webgl", "threejs"] },
     { imgPath: "images/projects/volumetricart.png",  link: "http://domenicobrz.github.io/webgl/projects/Volumetric art/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/frontend2.jpg",  link: "http://domenicobrz.github.io/webgl/projects/frontend 2/", description: "", tags: ["threejs", "misc"] },
+    { imgPath: "images/projects/doflinesrenderer.jpg",  link: "http://domenicobrz.github.io/webgl/projects/DOFlinesrenderer/", description: "", tags: ["threejs", "geometry"] },
     { imgPath: "images/projects/sidescroller.jpg",  link: "http://domenicobrz.github.io/webgl/projects/Sidescroller anim/", description: "", tags: ["webgl"] },
 
-
+    { imgPath: "images/projects/thematrix.jpg",  link: "http://domenicobrz.github.io/webgl/projects/enter the matrix/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/webglheader.jpg",  link: "http://domenicobrz.github.io/webgl/projects/webgl header/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/wolfheader.jpg",  link: "http://domenicobrz.github.io/webgl/projects/wolf-header/", description: "", tags: ["threejs"] },
-    { imgPath: "images/projects/thematrix.jpg",  link: "http://domenicobrz.github.io/webgl/projects/enter the matrix/", description: "", tags: ["webgl"] },
 
     { imgPath: "images/projects/ssr.png",  link: "http://domenicobrz.github.io/webgl/projects/SSR/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/glassabsorption.jpg",  link: "http://domenicobrz.github.io/webgl/projects/glass-absorption/", description: "", tags: ["threejs"] },
