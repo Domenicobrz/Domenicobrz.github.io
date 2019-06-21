@@ -5,6 +5,20 @@ import { dom } from "./DOMreferences";
 var paginatorContainer = document.querySelector(".sketches_paginator_container");
 var activePage = 0;
 
+let CELLS_PER_PAGE = 27;
+if(innerWidth < 1800) {
+    CELLS_PER_PAGE = 7*4;
+}
+if(innerWidth < 1200) {
+    CELLS_PER_PAGE = 5*5;
+}
+if(innerWidth < 800) {
+    CELLS_PER_PAGE = 4*7;
+}
+if(innerWidth < 600) {
+    CELLS_PER_PAGE = 3*7;
+}
+
 function initSketches() {
     initPaginator();
     loadPage(activePage);
@@ -12,7 +26,6 @@ function initSketches() {
 
 
 function initPaginator() {
-    var CELLS_PER_PAGE = 18;
 
     var nPages = Math.floor(    (sketches.length - 1) // subtracting one makes sure that if we have 30 elements and 10 per page,
                                                            // we return 3 pages instead of four
@@ -54,20 +67,6 @@ function loadPage(pageNumber) {
     // remove all elements
     while (dom.SketchesContainer.firstChild) {
         dom.SketchesContainer.removeChild(dom.SketchesContainer.firstChild);
-    }
-
-    let CELLS_PER_PAGE = 27;
-    if(innerWidth < 1800) {
-        CELLS_PER_PAGE = 7*4;
-    }
-    if(innerWidth < 1200) {
-        CELLS_PER_PAGE = 5*5;
-    }
-    if(innerWidth < 800) {
-        CELLS_PER_PAGE = 4*7;
-    }
-    if(innerWidth < 600) {
-        CELLS_PER_PAGE = 3*7;
     }
 
     let starting_index = CELLS_PER_PAGE * pageNumber;

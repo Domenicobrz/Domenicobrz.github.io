@@ -319,6 +319,106 @@ var sketches = [
         mediaType: "image",
         mediaPath: "images/sketches/raytracer11.jpg",
     },
+    { 
+        thumbnail: "images/sketches/dof-renderer1.jpg",  
+        description: `
+            <h1>DOF lines renderer</h1>
+            <p>This renderer tries to emulate a bokeh effect by accumulating millions of particles over time in a floating point framebuffer</p>
+            <p>The renderer is available <a target="_blank" href="https://github.com/Domenicobrz/DOF-lines-renderer">in this git repo</a></p>
+        `,
+        mediaType: "image",
+        mediaPath: "images/sketches/dof-renderer-f1.jpg",
+    },
+    { 
+        thumbnail: "images/sketches/dof-renderer2.jpg",  
+        description: `
+            <h1>DOF lines renderer</h1>
+            <p>This renderer tries to emulate a bokeh effect by accumulating millions of particles over time in a floating point framebuffer</p>
+            <p>The renderer is available <a target="_blank" href="https://github.com/Domenicobrz/DOF-lines-renderer">in this git repo</a></p>
+        `,
+        mediaType: "image",
+        mediaPath: "images/sketches/dof-renderer-f2.jpg",
+    },
+    { 
+        thumbnail: "images/sketches/dof-renderer3.jpg",  
+        description: `
+            <h1>DOF lines renderer</h1>
+            <p>This renderer tries to emulate a bokeh effect by accumulating millions of particles over time in a floating point framebuffer</p>
+            <p>The renderer is available <a target="_blank" href="https://github.com/Domenicobrz/DOF-lines-renderer">in this git repo</a></p>
+        `,
+        mediaType: "image",
+        mediaPath: "images/sketches/dof-renderer-f3.jpg",
+    },
+    { 
+        thumbnail: "images/sketches/dof-renderer4.jpg",  
+        description: `
+            <h1>DOF lines renderer</h1>
+            <p>This renderer tries to emulate a bokeh effect by accumulating millions of particles over time in a floating point framebuffer</p>
+            <p>The renderer is available <a target="_blank" href="https://github.com/Domenicobrz/DOF-lines-renderer">in this git repo</a></p>
+        `,
+        mediaType: "image",
+        mediaPath: "images/sketches/dof-renderer-f4.jpg",
+    },
+    { 
+        thumbnail: "images/sketches/dof-renderer5.jpg",  
+        description: `
+            <h1>DOF lines renderer</h1>
+            <p>This renderer tries to emulate a bokeh effect by accumulating millions of particles over time in a floating point framebuffer</p>
+            <p>The renderer is available <a target="_blank" href="https://github.com/Domenicobrz/DOF-lines-renderer">in this git repo</a></p>
+        `,
+        mediaType: "image",
+        mediaPath: "images/sketches/dof-renderer-f5.jpg",
+    },
+    { 
+        thumbnail: "images/sketches/dof-renderer6.jpg",  
+        description: `
+            <h1>DOF lines renderer</h1>
+            <p>This renderer tries to emulate a bokeh effect by accumulating millions of particles over time in a floating point framebuffer</p>
+            <p>The renderer is available <a target="_blank" href="https://github.com/Domenicobrz/DOF-lines-renderer">in this git repo</a></p>
+        `,
+        mediaType: "image",
+        mediaPath: "images/sketches/dof-renderer-f6.jpg",
+    },
+    { 
+        thumbnail: "images/sketches/dof-renderer7.jpg",  
+        description: `
+            <h1>DOF lines renderer</h1>
+            <p>This renderer tries to emulate a bokeh effect by accumulating millions of particles over time in a floating point framebuffer</p>
+            <p>The renderer is available <a target="_blank" href="https://github.com/Domenicobrz/DOF-lines-renderer">in this git repo</a></p>
+        `,
+        mediaType: "image",
+        mediaPath: "images/sketches/dof-renderer-f7.jpg",
+    },
+    { 
+        thumbnail: "images/sketches/dof-renderer8.jpg",  
+        description: `
+            <h1>DOF lines renderer</h1>
+            <p>This renderer tries to emulate a bokeh effect by accumulating millions of particles over time in a floating point framebuffer</p>
+            <p>The renderer is available <a target="_blank" href="https://github.com/Domenicobrz/DOF-lines-renderer">in this git repo</a></p>
+        `,
+        mediaType: "image",
+        mediaPath: "images/sketches/dof-renderer-f8.jpg",
+    },
+    { 
+        thumbnail: "images/sketches/dof-renderer9.jpg",  
+        description: `
+            <h1>DOF lines renderer</h1>
+            <p>This renderer tries to emulate a bokeh effect by accumulating millions of particles over time in a floating point framebuffer</p>
+            <p>The renderer is available <a target="_blank" href="https://github.com/Domenicobrz/DOF-lines-renderer">in this git repo</a></p>
+        `,
+        mediaType: "image",
+        mediaPath: "images/sketches/dof-renderer-f9.jpg",
+    },
+    { 
+        thumbnail: "images/sketches/dof-renderer10.jpg",  
+        description: `
+            <h1>DOF lines renderer</h1>
+            <p>Pretty interesting bug on my DOF points renderer which creates swirly patterns</p>
+            <p>The renderer is available <a target="_blank" href="https://github.com/Domenicobrz/DOF-lines-renderer">in this git repo</a></p>
+        `,
+        mediaType: "image",
+        mediaPath: "images/sketches/dof-renderer-f10.jpg",
+    },
 ];
 
 export { sketches };
