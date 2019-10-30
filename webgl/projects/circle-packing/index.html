@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <style>
+    html, body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+
+        overflow: hidden;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        background: #ededed;
+    }
+    
+    p {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+
+        transform: translate(-50%, -50%);
+
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 20px;
+    }
+
+    </style>
+
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+
+    <p>Click :)</p>
+    
+    <script src="three.js"></script>
+    <script src="main glsl.js"></script>
+</body>
+
+</html>
