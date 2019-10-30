@@ -79,7 +79,14 @@ function loadPage(pageNumber) {
         let element = document.createElement("div");
         element.className = "grid-element";
 
-        element.style.backgroundImage = "url(" + sketches[i].thumbnail + ")";
+        let thumbnailPath = sketches[i].thumbnail;
+        if(!thumbnailPath) {
+            let path = sketches[i].mediaPath;
+            let ind = path.lastIndexOf(".");
+            thumbnailPath = path.substr(0, ind) + "-thumb" + path.substr(ind);
+        }
+
+        element.style.backgroundImage = "url(" + thumbnailPath + ")";
 
         element.addEventListener("click", () => { showModal(sketches[i]) });
 
@@ -200,7 +207,7 @@ function showModal(sketch) {
     window.addEventListener("resize", resizeFunction);
     resizeFunction();
     
-    if(sketch.mediaType == "image") {
+    // if(sketch.mediaType == "image") {
         let image = new Image();
         image.onload = function() {
             savedImageReference = image;
@@ -209,7 +216,7 @@ function showModal(sketch) {
         };
 
         image.src = sketch.mediaPath;
-    }
+    // }
 
     let main = dom.main;
     main.appendChild(sketchModalContainer);

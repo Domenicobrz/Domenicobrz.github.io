@@ -1,16 +1,19 @@
 var posts = [
     { imgPath: "images/projects/caustics.jpg",  link: "http://domenicobrz.github.io/webgl/projects/dispersion-caustics/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/lumen2d.jpg",  link: "https://github.com/Domenicobrz/Lumen-2D", description: "", tags: ["geometry", "misc"] },
-    { imgPath: "images/projects/doflines.jpg",  link: "http://domenicobrz.github.io/webgl/projects/DOF lines/", description: "", tags: ["webgl", "threejs"] },
     { imgPath: "images/projects/volumetricart.png",  link: "http://domenicobrz.github.io/webgl/projects/Volumetric art/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/frontend2.jpg",  link: "http://domenicobrz.github.io/webgl/projects/frontend 2/", description: "", tags: ["threejs", "misc"] },
-    { imgPath: "images/projects/doflinesrenderer.jpg",  link: "http://domenicobrz.github.io/webgl/projects/DOFlinesrenderer/", description: "", tags: ["threejs", "geometry"] },
     { imgPath: "images/projects/sidescroller.jpg",  link: "http://domenicobrz.github.io/webgl/projects/Sidescroller anim/", description: "", tags: ["webgl"] },
+    { imgPath: "images/projects/blurryspider.jpg",  link: "https://domenicobrz.github.io/webgl/projects/blurry-web-spider/", description: "", tags: ["webgl", "threejs"] },
+    { imgPath: "images/projects/doflines.jpg",  link: "http://domenicobrz.github.io/webgl/projects/DOF lines/", description: "", tags: ["webgl", "threejs"] },
+
 
     { imgPath: "images/projects/thematrix.jpg",  link: "http://domenicobrz.github.io/webgl/projects/enter the matrix/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/doflinesrenderer2.jpg",  link: "http://domenicobrz.github.io/webgl/projects/DOFlines-2/", description: "", tags: ["webgl", "threejs"] },
+    { imgPath: "images/projects/circle-packing-mm.jpg",  link: "http://domenicobrz.github.io/webgl/projects/circle-packing/", description: "", tags: ["webgl", "threejs", "geometry"] },
     { imgPath: "images/projects/webglheader.jpg",  link: "http://domenicobrz.github.io/webgl/projects/webgl header/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/wolfheader.jpg",  link: "http://domenicobrz.github.io/webgl/projects/wolf-header/", description: "", tags: ["threejs"] },
+    { imgPath: "images/projects/doflinesrenderer.jpg",  link: "http://domenicobrz.github.io/webgl/projects/DOFlinesrenderer/", description: "", tags: ["threejs", "geometry"] },
 
     { imgPath: "images/projects/ssr.png",  link: "http://domenicobrz.github.io/webgl/projects/SSR/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/glassabsorption.jpg",  link: "http://domenicobrz.github.io/webgl/projects/glass-absorption/", description: "", tags: ["threejs"] },
@@ -31,6 +34,7 @@ var posts = [
     { imgPath: "images/projects/mainpage2.jpg", link: "http://domenicobrz.github.io/webgl/projects/testportfolio2/", description: "", tags: ["webgl", "geometry"] },
     { imgPath: "images/projects/dofcannon.jpg", link: "http://domenicobrz.github.io/webgl/projects/Physics Mouse/", description: "", tags: ["threejs"] },
     { imgPath: "images/projects/threedof.jpg", link: "http://domenicobrz.github.io/webgl/projects/threejs DOF/", description: "", tags: ["threejs"] },
+   
     { imgPath: "images/projects/threetest1.jpg", link: "http://domenicobrz.github.io/webgl/projects/ValueNoiseModel/", description: "", tags: ["threejs", "misc"] },
     { imgPath: "images/projects/variablelines.jpg", link: "https://github.com/Domenicobrz/Variable-width-lines-algorithm", description: "", tags: ["webgl", "geometry"] },
 

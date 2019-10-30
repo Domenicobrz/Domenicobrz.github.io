@@ -16,3 +16,8 @@ main {
 body {
     background: #eee;
 }
+
+* {
+    user-select: none;
+    -webkit-user-drag: none;
+}
