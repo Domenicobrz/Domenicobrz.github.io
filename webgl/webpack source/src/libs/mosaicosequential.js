@@ -4,7 +4,7 @@ import { isMobile } from "./isMobile";
 
 
 var CELL_MARGIN = 2;
-var CELLS_PER_PAGE = 20;
+var CELLS_PER_PAGE = 25;
 
 var toSpawn = 0;
 var selectedPage = 0;
