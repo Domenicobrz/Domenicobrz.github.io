@@ -1,0 +1,133 @@
+{
+	"mannequin": {
+		"lowResAssets" : {
+			"pose0":   "assets/new-assets/mannequin-stdpose.glb",
+			"pose1":   "assets/new-assets/mannequin-tpose.glb",
+			"diffuse0": "assets/new-assets/mannequin-stdpose-2k.jpg",
+			"diffuse1": "assets/new-assets/mannequin-tpose-2k.jpg"
+		},
+
+		"stdResAssets" : {
+			"diffuse0": "https://storage.googleapis.com/drapr-viewer-assets/persistent/bodies/textures/smooth-compressed/mjeans-diffuse.jpg",
+			"diffuse1": "https://storage.googleapis.com/drapr-viewer-assets/persistent/bodies/textures/smooth-compressed/mjeans-diffuse.jpg"
+		}
+	},
+
+	"garments": [
+		{
+			"name": "articleName",
+			"description": "UGxhY2Vob2xkZXI=",
+			"sizes": [
+				{
+					"name": "Large Tall",
+					"size": "TALLL",
+					"sizeTooTight": true,
+					"shortSleeve": false,
+					"garmentLength": "good",
+					"colors": [
+						{
+							"articleId": "227",
+							"colorTitle": "Solid Pink",
+							"colorHex": "ffe5d6",
+							"data": {
+								"material" : "lowResMaterial",
+								"materialProperty1" : "materialValue",
+								"materialProperty2" : "materialValue",
+								"materialProperty3" : "materialValue",
+
+								"lowResAssets": {
+									"pose0":    "assets/new-assets/size-1-stdpose/low-res.glb", 
+									"pose1":    "assets/new-assets/size-1-tpose/low-res.glb", 
+									"diffuse0": "assets/new-assets/size-1-stdpose/garment-512.jpg",	
+									"diffuse1": "assets/new-assets/size-1-tpose/garment-512.jpg"	
+								},
+
+								"stdResAssets" : {
+									"pose0":    "assets/new-assets/size-1-stdpose/std-res.glb", 
+									"pose1":    "assets/new-assets/size-1-tpose/std-res.glb", 
+									"diffuse0": "assets/new-assets/size-1-stdpose/garment-2k.jpg",	
+									"diffuse1": "assets/new-assets/size-1-tpose/garment-2k.jpg"	
+								},
+
+								"highResAssets" : {
+									"diffuse": "https://storage.googleapis.com/drapr-viewer-assets/persistent/bodies/textures/smooth-compressed/mjeans-ao.jpg"
+								}
+							}
+						},
+						{
+							"articleId": "228",
+							"colorTitle": "Whatever",
+							"colorHex": "cedaff",
+							"data": {
+								"material" : "lowResMaterial",
+								"materialProperty1" : "materialValue",
+								"materialProperty2" : "materialValue",
+								"materialProperty3" : "materialValue",
+
+								"lowResAssets": {
+									"pose0":    "assets/new-assets/size-1-stdpose/low-res.glb", 
+									"pose1":    "assets/new-assets/size-1-tpose/low-res.glb", 
+									"diffuse0": "assets/new-assets/size-1-stdpose/garment-512 - second color.jpg",	
+									"diffuse1": "assets/new-assets/size-1-tpose/garment-512 - second color.jpg"	
+								},
+
+								"stdResAssets" : {
+									"pose0":    "assets/new-assets/size-1-stdpose/std-res.glb", 
+									"pose1":    "assets/new-assets/size-1-tpose/std-res.glb", 
+									"diffuse0": "assets/new-assets/size-1-stdpose/garment-2k - second color.jpg",	
+									"diffuse1": "assets/new-assets/size-1-tpose/garment-2k - second color.jpg"	
+								},
+
+								"highResAssets" : {
+									"diffuse": "https://storage.googleapis.com/drapr-viewer-assets/persistent/bodies/textures/smooth-compressed/mjeans-ao.jpg"
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "X-Large Tall",
+					"size": "TALLXL",
+					"sizeTooTight": true,
+					"shortSleeve": false,
+					"garmentLength": "good",
+					"colors": [
+						{
+							"articleId": "229",
+							"colorTitle": "Solid Pink",
+							"colorHex": "ffe5d6",
+							"data": {
+								"material" : "heatMapMaterial",
+								"materialProperty1" : "materialValue",
+								"materialProperty2" : "materialValue",
+								"materialProperty3" : "materialValue",
+
+								"lowResAssets": {
+									"pose0":    "assets/new-assets/size-2-stdpose/low-res.glb", 
+									"pose1":    "assets/new-assets/size-2-tpose/low-res.glb", 
+									"diffuse0": "assets/new-assets/size-2-stdpose/garment-512.jpg",	
+									"diffuse1": "assets/new-assets/size-2-tpose/garment-512.jpg"	
+								},
+
+								"stdResAssets" : {
+									"pose0":    "assets/new-assets/size-2-stdpose/std-res.glb", 
+									"pose1":    "assets/new-assets/size-2-tpose/std-res.glb", 
+									"diffuse0": "assets/new-assets/size-2-stdpose/garment-2k.jpg",	
+									"diffuse1": "assets/new-assets/size-2-tpose/garment-2k.jpg",	
+									"heatmap0": "assets/new-assets/size-2-stdpose/heatmap-2k.jpg",	
+									"heatmap1": "assets/new-assets/size-2-tpose/heatmap-2k.jpg"	
+								},
+
+								"highResAssets" : {
+									"diffuse": "https://storage.googleapis.com/drapr-viewer-assets/persistent/bodies/textures/smooth-compressed/mjeans-ao.jpg"
+								}
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}
+														
+							

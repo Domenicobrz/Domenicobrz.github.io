@@ -1,0 +1,176 @@
+{
+    "fitguide-recommendations": [
+        "xl-tall", 
+        "large-tall"
+    ], 
+    "sizes": {
+        "large-standard": {
+            "color": 3, 
+            "lengthBar": [
+                1.9, 
+                -1.882
+            ], 
+            "shortDescription": "Too small", 
+            "fitBarData": [
+                0.052, 
+                1.151
+            ]
+        }, 
+        "medium-trim": {
+            "color": 3, 
+            "lengthBar": [
+                1.9, 
+                -2.632
+            ], 
+            "shortDescription": "Too small", 
+            "fitBarData": [
+                0.047, 
+                1.01
+            ]
+        }, 
+        "small-standard": {
+            "color": 3, 
+            "lengthBar": [
+                1.9, 
+                -2.882
+            ], 
+            "shortDescription": "Too small", 
+            "fitBarData": [
+                0.05, 
+                1.057
+            ]
+        }, 
+        "large-tall": {
+            "color": 0, 
+            "lengthBar": [
+                1.9, 
+                0.493
+            ], 
+            "shortDescription": "fitted", 
+            "fitBarData": [
+                0.048, 
+                1.06
+            ]
+        }, 
+        "xl-trim": {
+            "color": 2, 
+            "lengthBar": [
+                1.9, 
+                -1.382
+            ], 
+            "shortDescription": "Maybe small", 
+            "fitBarData": [
+                0.052, 
+                1.129
+            ]
+        }, 
+        "small-trim": {
+            "color": 3, 
+            "lengthBar": [
+                1.9, 
+                -3.132
+            ], 
+            "shortDescription": "Too small", 
+            "fitBarData": [
+                0.045, 
+                0.963
+            ]
+        }, 
+        "medium-standard": {
+            "color": 3, 
+            "lengthBar": [
+                1.9, 
+                -2.382
+            ], 
+            "shortDescription": "Too small", 
+            "fitBarData": [
+                0.052, 
+                1.104
+            ]
+        }, 
+        "xxl-standard": {
+            "color": 3, 
+            "lengthBar": [
+                1.9, 
+                -0.257
+            ], 
+            "shortDescription": "Too large", 
+            "fitBarData": [
+                0.059, 
+                1.288
+            ]
+        }, 
+        "xxl-trim": {
+            "color": 0, 
+            "lengthBar": [
+                1.9, 
+                -0.507
+            ], 
+            "shortDescription": "relaxed", 
+            "fitBarData": [
+                0.055, 
+                1.197
+            ]
+        }, 
+        "large-trim": {
+            "color": 3, 
+            "lengthBar": [
+                1.9, 
+                -2.132
+            ], 
+            "shortDescription": "Too small", 
+            "fitBarData": [
+                0.05, 
+                1.057
+            ]
+        }, 
+        "xl-tall": {
+            "color": 0, 
+            "lengthBar": [
+                1.9, 
+                1.493
+            ], 
+            "shortDescription": "fitted", 
+            "fitBarData": [
+                0.052, 
+                1.129
+            ]
+        }, 
+        "medium-tall": {
+            "color": 0, 
+            "lengthBar": [
+                1.9, 
+                -0.632
+            ], 
+            "shortDescription": "fitted", 
+            "fitBarData": [
+                0.047, 
+                1.014
+            ]
+        }, 
+        "xl-standard": {
+            "color": 2, 
+            "lengthBar": [
+                1.9, 
+                -1.132
+            ], 
+            "shortDescription": "Maybe small", 
+            "fitBarData": [
+                0.055, 
+                1.22
+            ]
+        }
+    }, 
+    "recommendations": {
+        "relaxed": [
+            "xl-standard", 
+            "xxl-trim"
+        ], 
+        "fitted": [
+            "large-tall", 
+            "medium-tall", 
+            "xl-trim", 
+            "xl-tall"
+        ]
+    }
+}

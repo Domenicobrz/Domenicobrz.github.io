@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+</head>
+
+<style>
+    html, body {
+        width: 100%;
+        height: 100%;
+    }
+
+    body {
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        overflow: hidden;
+
+        background: #f2f2f2;
+    }
+
+    .sliders-container {
+        margin-top: 80px;
+    }
+
+    .sliders-container > div {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .sliders-container > div > input {
+        width: 300px;
+    }
+
+
+    .sliders-container > div > span {
+        margin-right: 20px; 
+        font-family: Helvetica;
+
+        text-transform: uppercase;
+        font-size: 14px;
+    }   
+
+    .iframe-container {
+        position: relative;
+    }
+
+    .ifwd, .ifhd {
+        position: absolute;
+        right: 0;
+        font-family: Helvetica;
+        color: rgba(0,0,0,0.5);
+    }
+
+    .ifwd {
+        bottom: -25px;
+    }
+
+    .ifhd {
+        top:   0;
+        transform: translateX(125%);
+    }
+
+</style>
+
+
+<body>
+
+<br>
+
+<!-- <div style="height: 1400px; width: 500px; background: #ddd;"> div used to test touch-scrolling </div> -->
+<div class="iframe-container">
+    <span class="ifwd">750 px</span>
+    <span class="ifhd">600 px</span>
+</div>
+<!-- <div style="height: 1400px; width: 500px; background: #ddd;"> div used to test touch-scrolling </div> -->
+<div class="sliders-container">
+    <div>
+        <span>IFrame width</span>
+        <input type="range" min="350" max="1000" value="750" class="slider-width">
+    </div>
+    <div>
+        <span>IFrame height</span>
+        <input type="range" min="500" max="1000" value="600" class="slider-height">
+    </div>
+
+
+    <script>
+        // Integrator script, has to be copied in every customer's page!
+        function DraprViewer(a){function b(a,b){if(h[a])for(let c=0;c<h[a].length;c++)h[a][c](b)}let c=a.width||"100%",d=a.height||"450px",e=a.amplitudeKey,f=a.viewerPath,g=document.createElement("iframe");g.id="drapr-viewer",g.style.width=c,g.style.height=d,g.style.border="none",g.style.outline="none",g.style.boxShadow="0px 14px 11px -14px rgba(0,0,0,0.2)",g.style.border="1px solid #e4e4e4",g.setAttribute("src",f);let h={};return window.addEventListener("message",a=>{a&&a.data&&a.data.type&&a.data.type.startsWith("drapr_")&&b(a.data.type,a.data)}),{DOMelement:g,addEventListener:function(a,b){h[a]||(h[a]=[]),h[a].push(b)},sendMessage:function(a){g.contentWindow.postMessage(a,"*")},setSize:function(a,b){g.style.width=a,g.style.height=b}}};
+        
+        // initialing the viewer
+        let draprViewer = new DraprViewer({
+            width:  "750px",
+            height: "600px",
+            viewerPath: "draprviewer.html?static_assets=true",
+        });
+
+        // Injecting the viewer in the page 
+        document.querySelector(".iframe-container").insertBefore(
+            draprViewer.DOMelement, 
+            document.querySelector(".ifwd"),
+        );
+
+        // setting up sliders
+        let widthSlider  = document.querySelector(".slider-width");
+        let heightSlider = document.querySelector(".slider-height");
+        widthSlider.addEventListener("input", onSliderChange);
+        heightSlider.addEventListener("input", onSliderChange);
+
+        function onSliderChange() {
+            let vx = widthSlider.value;
+            let vh = heightSlider.value;
+
+            draprViewer.setSize(Math.floor(vx) + "px", Math.floor(vh) + "px");
+
+            document.querySelector(".ifwd").textContent = Math.floor(vx) + " px";
+            document.querySelector(".ifhd").textContent = Math.floor(vh) + " px";
+        }
+    </script>
+</div>
+
+
+
+<script>
+// window.addEventListener("keypress", function(e) {
+//     document.getElementById("iframe").contentWindow.postMessage({ type: "keypress", key: e.key }, "*");
+// });
+
+// required for key-press event to pass down to the iframe
+// document.getElementById("iframe").contentWindow.focus();
+
+// $('#size').on('change', function() {
+//     document.getElementById("iframe").contentWindow.postMessage({ type: "switch-size", newSize: this.value }, "*");
+//     console.log('{ type: "switch-size", newSize: "'+this.value+'" }');
+// });
+// $('#color').on('change', function() {
+//     document.getElementById("iframe").contentWindow.postMessage({ type: "switch-color", newColor: this.value }, "*");
+//     console.log('{ type: "switch-color", newColor: "'+this.value+'" }');
+    
+//     //iframe.contentWindow.postMessage( { type: "switch-color", newColor: "ffffff" } );
+// });
+</script>
+</body>
+</html>

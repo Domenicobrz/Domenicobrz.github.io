@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <title>Drapr 3D viewer</title>
+
+    <link rel="stylesheet" type="text/css" href="dist/main.css">
+    <script src="dist/main.js"></script>
+
+    <script>
+        var phpData = {
+            staticData: true,
+        };
+
+        // ************* amplitude initialization 
+        (function(e,t){var n=e.amplitude||{_q:[],_iq:{}};var r=t.createElement("script")
+        ;r.type="text/javascript"
+        ;r.integrity="sha384-d/yhnowERvm+7eCU79T/bYjOiMmq4F11ElWYLmt0ktvYEVgqLDazh4+gW9CKMpYW"
+        ;r.crossOrigin="anonymous";r.async=true
+        ;r.src="https://cdn.amplitude.com/libs/amplitude-5.2.2-min.gz.js"
+        ;r.onload=function(){if(!e.amplitude.runQueuedFunctions){
+        console.log("[Amplitude] Error: could not load SDK")}}
+        ;var i=t.getElementsByTagName("script")[0];i.parentNode.insertBefore(r,i)
+        ;function s(e,t){e.prototype[t]=function(){
+        this._q.push([t].concat(Array.prototype.slice.call(arguments,0)));return this}}
+        var o=function(){this._q=[];return this}
+        ;var a=["add","append","clearAll","prepend","set","setOnce","unset"]
+        ;for(var u=0;u<a.length;u++){s(o,a[u])}n.Identify=o;var c=function(){this._q=[]
+        ;return this}
+        ;var l=["setProductId","setQuantity","setPrice","setRevenueType","setEventProperties"]
+        ;for(var p=0;p<l.length;p++){s(c,l[p])}n.Revenue=c
+        ;var d=["init","logEvent","logRevenue","setUserId","setUserProperties","setOptOut","setVersionName","setDomain","setDeviceId","setGlobalUserProperties","identify","clearUserProperties","setGroup","logRevenueV2","regenerateDeviceId","groupIdentify","onInit","logEventWithTimestamp","logEventWithGroups","setSessionId","resetSessionId"]
+        ;function v(e){function t(t){e[t]=function(){
+        e._q.push([t].concat(Array.prototype.slice.call(arguments,0)))}}
+        for(var n=0;n<d.length;n++){t(d[n])}}v(n);n.getInstance=function(e){
+        e=(!e||e.length===0?"$default_instance":e).toLowerCase()
+        ;if(!n._iq.hasOwnProperty(e)){n._iq[e]={_q:[]};v(n._iq[e])}return n._iq[e]}
+        ;e.amplitude=n})(window,document);
+    </script>
+
+</head>
+<body>
+
+    <svg style="display: none;">
+        <symbol id="icon-close" viewBox="0 0 357 357">
+	        <g> <polygon points="357,35.7 321.3,0 178.5,142.8 35.7,0 0,35.7 142.8,178.5 0,321.3 35.7,357 178.5,214.2 321.3,357 357,321.3     214.2,178.5   "/> </g>
+        </symbol>
+        <symbol id="icon-down-arrow" viewBox="0 0 48 48">
+            <path d=" M 7.32 24.79 C 4.40 22.93 6.79 17.96 10.09 18.96 C 14.93 21.62 19.32 25.05 24.00 27.99 C 28.46 25.15 32.72 21.97 37.27 19.28 C 40.16 17.47 43.54 21.74 41.31 24.22 C 37.40 27.42 32.92 29.85 28.83 32.81 C 26.78 34.24 24.04 36.30 21.60 34.36 C 16.81 31.22 12.00 28.10 7.32 24.79 Z"></path>
+        </symbol>
+        <symbol id="icon-arrowright" viewBox="0 0 24 24">
+	        <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z"></path>
+        </symbol>
+        <symbol id="icon-arrowleft" viewBox="0 0 24 24">
+	        <path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"></path>
+        </symbol>
+
+        <symbol id="icon-bb-fit" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+            <title>Untitled-1</title><path class="cls-1" d="M27.6,64.15a12.43,12.43,0,0,0-.34,2.5c8.63,2.29,17,2.66,24.86.44a13,13,0,0,0-.26-2.52"/><polyline class="cls-1" points="36.08 19.41 37.06 11.42 44.24 11.55 44.95 19.56"/><path class="cls-1" d="M29,31.78l-6.7,8.85-5.91-5.71,8.08-13.11,7.82-4.35q8.16,5.45,16.51.29l7.67,4.62,7.61,13.38L58,41.25l-6.38-9.08c.08-2.09-.92,22.61,3.57,31.77a66.42,66.42,0,0,1-30.84-.54C29.13,54.4,29,29.69,29,31.78Z"/><line class="cls-1" x1="59.23" y1="49.1" x2="72" y2="49.33"/><polyline class="cls-1" points="62.97 52.98 59.23 49.1 63.1 45.36"/><line class="cls-1" x1="20.77" y1="48.43" x2="8" y2="48.21"/><polyline class="cls-1" points="16.9 52.17 20.77 48.43 17.03 44.56"/>
+        </symbol>
+
+        <symbol id="icon-bb-pose" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+            <title>Untitled-1</title><path class="cls-1" d="M33.07,50H40a0,0,0,0,1,0,0V68.53A3.47,3.47,0,0,1,36.53,72h0a3.47,3.47,0,0,1-3.47-3.47V50A0,0,0,0,1,33.07,50Z"/><path class="cls-1" d="M40,50h6.93a0,0,0,0,1,0,0V68.53A3.47,3.47,0,0,1,43.47,72h0A3.47,3.47,0,0,1,40,68.53V50a0,0,0,0,1,0,0Z"/><path class="cls-1" d="M16.46,27.21h0a2.42,2.42,0,0,0,2.43,2.42H33.07V50H46.93V29.63H61.11a2.42,2.42,0,0,0,2.43-2.42h0a2.43,2.43,0,0,0-2.43-2.43H18.89A2.43,2.43,0,0,0,16.46,27.21Z"/><circle class="cls-1" cx="40" cy="14.87" r="6.87"/>
+        </symbol>
+
+        <symbol id="icon-bb-body" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+            <defs><style>.cls-1{fill:none;}</style></defs>
+            <title>Untitled-1</title><polyline class="cls-1" points="54.51 32.67 54.51 49.97 40.65 49.97 40.65 32.67"/><path class="cls-1" d="M40.65,50h6.93a0,0,0,0,1,0,0V68.53A3.47,3.47,0,0,1,44.12,72h0a3.47,3.47,0,0,1-3.47-3.47V50A0,0,0,0,1,40.65,50Z"/><path class="cls-1" d="M47.58,50h6.93a0,0,0,0,1,0,0V68.53A3.47,3.47,0,0,1,51,72h0a3.47,3.47,0,0,1-3.47-3.47V50A0,0,0,0,1,47.58,50Z"/><path class="cls-1" d="M40.65,32.67V46a2.43,2.43,0,0,1-2.43,2.43h0A2.42,2.42,0,0,1,35.8,46V30.24A5.27,5.27,0,0,1,41.07,25h13a5.27,5.27,0,0,1,5.27,5.27V46a2.43,2.43,0,0,1-2.43,2.43h0A2.43,2.43,0,0,1,54.51,46V32.67"/><circle class="cls-1" cx="47.58" cy="14.87" r="6.87"/><rect class="cls-1" x="20.63" y="8" width="10.08" height="64"/><line class="cls-1" x1="20.63" y1="15.31" x2="25.21" y2="15.31"/><line class="cls-1" x1="20.63" y1="23.54" x2="24.09" y2="23.54"/><line class="cls-1" x1="20.63" y1="31.77" x2="25.21" y2="31.77"/><line class="cls-1" x1="20.63" y1="40" x2="24.09" y2="40"/><line class="cls-1" x1="20.63" y1="48.23" x2="25.21" y2="48.23"/><line class="cls-1" x1="20.63" y1="56.46" x2="24.09" y2="56.46"/><line class="cls-1" x1="20.63" y1="64.69" x2="25.21" y2="64.69"/>
+        </symbol>
+
+        <symbol id="icon-bb-fit-error" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+            <title>Untitled-1</title><path class="cls-1" d="M68.12,72H11.88a3.87,3.87,0,0,1-3.47-5.61L36.53,10.14a3.89,3.89,0,0,1,6.94,0L71.59,66.39A3.87,3.87,0,0,1,68.12,72Z"/><polygon class="cls-1" points="42.72 54.8 37.28 54.8 36.14 27.23 43.86 27.23 42.72 54.8"/><rect class="cls-1" x="36.94" y="58.55" width="6.12" height="6.12"/>
+        </symbol>
+    </svg>
+
+</body>
+</html>
