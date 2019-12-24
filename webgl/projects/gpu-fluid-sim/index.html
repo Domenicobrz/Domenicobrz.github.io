@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+        <title>Gpu Fluid sim</title>
+
+        <style>
+            * {
+                user-select: none;
+            }
+
+            html, body {
+                overflow: hidden;
+                background-color: #000;
+            }
+
+            body {
+                margin: 0;
+                position: fixed;
+                width: 100%;
+                height: 100%;
+            }
+
+            canvas {
+                width: 100%;
+                height: 100%;
+            }
+
+            .caption-container {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                padding: 0.5em;
+            }
+
+            .caption-container p {
+                margin: 0.25em;
+                color: white;
+                font-family: Arial, Helvetica, sans-serif, "Palatino Linotype", "Book Antiqua", Palatino, serif;
+                font-size: 14px;
+                letter-spacing: 0.03em;
+                opacity: 0.7;
+                font-weight: normal;
+            }
+
+            .caption-container a {
+                color: #ccc;
+            }
+        </style>
+    </head>
+    <body oncontextmenu="return false;">
+
+        <div class="caption-container">
+            <p>Left / right click to add white / black dye to the canvas, middle click to move the fluid</p>
+            <p>This is a modified version of the amazing shaders from <a target="blank" href="https://github.com/PavelDoGreat/WebGL-Fluid-Simulation">PavelDoGreat</a> ported over to work with threejs</p>
+        </div>
+
+        <script src="./three.js"></script>
+        <script src="./adapted-shaders.js"></script>
+        <script src="./script2.js"></script>
+    </body>
+</html>

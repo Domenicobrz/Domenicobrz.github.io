@@ -1,0 +1,6 @@
+- check if OES_texture_float_linear is REALLY enabled / supported
+- rimosso: ext.supportLinearFiltering ? null : ['MANUAL_FILTERING'] dall'advection shader
+- ho automaticamente usato "replace" dentro shader.js per rimuovere i prefix/suffix usati da lui
+
+
+****** - devi aggiungere gli uniform sui texelSize dentro step() se vuoi supportare i ridimensionamenti
