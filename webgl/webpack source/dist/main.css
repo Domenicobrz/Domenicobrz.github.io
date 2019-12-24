@@ -365,6 +365,13 @@ main {
 body {
   background: #eee; }
 
+* {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  -webkit-user-drag: none; }
+
 .header {
   position: relative;
   margin: auto; }
@@ -655,8 +662,8 @@ hr.header_separator {
         transition: transform 0.25s ease, -webkit-transform 0.25s ease;
         cursor: pointer; }
         .mosaicogrid .mosaicogrid_cell a img:hover {
-          -webkit-transform: scale(1.1, 1.1);
-                  transform: scale(1.1, 1.1); }
+          -webkit-transform: scale(1.05, 1.05);
+                  transform: scale(1.05, 1.05); }
 
 .mosaico_container {
   position: relative;

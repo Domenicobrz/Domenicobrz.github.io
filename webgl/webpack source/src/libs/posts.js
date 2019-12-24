@@ -6,10 +6,11 @@ var posts = [
     { imgPath: "images/projects/sidescroller.jpg",  link: "http://domenicobrz.github.io/webgl/projects/Sidescroller anim/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/blurryspider.jpg",  link: "https://domenicobrz.github.io/webgl/projects/blurry-web-spider/", description: "", tags: ["webgl", "threejs"] },
     { imgPath: "images/projects/doflines.jpg",  link: "http://domenicobrz.github.io/webgl/projects/DOF lines/", description: "", tags: ["webgl", "threejs"] },
-
-
+    
     { imgPath: "images/projects/thematrix.jpg",  link: "http://domenicobrz.github.io/webgl/projects/enter the matrix/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/doflinesrenderer2.jpg",  link: "http://domenicobrz.github.io/webgl/projects/DOFlines-2/", description: "", tags: ["webgl", "threejs"] },
+    { imgPath: "images/projects/gpu-fluid-sim.jpg",  link: "http://domenicobrz.github.io/webgl/projects/gpu-fluid-sim/", description: "", tags: ["webgl", "threejs"] },
+
     { imgPath: "images/projects/circle-packing-mm.jpg",  link: "http://domenicobrz.github.io/webgl/projects/circle-packing/", description: "", tags: ["webgl", "threejs", "geometry"] },
     { imgPath: "images/projects/webglheader.jpg",  link: "http://domenicobrz.github.io/webgl/projects/webgl header/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/wolfheader.jpg",  link: "http://domenicobrz.github.io/webgl/projects/wolf-header/", description: "", tags: ["threejs"] },
