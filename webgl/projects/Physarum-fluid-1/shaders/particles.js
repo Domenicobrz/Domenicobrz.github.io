@@ -67,7 +67,7 @@ vec2 clampSensorPosition(vec2 sensor) {
 
 void main() {
 
-    float senseLength = 10.7 + sin(vParticleIndex.x * 0.757) * 2.35;
+    float senseLength = 6.7 + sin(vParticleIndex.x * 0.757) * 2.35;
     float senseAngle  = 0.785398 * 0.5;//  + sin(vParticleIndex.x) * 0.1;  // radians
 
 
