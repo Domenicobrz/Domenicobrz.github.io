@@ -29,7 +29,7 @@ void main() {
 
     // Exposure tone mapping
     // float exposure = 0.19;       // works best on fullscreen
-    float exposure = 0.15;       // works best on quad-screen
+    float exposure = 0.178;       // works best on quad-screen
     vec3 val = texture2D(uTrailMap, vUv).xxx;
     vec3 mapped = vec3(1.0) - exp(-val * exposure);
     // vec3 mapped = aces(val);
