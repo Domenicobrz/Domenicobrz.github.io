@@ -1,0 +1,4 @@
+This is a Brave Rewards publisher verification file.
+
+Domain: domenicobrz.github.io
+Token: fbb4b2b59619543a7f94818bedf0add2aed56d03193ab0835eb0f91ace2c1613
