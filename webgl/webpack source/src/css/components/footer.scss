@@ -248,22 +248,56 @@
     @media all and(min-width: 720px) {
         flex: 0 0 35%;
         padding-right: 1.5em;
-        a {
-            text-align: left;
-        }
-        span {
-            text-align: left;
-        }
+        // a {
+        //     text-align: left;
+        // }
+        // span {
+        //     text-align: left;
+        // }
     }
 }
 
 .social_links_box {
     flex: 1 0 100%;
     display: flex;
-    flex-flow: row wrap;
-    justify-content: center;
-    align-content: start;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-content: center;
     margin: 2em auto 2em;
+
+    .socials {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: center;
+
+        & > a {  
+            margin: 0 0 0.5em 0.9em;
+    
+            &:first-of-type {
+                margin: 0 0 0.5em 0;
+            }
+    
+            @media all and(min-width: 400px) {
+                margin: 0 0 0.5em 0.9em;    
+            }
+            @media all and(min-width: 720px) {
+                margin: 0 0 1.4em 0.9em;    
+            }
+    
+            &:hover > svg {
+                fill: $primary-color;
+            }
+    
+            & > svg {
+                transition: fill .3s;
+    
+                width: 1em;
+                height: 1em;
+    
+                fill: #444;
+            }
+        }
+    }
 
     @media all and(min-width: 400px) {
         margin: 1em auto 2em;
@@ -271,53 +305,20 @@
     
     @media all and(min-width: 720px) {
         flex: 1 0 0;
-        justify-content: right;
         margin: 0 auto 1em;
     }
 
-    
-    & > a {  
-        margin: 0 0 0.5em 0.9em;
-
-        &:first-of-type {
-            margin: 0 0 0.5em 0;
-        }
-
-        @media all and(min-width: 400px) {
-            margin: 0 0 0.5em 0.9em;    
-        }
-        @media all and(min-width: 720px) {
-            margin: 0 0 1.4em 0.9em;    
-        }
-
-        &:hover > svg {
-            fill: $primary-color;
-        }
-
-        & > svg {
-            transition: fill .3s;
-
-            width: 1em;
-            height: 1em;
-
-            fill: #444;
-        }
-    }
-
     span {
-        flex: 0 0 100%;
-
         display: block;
         font-family: 'Source Sans Pro', sans-serif;
         color: #606060;
         font-size: 0.8em;
         letter-spacing: 0.1em;
-        margin: 0.5em 0 0 0.4em;
-
+        margin: 0.5em 0 0 0em;
         text-align: center;
+
         @media all and(min-width: 720px) {
             margin: 0;
-            text-align: right;
         }
 
         svg {

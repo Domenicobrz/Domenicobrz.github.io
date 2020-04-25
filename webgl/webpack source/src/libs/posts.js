@@ -7,12 +7,14 @@ var posts = [
     { imgPath: "images/projects/sidescroller.jpg",  link: "http://domenicobrz.github.io/webgl/projects/Sidescroller anim/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/blurryspider.jpg",  link: "https://domenicobrz.github.io/webgl/projects/blurry-web-spider/", description: "", tags: ["webgl", "threejs"] },
     { imgPath: "images/projects/doflines.jpg",  link: "http://domenicobrz.github.io/webgl/projects/DOF lines/", description: "", tags: ["webgl", "threejs"] },
+    { imgPath: "images/projects/doflines.jpg",  link: "http://domenicobrz.github.io/webgl/projects/DOF lines/", description: "", tags: ["webgl", "threejs"] },
     
     { imgPath: "images/projects/thematrix.jpg",  link: "http://domenicobrz.github.io/webgl/projects/enter the matrix/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/doflinesrenderer2.jpg",  link: "http://domenicobrz.github.io/webgl/projects/DOFlines-2/", description: "", tags: ["webgl", "threejs"] },
     { imgPath: "images/projects/gpu-fluid-sim.jpg",  link: "http://domenicobrz.github.io/webgl/projects/gpu-fluid-sim/", description: "", tags: ["webgl", "threejs"] },
 
     { imgPath: "images/projects/circle-packing-mm.jpg",  link: "http://domenicobrz.github.io/webgl/projects/circle-packing/", description: "", tags: ["webgl", "threejs", "geometry"] },
+    { imgPath: "images/projects/phys-fluid-sim.jpg",  link: "https://domenicobrz.github.io/webgl/projects/Physarum-fluid-2/", description: "", tags: ["webgl", "threejs"] },
     { imgPath: "images/projects/webglheader.jpg",  link: "http://domenicobrz.github.io/webgl/projects/webgl header/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/wolfheader.jpg",  link: "http://domenicobrz.github.io/webgl/projects/wolf-header/", description: "", tags: ["threejs"] },
     { imgPath: "images/projects/doflinesrenderer.jpg",  link: "http://domenicobrz.github.io/webgl/projects/DOFlinesrenderer/", description: "", tags: ["threejs", "geometry"] },
@@ -20,8 +22,8 @@ var posts = [
     { imgPath: "images/projects/ssr.png",  link: "http://domenicobrz.github.io/webgl/projects/SSR/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/glassabsorption.jpg",  link: "http://domenicobrz.github.io/webgl/projects/glass-absorption/", description: "", tags: ["threejs"] },
 
-    { imgPath: "images/projects/2dsoftshadows.jpg",  link: "http://domenicobrz.github.io/webgl/projects/2D soft shadows/", description: "", tags: ["webgl", "geometry"] },
     { imgPath: "images/projects/legendarycursor.jpg",  link: "https://github.com/Domenicobrz/legendary-cursor", description: "", tags: ["webgl", "threejs"] },
+    { imgPath: "images/projects/2dsoftshadows.jpg",  link: "http://domenicobrz.github.io/webgl/projects/2D soft shadows/", description: "", tags: ["webgl", "geometry"] },
     { imgPath: "images/projects/marchingcubes.jpg",  link: "http://domenicobrz.github.io/webgl/projects/marching cubes/", description: "", tags: ["webgl", "geometry"] },
     
    
