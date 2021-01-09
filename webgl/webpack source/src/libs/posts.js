@@ -4,7 +4,7 @@ var posts = [
     { imgPath: "images/projects/rtptcornellbox.jpg",  link: "http://domenicobrz.github.io/webgl/projects/RTPTCornellBox/", description: "", tags: ["threejs", "webgl"] },
     { imgPath: "images/projects/volumetricart.png",  link: "http://domenicobrz.github.io/webgl/projects/Volumetric art/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/frontend2.jpg",  link: "http://domenicobrz.github.io/webgl/projects/frontend 2/", description: "", tags: ["threejs", "misc"] },
-    { imgPath: "images/projects/sidescroller.jpg",  link: "http://domenicobrz.github.io/webgl/projects/Sidescroller anim/", description: "", tags: ["webgl"] },
+    { imgPath: "images/projects/ssgi.jpg",  link: "http://domenicobrz.github.io/webgl/projects/SSGI/", description: "", tags: ["threejs", "webgl"] },
     { imgPath: "images/projects/ssrefractiondepthpeeling.jpg",  link: "http://domenicobrz.github.io/webgl/projects/SSRefractionDepthPeeling/", description: "", tags: ["webgl", "threejs"] },
     { imgPath: "images/projects/blurryspider.jpg",  link: "https://domenicobrz.github.io/webgl/projects/blurry-web-spider/", description: "", tags: ["webgl", "threejs"] },
     { imgPath: "images/projects/doflines.jpg",  link: "http://domenicobrz.github.io/webgl/projects/DOF lines/", description: "", tags: ["webgl", "threejs"] },
@@ -18,6 +18,7 @@ var posts = [
     { imgPath: "images/projects/webglheader.jpg",  link: "http://domenicobrz.github.io/webgl/projects/webgl header/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/wolfheader.jpg",  link: "http://domenicobrz.github.io/webgl/projects/wolf-header/", description: "", tags: ["threejs"] },
     { imgPath: "images/projects/doflinesrenderer.jpg",  link: "http://domenicobrz.github.io/webgl/projects/DOFlinesrenderer/", description: "", tags: ["threejs", "geometry"] },
+    { imgPath: "images/projects/sidescroller.jpg",  link: "http://domenicobrz.github.io/webgl/projects/Sidescroller anim/", description: "", tags: ["webgl"] },
 
     { imgPath: "images/projects/ssr.png",  link: "http://domenicobrz.github.io/webgl/projects/SSR/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/glassabsorption.jpg",  link: "http://domenicobrz.github.io/webgl/projects/glass-absorption/", description: "", tags: ["threejs"] },
