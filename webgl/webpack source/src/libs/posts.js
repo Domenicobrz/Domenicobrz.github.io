@@ -2,9 +2,10 @@ var posts = [
     { imgPath: "images/projects/caustics.jpg",  link: "http://domenicobrz.github.io/webgl/projects/dispersion-caustics/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/lumen2d.jpg",  link: "https://github.com/Domenicobrz/Lumen-2D", description: "", tags: ["geometry", "misc"] },
     { imgPath: "images/projects/rtptcornellbox.jpg",  link: "http://domenicobrz.github.io/webgl/projects/RTPTCornellBox/", description: "", tags: ["threejs", "webgl"] },
-    { imgPath: "images/projects/volumetricart.png",  link: "http://domenicobrz.github.io/webgl/projects/Volumetric art/", description: "", tags: ["webgl"] },
+    { imgPath: "images/projects/ssr2.jpg",  link: "http://domenicobrz.github.io/webgl/projects/SSR2/", description: "", tags: ["webgl", "threejs"] },
     { imgPath: "images/projects/frontend2.jpg",  link: "http://domenicobrz.github.io/webgl/projects/frontend 2/", description: "", tags: ["threejs", "misc"] },
     { imgPath: "images/projects/ssgi.jpg",  link: "http://domenicobrz.github.io/webgl/projects/SSGI/", description: "", tags: ["threejs", "webgl"] },
+    { imgPath: "images/projects/volumetricart.png",  link: "http://domenicobrz.github.io/webgl/projects/Volumetric art/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/ssrefractiondepthpeeling.jpg",  link: "http://domenicobrz.github.io/webgl/projects/SSRefractionDepthPeeling/", description: "", tags: ["webgl", "threejs"] },
     { imgPath: "images/projects/blurryspider.jpg",  link: "https://domenicobrz.github.io/webgl/projects/blurry-web-spider/", description: "", tags: ["webgl", "threejs"] },
     { imgPath: "images/projects/doflines.jpg",  link: "http://domenicobrz.github.io/webgl/projects/DOF lines/", description: "", tags: ["webgl", "threejs"] },
@@ -23,12 +24,12 @@ var posts = [
     { imgPath: "images/projects/ssr.png",  link: "http://domenicobrz.github.io/webgl/projects/SSR/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/glassabsorption.jpg",  link: "http://domenicobrz.github.io/webgl/projects/glass-absorption/", description: "", tags: ["threejs"] },
 
+    { imgPath: "images/projects/flyingsimulator.jpg",  link: "http://domenicobrz.github.io/webgl/projects/flying simulation/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/legendarycursor.jpg",  link: "https://github.com/Domenicobrz/legendary-cursor", description: "", tags: ["webgl", "threejs"] },
     { imgPath: "images/projects/2dsoftshadows.jpg",  link: "http://domenicobrz.github.io/webgl/projects/2D soft shadows/", description: "", tags: ["webgl", "geometry"] },
     { imgPath: "images/projects/marchingcubes.jpg",  link: "http://domenicobrz.github.io/webgl/projects/marching cubes/", description: "", tags: ["webgl", "geometry"] },
     
    
-    { imgPath: "images/projects/flyingsimulator.jpg",  link: "http://domenicobrz.github.io/webgl/projects/flying simulation/", description: "", tags: ["webgl"] },
     { imgPath: "images/projects/cpufluid.jpg",  link: "http://domenicobrz.github.io/webgl/projects/CPU Fluid simulation/", description: "", tags: ["webgl"] },
     
     { imgPath: "images/projects/audiowaves.jpg", link: "http://domenicobrz.github.io/webgl/projects/Wavelengths visualizer/", description: "", tags: ["webgl"] },
