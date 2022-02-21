@@ -101,11 +101,11 @@ export default class Bloom {
     this.clock.start();
   }
 
-  compute() {
+  compute(bloomSpread = 5.5) {
     this.mesh.material = this.blurMaterial;
     // ping pong blur toruses scene
     for(let i = 0; i < 7; i++) {
-      this.blurMaterial.uniforms.uStep.value = (i * 5.5 + 0.2);
+      this.blurMaterial.uniforms.uStep.value = (i * bloomSpread + 0.2);
 
       // horizontal pass
       this.renderer.setRenderTarget(this.rt0);

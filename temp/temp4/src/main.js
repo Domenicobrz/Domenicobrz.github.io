@@ -1,5 +1,6 @@
 import { WebGLRenderer, sRGBEncoding, ACESFilmicToneMapping, LinearEncoding, NoToneMapping, LinearToneMapping } from 'https://cdn.skypack.dev/three';
 import { Stage1 } from './stages/stage1.js';
+import { Stage2 } from './stages/stage2.js';
 
 const renderer = new WebGLRenderer({ antialias: true });
 renderer.setSize(innerWidth, innerHeight);
@@ -17,6 +18,9 @@ const day = parseInt(new URLSearchParams(window.location.search).get("day"));
 let stageManager;
 if(day <= 4) {
   stageManager = new Stage1(renderer, day);
+}
+if(day >= 20) {
+  stageManager = new Stage2(renderer, day);
 }
 
 (async function init() {
