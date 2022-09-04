@@ -8,7 +8,7 @@ import {
 import { OrbitControls } from 'https://cdn.skypack.dev/three-stdlib@2.8.5/controls/OrbitControls';
 import { RGBELoader } from 'https://cdn.skypack.dev/three-stdlib@2.8.5/loaders/RGBELoader';
 import { mergeBufferGeometries } from 'https://cdn.skypack.dev/three-stdlib@2.8.5/utils/BufferGeometryUtils';
-import SimplexNoise from 'https://cdn.skypack.dev/simplex-noise';
+import SimplexNoise from 'https://cdn.skypack.dev/simplex-noise@3.0.0';
 
 // envmap https://polyhaven.com/a/herkulessaulen
 
