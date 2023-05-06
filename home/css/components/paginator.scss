@@ -1,0 +1,38 @@
+.paginator_container,
+.sketches_paginator_container {
+    margin: 2rem auto auto auto;
+    position: relative;
+
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+
+.paginator_page_selector {
+    box-sizing: border-box;
+    padding: 0.5em 0.5em;
+    cursor: pointer;
+    color: #333;
+
+    font-family: 'Source Sans Pro', sans-serif;
+
+    &.active {
+        background: #444;
+        color: #eee;
+        border-radius: 5px;
+        padding: 0.5em 0.6em;    
+    }
+
+    @media all and (min-width: $large-screen-breakpoint) {
+        
+        padding: 0.5em 0.5em;
+        font-size: 1.3rem;
+
+        &.active {
+            border-radius: 7px;
+            padding: 0.5em 0.6em;    
+        }
+    }    
+}
