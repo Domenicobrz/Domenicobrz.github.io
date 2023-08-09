@@ -4063,7 +4063,7 @@ vec4 SRGBToLinear( vec4 c ) {
 
 void main() {
   vec2 uv = vUv;
-	vec2 aspectCorrection = vec2(1.0, aspect);
+	vec2 aspectCorrection = vec2(1.0 / aspect, 1.0);
 
 	float linearDepth = abs(texture2D(uPosition, uv).z) / cameraFar;
 
@@ -4137,7 +4137,7 @@ void main() {
 		if (i < 12) sDofBlur = dofblur9;
 		if (i < 8) sDofBlur = dofBlur;
 
-		vec4 s = texture2D(uRadiance, uv + samples[i] * aspectCorrection * sDofBlur);
+		vec4 s = texture2D(uRadiance, uv + samples[i] * aspectCorrection * sDofBlur * 1.5);
 		color += SRGBToLinear(s);
 	}
 	color = LinearTosRGB(color / 20.0);
