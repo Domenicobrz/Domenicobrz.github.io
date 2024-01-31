@@ -1,0 +1,95 @@
+let s = 800;
+
+function setup() {
+  createCanvas(s, s);
+}
+
+function resetM() {
+  resetMatrix();
+  translate(s * 0.5, s * 0.5);
+  scale(1.35);
+}
+
+function draw() {
+  background(0);
+  
+  resetM();
+  
+  noFill();
+  stroke('rgba(255,255,255, 0.35)');
+  strokeWeight(30);
+  circle(0, 0, 390);
+  
+  stroke('rgba(255,255,255, 0.3)');
+  strokeWeight(12);
+  circle(0, 0, 490);
+  
+  stroke('rgba(255,255,255, 1.0)');
+  strokeWeight(4);
+  circle(0, 0, 440);
+  
+  stroke('rgba(255,255,255, 0.35)');
+  strokeWeight(2);
+  circle(0, 0, 170);
+
+  
+  for(let i = 0; i < 12; i++) {
+    noStroke();
+    fill('rgba(255,255,255, 1.0)');
+  
+    resetM();
+    let sangle = i / 12 * Math.PI * 2;
+    rotate(sangle);
+    
+    if(i > 3) {
+      translate(210, 0);
+      rect(-10, -1.5, 20, 3);
+    } else {
+      translate(180, 0);
+      rect(-10, -1.5, 50, 2 + i * 3);
+    }
+    
+    for(let j = 1; j < 5; j++) {
+      resetM();
+      let share = 1 / 12 * Math.PI * 2;
+      let shareStep = share / 5;
+      
+      fill('rgba(255,255,255, 0.5)');
+
+      rotate(sangle + shareStep * j);
+      translate(210, 0);
+      
+      rect(-5, -1, 6, 2);
+    }
+    
+    resetM();
+    fill('rgba(255,255,255, 0.5)');
+    rotate(sangle);
+    translate(80, 0);
+    rect(-5, -1, 4, 2);
+  }
+  
+  resetM();
+  noFill();
+  stroke('rgba(255,255,255, 0.85)');
+  strokeWeight(3);
+  arc(0, 0, 190, 190, PI * 0.5, PI * 1.7, OPEN);
+  
+  
+  
+  resetM();
+  noStroke();
+  
+  fill('rgba(255,255,255, 0.75)');
+  rotate(PI * 0.25);
+  translate(85, 0);
+  rect(0, 0, 135, 1);
+  
+  resetM();
+  rotate(PI * 0.75);
+  translate(95, 0);
+  rect(0, 0, 200, 1);
+  
+  
+  resetM();
+}
