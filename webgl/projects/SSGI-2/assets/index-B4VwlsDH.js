@@ -4803,7 +4803,7 @@ bool diffuseGI(
   vec2 noise, mat3 tbn, vec3 ro, vec3 norm, vec3 pos, vec3 albedo, float metalness, 
   inout vec3 mult,
   out vec3 hitP,
-  out vec4 ssrDiffuseData
+  inout vec4 ssrDiffuseData
 ) {
   float rand_1 = noise.x;
   // if rand_2 is 0, both cosTheta and the pdf will be zero
@@ -4829,9 +4829,12 @@ bool diffuseGI(
     true
   );
 
-  mult *= mix(albedo, vec3(0.0), metalness) / PI;
-  mult /= brdfSamplePdf;
-  mult *= max(dot(reflDir, norm), 0.0);
+  // mult *= mix(albedo, vec3(0.0), metalness) / PI;
+  // mult /= brdfSamplePdf;
+  // mult *= max(dot(reflDir, norm), 0.0);
+  // if you do the math, the code above cancels out
+  // and this is the only line that remains
+  mult *= mix(albedo, vec3(0.0), metalness);
 
   vec3 sum = vec3(0.0);
 
@@ -5393,8 +5396,6 @@ bool diffuseGI(
                         nmetalness, diffMult, diffHitP, out_SSRData
                       );
                     }
-                    // diffuseGI(blueNoise.zw, tbn, ro, norm, pos, albedo.xyz, metalness, out_SSRData);
-                    // out_SSRData *= 0.5;
 
                     // // simulate specular motion vector
                     // vec3 simP = intersected ? p2 : lastP;
