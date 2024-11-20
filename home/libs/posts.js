@@ -1,6 +1,6 @@
 var posts = [
     { imgPath: "images/projects/experiment1.jpg",  link: "http://domenicobrz.github.io/webgl/projects/experiment1/", description: "", tags: ["webgl", "threejs"] },
-    { imgPath: "images/projects/c2-renderer.jpg",  link: "domenicobrz.github.io/webgl/projects/c2-renderer", description: "", tags: ["webgpu", "threejs"] },
+    { imgPath: "images/projects/c2-renderer.jpg",  link: "https://github.com/Domenicobrz/C2-Renderer", description: "", tags: ["webgpu", "threejs"] },
     { imgPath: "images/projects/recursive.jpg",  link: "http://domenicobrz.github.io/webgl/projects/recursive/", description: "", tags: ["webgl", "threejs"] },
     { imgPath: "images/projects/ssgi-2.jpg",  link: "https://domenicobrz.github.io/webgl/projects/SSGI-2/", description: "", tags: ["threejs", "webgl"] },
     { imgPath: "images/projects/ssr2.jpg",  link: "http://domenicobrz.github.io/webgl/projects/SSR2/", description: "", tags: ["webgl", "threejs"] },
