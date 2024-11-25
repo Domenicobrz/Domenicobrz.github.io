@@ -7,7 +7,7 @@
     "canvas-confetti": "^1.4.0",
     "dat.gui": "^0.7.7",
     "snowpack": "^3.5.4",
-    "three": "^0.129.0"
+    "three": "^0.137.0"
   },
   "devDependencies": {},
   "scripts": {
